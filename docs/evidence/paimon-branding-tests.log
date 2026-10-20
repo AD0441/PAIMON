@@ -1,0 +1,64 @@
+Building for debugging...
+[Computing dependencies]
+Build complete! (0,71 s)
+Test Suite 'All tests' started at 2026-10-19 15:32:30.841.
+Test Suite 'All tests' passed at 2026-10-19 15:32:30.846.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.004) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test changingTemplateReprocessesOriginalWithoutExtraNormalPasses() started.
+◇ Test oldSettingsAndSessionsKeepTheirPreferences() started.
+◇ Test vadHysteresisAndPCMConversion() started.
+◇ Test evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession() started.
+◇ Test summarySchemaCanBeConstructed() started.
+◇ Test ringBoundedOverflowDownmixAndRecovery() started.
+◇ Test timestampFormats() started.
+◇ Test exportFormatsAndSelection() started.
+◇ Test incompleteFindingDoesNotDiscardValidSiblings() started.
+◇ Test unsupportedEvidenceAndInventedFieldsAreDiscarded() started.
+◇ Test reportStructureSeparatesTasksAndOmitsEmptySections() started.
+◇ Test longTaskRowsContinueAcrossPDFPagesWithoutLosingText() started.
+◇ Test malformedSummaryExplainsRecoveryWithoutMissingDataMessage() started.
+◇ Test bookmarksPersistEditPaginateAndDeleteWithSession() started.
+◇ Test duplicateEvidenceMergesRephrasedTasks() started.
+◇ Test bookmarkExportsPageThroughAllNotesAndRespectSelection() started.
+◇ Test markdownEscapesSourceMarkupAndUsesEvidenceLinks() started.
+◇ Test copyableMeetingReportPreservesEvidenceFields() started.
+◇ Test continuousConverterPreservesSamples() started.
+◇ Test fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators() started.
+◇ Test persistenceSurvivesReopenAndDeletesAll() started.
+◇ Test richReportPreservesBoldAndRealTableThroughRTF() started.
+◇ Test pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex() started.
+◇ Test failedSummaryPreservesCheckpointAndCanBeRetried() started.
+◇ Test hierarchicalSummaryAdvancesCursorAndFinalizes() started.
+◇ Test legacyIndexBackfillResumesAndIndexesNewRowsImmediately() started.
+✔ Test ringBoundedOverflowDownmixAndRecovery() passed after 0.061 seconds.
+✔ Test incompleteFindingDoesNotDiscardValidSiblings() passed after 0.061 seconds.
+✔ Test unsupportedEvidenceAndInventedFieldsAreDiscarded() passed after 0.061 seconds.
+✔ Test timestampFormats() passed after 0.061 seconds.
+✔ Test oldSettingsAndSessionsKeepTheirPreferences() passed after 0.062 seconds.
+✔ Test summarySchemaCanBeConstructed() passed after 0.062 seconds.
+✔ Test malformedSummaryExplainsRecoveryWithoutMissingDataMessage() passed after 0.061 seconds.
+✔ Test duplicateEvidenceMergesRephrasedTasks() passed after 0.061 seconds.
+✔ Test changingTemplateReprocessesOriginalWithoutExtraNormalPasses() passed after 0.062 seconds.
+✔ Test reportStructureSeparatesTasksAndOmitsEmptySections() passed after 0.061 seconds.
+✔ Test vadHysteresisAndPCMConversion() passed after 0.062 seconds.
+✔ Test continuousConverterPreservesSamples() passed after 0.062 seconds.
+✔ Test copyableMeetingReportPreservesEvidenceFields() passed after 0.062 seconds.
+✔ Test bookmarksPersistEditPaginateAndDeleteWithSession() passed after 0.062 seconds.
+✔ Test persistenceSurvivesReopenAndDeletesAll() passed after 0.062 seconds.
+✔ Test markdownEscapesSourceMarkupAndUsesEvidenceLinks() passed after 0.062 seconds.
+✔ Test fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators() passed after 0.062 seconds.
+✔ Test failedSummaryPreservesCheckpointAndCanBeRetried() passed after 0.062 seconds.
+✔ Test hierarchicalSummaryAdvancesCursorAndFinalizes() passed after 0.077 seconds.
+✔ Test evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession() passed after 0.183 seconds.
+✔ Test legacyIndexBackfillResumesAndIndexesNewRowsImmediately() passed after 0.198 seconds.
+✔ Test richReportPreservesBoldAndRealTableThroughRTF() passed after 0.276 seconds.
+2026-10-19 15:32:31.272 swiftpm-testing-helper[27755:8389865] attributedStringScaled count: 1
+2026-10-19 15:32:31.272 swiftpm-testing-helper[27755:8389865] attributedStringScaled i: 0
+✔ Test longTaskRowsContinueAcrossPDFPagesWithoutLosingText() passed after 0.310 seconds.
+✔ Test pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex() passed after 0.328 seconds.
+✔ Test bookmarkExportsPageThroughAllNotesAndRespectSelection() passed after 0.330 seconds.
+✔ Test exportFormatsAndSelection() passed after 0.345 seconds.
+✔ Test run with 26 tests in 0 suites passed after 0.346 seconds.

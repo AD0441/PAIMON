@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "session": {
+    "created": "2026-10-20T11:25:03Z",
+    "duration": 25.07428387494292,
+    "id": "EAEE5171-05E5-4315-82BB-F454493E5A40",
+    "status": "completed",
+    "template": "meeting",
+    "title": "Validación final Release 10 · audio sintético"
+  },
+  "findings": [],
+  "bookmarks": [],
+  "transcript": [
+    {
+      "end": 10.77025,
+      "id": "system-90",
+      "isFinal": true,
+      "sessionID": "EAEE5171-05E5-4315-82BB-F454493E5A40",
+      "source": "system",
+      "start": 0.09025,
+      "text": "Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos."
+    }
+  ]
+}

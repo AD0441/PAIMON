@@ -1,0 +1,23 @@
+{
+  "clientFootprintAfterMB" : 4.5161514282226562,
+  "clientFootprintBeforeMB" : 3.4380264282226562,
+  "fixtureSegments" : 1200,
+  "indexedWrites" : {
+    "maxMs" : 45.131667,
+    "p50ms" : 0.140208,
+    "p95ms" : 0.489292
+  },
+  "note" : "Synthetic SQLite benchmark. No audio or language models loaded; not an Instruments or battery measurement.",
+  "queriesDuringWrites" : 200,
+  "queriesWithWrites" : {
+    "maxMs" : 29.051167,
+    "p50ms" : 1.9652080000000001,
+    "p95ms" : 3.1447919999999998
+  },
+  "resultLimit" : 50,
+  "writesWithSearch" : {
+    "maxMs" : 28.781333,
+    "p50ms" : 1.949417,
+    "p95ms" : 3.0856249999999998
+  }
+}

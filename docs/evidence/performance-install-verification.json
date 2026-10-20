@@ -1,0 +1,40 @@
+{
+  "bundles": [
+    {
+      "location": "Applications",
+      "version": "0.4.0",
+      "build": "10",
+      "bundleID": "local.audio.intelligence",
+      "isLink": false,
+      "sha256": "5c1fbf913c614eeb919cc113ddfd3ce2335192612908667fe18686f91deae967",
+      "signatureValid": true
+    },
+    {
+      "location": "project",
+      "version": "0.4.0",
+      "build": "10",
+      "bundleID": "local.audio.intelligence",
+      "isLink": true,
+      "sha256": "5c1fbf913c614eeb919cc113ddfd3ce2335192612908667fe18686f91deae967",
+      "signatureValid": true
+    }
+  ],
+  "portable": {
+    "file": "PAIMON-0.4.0.zip",
+    "bytes": 2410205,
+    "signatureValidAfterExtraction": true,
+    "matchesInstalled": true
+  },
+  "identicalExecutables": true,
+  "installedProcessRunning": true,
+  "captureSourceRestoredToGlobal": true,
+  "validationPreferenceBackupCleared": true,
+  "activeStoredCaptures": 0,
+  "screenReview": "Release 10 capture, ASR, pause/resume/stop, JSON export and subsequently recovered final summary with evidence popover reviewed. Synthetic sample only.",
+  "systemAudioPermissionObservedOn": true,
+  "completeCaptureValidatedBuild": 10,
+  "currentBuild": 10,
+  "captureTranscriptionUIValidatedBuild": 10,
+  "summaryDeferredOnMemoryWarning": true,
+  "summaryRecoveryObserved": true
+}

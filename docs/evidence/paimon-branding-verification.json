@@ -1,0 +1,14 @@
+{
+  "name": "PAIMON",
+  "executable": "PAIMON",
+  "version": "0.3.1",
+  "build": "5",
+  "bundleIdentifier": "local.audio.intelligence",
+  "iconFile": "Paimon.icns",
+  "originalCopiedExactly": true,
+  "originalSHA256": "79e998f281a400e5a43655031f74e0e3bf25b504bc4c2d88ff56c3940a915824",
+  "installedIconMatches": true,
+  "appExecutablesMatch": true,
+  "legacyProjectNameRetired": true,
+  "legacyInstalledNameRetired": true
+}

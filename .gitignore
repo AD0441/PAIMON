@@ -1,0 +1,44 @@
+.DS_Store
+.build/
+dist/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+Models/
+.venv/
+*.trace
+Integrations/FluidWorker/Vendor/
+__pycache__/
+/Local Audio Intelligence.app/
+/PAIMON.app/
+/PAIMON.app
+/PAIMON-*.zip
+
+# Local agent configuration, credentials and signing material.
+.codex/
+.agents/
+.env
+.env.*
+!.env.example
+*.p12
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile
+
+# Session data, recordings and downloaded model weights stay on this Mac.
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.wav
+*.aiff
+*.m4a
+*.mp3
+*.aac
+*.caf
+*.flac
+!/Tests/Fixtures/spanish-synthetic.aiff
+*.safetensors
+*.mlmodelc/
+*.mlpackage/

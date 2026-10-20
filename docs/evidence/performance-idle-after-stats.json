@@ -1,0 +1,12 @@
+{
+  "durationSeconds": 10,
+  "timeSampleRows": 6,
+  "threadStates": {
+    "Blocked": 6
+  },
+  "sampleKinds": {
+    "Stackshot": 6
+  },
+  "scope": "PAIMON 0.4.0 app process, idle; no model-service CPU included",
+  "interpretation": "Sample rows are not CPU utilization. Raw trace kept privately in /tmp; no environment metadata included."
+}

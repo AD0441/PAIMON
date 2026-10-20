@@ -1,0 +1,6 @@
+2026-10-19 15:31:44.571 appintentsmetadataprocessor[27634:8387963] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+** BUILD SUCCEEDED **
+File Provider vuelve a añadir metadatos a la copia del proyecto. Usa la copia firmada en Aplicaciones.
+Versiones anteriores conservadas en: $TMPDIR//paimon-previous.cvQ0Lb
+Aplicación junto al proyecto: $PROJECT_ROOT/PAIMON.app
+Aplicación instalada: /Applications/PAIMON.app

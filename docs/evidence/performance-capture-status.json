@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "blocked": false,
+  "versionTested": "0.4.0 (9)",
+  "currentBuild": 10,
+  "currentBuildReleaseUIRetestPending": false,
+  "realAudio": true,
+  "syntheticSample": true,
+  "audioSaved": false,
+  "capturedBuffers": 1052,
+  "capturedFrames": 538624,
+  "nonzeroBuffers": 769,
+  "transcriptSegments": 1,
+  "findings": 5,
+  "durationSeconds": 11.32980683335336,
+  "preparationSeconds": 0.40616629167925566,
+  "searchable": true,
+  "bookmarks": 1,
+  "timelineValid": true,
+  "earlierFailedReports": [
+    "performance-capture-repeat.json",
+    "performance-capture-before-renewal.json"
+  ],
+  "permissionMismatchConfirmed": true,
+  "permissionRenewedWithUserApproval": true,
+  "visualReview": "Release 10 partial/final transcript, pause/resume/stop, JSON export, final summary and evidence popover reviewed with synthetic speech.",
+  "remaining": "Long real sessions and macOS 26 still require validation. Exact trigger and pressure transition for the observed summary recovery were not independently logged.",
+  "activeStoredCaptures": 0,
+  "currentBuildReleaseSummaryRecoveryPending": false
+}

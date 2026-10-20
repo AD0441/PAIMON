@@ -1,0 +1,14 @@
+{
+  "audioSaved" : false,
+  "capturedBuffers" : 1049,
+  "capturedFrames" : 537088,
+  "findings" : 3,
+  "footprintMB" : 55.235450744628906,
+  "nonzeroBuffers" : 768,
+  "os" : "Version 27.2 (Build 26B5101f)",
+  "passed" : true,
+  "rssMB" : 54.453125,
+  "sample" : "synthetic local speech, captured from app output by Core Audio process tap",
+  "source" : "local.audio.intelligence only",
+  "transcriptSegments" : 1
+}

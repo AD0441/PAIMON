@@ -1,0 +1,64 @@
+// !$*UTF8*$!
+{ archiveVersion = 1; classes = {}; objectVersion = 60; objects = {
+4BCBB1C631210FC6D9A0476C = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/CaptureValidation.swift"; sourceTree = "<group>"; };
+FF0511CBF5D8F1177168DE26 = { isa = PBXBuildFile; fileRef = 4BCBB1C631210FC6D9A0476C; };
+		D1B21DF7F87BA11E9421DD73 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/LocalAudioIntelligenceApp.swift"; sourceTree = "<group>"; };
+		5B859292E4E09EC072F9AFB4 = { isa = PBXBuildFile; fileRef = D1B21DF7F87BA11E9421DD73; };
+		665DCB845B85BBE0351D5D4C = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/AppModel.swift"; sourceTree = "<group>"; };
+		9A76626AEF40BC6A0A5B4F65 = { isa = PBXBuildFile; fileRef = 665DCB845B85BBE0351D5D4C; };
+		B8D0166D64D932FF7BC48C65 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CaptureHeader.swift"; sourceTree = "<group>"; };
+		DCC9450409D30AAE702CB53C = { isa = PBXBuildFile; fileRef = B8D0166D64D932FF7BC48C65; };
+		88B1FE1642C53F6961BDF1BF = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CaptureMenu.swift"; sourceTree = "<group>"; };
+		1D17C251EA063156F550D46E = { isa = PBXBuildFile; fileRef = 88B1FE1642C53F6961BDF1BF; };
+		B2C1B79D4003562DEF224B48 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ContentView.swift"; sourceTree = "<group>"; };
+		4559B2D31FBCD13F44A88F3C = { isa = PBXBuildFile; fileRef = B2C1B79D4003562DEF224B48; };
+		665AAC2A3B403C6D620C99B4 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExportSheet.swift"; sourceTree = "<group>"; };
+		A89837D8C3646ACACEBDCEB7 = { isa = PBXBuildFile; fileRef = 665AAC2A3B403C6D620C99B4; };
+		2DE499AC33C1784A607E3B99 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SettingsView.swift"; sourceTree = "<group>"; };
+		617285B03676007D179959DD = { isa = PBXBuildFile; fileRef = 2DE499AC33C1784A607E3B99; };
+		2B73552DBD5FB6B0AA88FF72 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SidebarView.swift"; sourceTree = "<group>"; };
+		76BC965D58947F5316E8F903 = { isa = PBXBuildFile; fileRef = 2B73552DBD5FB6B0AA88FF72; };
+		4CE1E2FFC307AC00B827B08B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SummaryView.swift"; sourceTree = "<group>"; };
+		E739FBBBEA0241F6330CCD61 = { isa = PBXBuildFile; fileRef = 4CE1E2FFC307AC00B827B08B; };
+		CCD223C4592F478C73D18628 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TranscriptView.swift"; sourceTree = "<group>"; };
+		E470DAE51378E99173A0A701 = { isa = PBXBuildFile; fileRef = CCD223C4592F478C73D18628; };
+		8B1E514334A14C438EF7F001 = { isa = PBXFileReference; lastKnownFileType = image.icns; path = Resources/Paimon.icns; sourceTree = "<group>"; };
+		8B1E514334A14C438EF7F002 = { isa = PBXBuildFile; fileRef = 8B1E514334A14C438EF7F001; };
+		31924BA9657C091C7605B762 = { isa = PBXFileReference; lastKnownFileType = text.xml; path = Resources/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		07B760A8663938679E1BD8F1 = { isa = PBXBuildFile; fileRef = 31924BA9657C091C7605B762; };
+		E6FC57C251E9E1BEC1D3C0D2 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = PAIMON.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBDC4F23F93125BBEEAE800C = { isa = PBXGroup; children = (E6FC57C251E9E1BEC1D3C0D2,); name = Products; sourceTree = "<group>"; };
+		B28B7AF69320201D1CF206EB = { isa = PBXGroup; children = (4BCBB1C631210FC6D9A0476C,D1B21DF7F87BA11E9421DD73,665DCB845B85BBE0351D5D4C,B8D0166D64D932FF7BC48C65,88B1FE1642C53F6961BDF1BF,B2C1B79D4003562DEF224B48,665AAC2A3B403C6D620C99B4,2DE499AC33C1784A607E3B99,2B73552DBD5FB6B0AA88FF72,4CE1E2FFC307AC00B827B08B,CCD223C4592F478C73D18628,8B1E514334A14C438EF7F001,31924BA9657C091C7605B762,FBDC4F23F93125BBEEAE800C,); sourceTree = "<group>"; };
+		582681C2EAE02B3F3D399C0C = { isa = XCLocalSwiftPackageReference; relativePath = .; };
+		94A0426E8D3203DA5468CCF0 = { isa = XCSwiftPackageProductDependency; package = 582681C2EAE02B3F3D399C0C; productName = LAICore; };
+		ABFE60E429B642B2B45ADF15 = { isa = PBXBuildFile; productRef = 94A0426E8D3203DA5468CCF0; };
+		BCE16DD0260827ECF338C787 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (FF0511CBF5D8F1177168DE26,5B859292E4E09EC072F9AFB4,9A76626AEF40BC6A0A5B4F65,DCC9450409D30AAE702CB53C,1D17C251EA063156F550D46E,4559B2D31FBCD13F44A88F3C,A89837D8C3646ACACEBDCEB7,617285B03676007D179959DD,76BC965D58947F5316E8F903,E739FBBBEA0241F6330CCD61,E470DAE51378E99173A0A701,); runOnlyForDeploymentPostprocessing = 0; };
+		7561BFB015D8F536760CB671 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (ABFE60E429B642B2B45ADF15,); runOnlyForDeploymentPostprocessing = 0; };
+		0189424A5A60FED329FA868E = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (07B760A8663938679E1BD8F1,8B1E514334A14C438EF7F002,); runOnlyForDeploymentPostprocessing = 0; };
+		89E1FD6268CC0F221A2BE178 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { MACOSX_DEPLOYMENT_TARGET = 26.0; ARCHS = arm64; ONLY_ACTIVE_ARCH = YES; SDKROOT = macosx; SWIFT_VERSION = 6.0; SWIFT_STRICT_CONCURRENCY = complete; CLANG_ENABLE_MODULES = YES; }; };
+		E9B2E96ABC5F6856F2BE79CF = { isa = XCBuildConfiguration; name = Debug; buildSettings = {
+ PRODUCT_BUNDLE_IDENTIFIER = local.audio.intelligence; PRODUCT_NAME = PAIMON;
+ INFOPLIST_FILE = Resources/Info.plist; GENERATE_INFOPLIST_FILE = NO;
+ CODE_SIGN_STYLE = Automatic; CODE_SIGN_IDENTITY = "-"; ENABLE_APP_SANDBOX = NO;
+ CODE_SIGN_ENTITLEMENTS = Resources/LocalAudioIntelligence.entitlements;
+ ENABLE_HARDENED_RUNTIME = YES; SWIFT_VERSION = 6.0; SWIFT_STRICT_CONCURRENCY = complete;
+ SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated; SWIFT_ENABLE_EXPLICIT_MODULES = NO; SWIFT_APPROACHABLE_CONCURRENCY = NO;
+ SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+ ENABLE_TESTABILITY = YES; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+ }; };
+		E6DE6C99132752C914FEF632 = { isa = XCBuildConfiguration; name = Release; buildSettings = { MACOSX_DEPLOYMENT_TARGET = 26.0; ARCHS = arm64; ONLY_ACTIVE_ARCH = YES; SDKROOT = macosx; SWIFT_VERSION = 6.0; SWIFT_STRICT_CONCURRENCY = complete; CLANG_ENABLE_MODULES = YES; }; };
+		5A8C91857F674E16E2724F47 = { isa = XCBuildConfiguration; name = Release; buildSettings = {
+ PRODUCT_BUNDLE_IDENTIFIER = local.audio.intelligence; PRODUCT_NAME = PAIMON;
+ INFOPLIST_FILE = Resources/Info.plist; GENERATE_INFOPLIST_FILE = NO;
+ CODE_SIGN_STYLE = Automatic; CODE_SIGN_IDENTITY = "-"; ENABLE_APP_SANDBOX = NO;
+ CODE_SIGN_ENTITLEMENTS = Resources/LocalAudioIntelligence.entitlements;
+ ENABLE_HARDENED_RUNTIME = YES; SWIFT_VERSION = 6.0; SWIFT_STRICT_CONCURRENCY = complete;
+ SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated; SWIFT_ENABLE_EXPLICIT_MODULES = NO; SWIFT_APPROACHABLE_CONCURRENCY = NO;
+ SWIFT_OPTIMIZATION_LEVEL = "-O";
+ ENABLE_TESTABILITY = YES; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+ }; };
+		862894B703A6DEDF96A9DD6C = { isa = XCConfigurationList; buildConfigurations = (89E1FD6268CC0F221A2BE178,E6DE6C99132752C914FEF632,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		F37922C48DA5978D02C9E50E = { isa = XCConfigurationList; buildConfigurations = (E9B2E96ABC5F6856F2BE79CF,5A8C91857F674E16E2724F47,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		0E8A3AD980EC179856012B7E = { isa = PBXNativeTarget; name = LocalAudioIntelligence; buildConfigurationList = F37922C48DA5978D02C9E50E; buildPhases = (BCE16DD0260827ECF338C787,7561BFB015D8F536760CB671,0189424A5A60FED329FA868E,); dependencies = (); packageProductDependencies = (94A0426E8D3203DA5468CCF0,); productName = LocalAudioIntelligence; productReference = E6FC57C251E9E1BEC1D3C0D2; productType = "com.apple.product-type.application"; };
+		98F54143AB4E86B28C3AFEE0 = { isa = PBXProject; attributes = { LastUpgradeCheck = 2600; }; buildConfigurationList = 862894B703A6DEDF96A9DD6C; compatibilityVersion = "Xcode 14.0"; developmentRegion = es; knownRegions = (es,en,Base); mainGroup = B28B7AF69320201D1CF206EB; productRefGroup = FBDC4F23F93125BBEEAE800C; packageReferences = (582681C2EAE02B3F3D399C0C,); projectDirPath = ""; projectRoot = ""; targets = (0E8A3AD980EC179856012B7E,); };
+}; rootObject = 98F54143AB4E86B28C3AFEE0; }

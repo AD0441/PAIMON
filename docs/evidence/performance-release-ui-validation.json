@@ -1,0 +1,33 @@
+{
+  "version": "0.4.0",
+  "build": 10,
+  "verifiedAtUTC": "2026-10-20T11:29:43.774820+00:00",
+  "captureControlsPassed": true,
+  "controlsObserved": [
+    "Iniciar",
+    "Pausar",
+    "Reanudar",
+    "Detener"
+  ],
+  "startAndPlayback": "User initiated the global source capture and played the synthetic fixture while the source selector was being inspected. Partial and final text were then observed; pause, resume and stop were operated through CUA.",
+  "source": "global system audio; microphone off",
+  "syntheticTranscriptVerifiedExactly": true,
+  "durationSeconds": 25.07428387494292,
+  "transcriptSegments": 1,
+  "duplicates": 0,
+  "timestampsValid": true,
+  "jsonExportThroughUI": true,
+  "audioSaved": false,
+  "captureStopped": true,
+  "activeStoredCaptures": 0,
+  "systemMemoryPressureLevel": 2,
+  "summaryDeferred": true,
+  "durableFinalSummaryJob": true,
+  "summaryFindingsExported": 0,
+  "summaryRecoveryCompleted": true,
+  "summaryStatusObserved": "Síntesis en espera hasta que baje la presión de memoria.",
+  "scope": "Capture, ASR, pause/resume/stop and JSON export passed on installed Release. The initially deferred final summary was later observed as a final v3 snapshot with five findings and no pending job. Recovery trigger and exact pressure transition were not independently logged.",
+  "summaryFindingsAfterRecovery": 5,
+  "durableFinalSummaryJobAfterRecovery": false,
+  "summaryRecoveryEvidence": "performance-summary-recovery.json"
+}

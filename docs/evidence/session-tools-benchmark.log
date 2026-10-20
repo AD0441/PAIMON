@@ -1,0 +1,1 @@
+PASS: 1200 indexed segments, 200 searches concurrent with incremental writes. Report: /tmp/lai-tools-benchmark.json

@@ -1,0 +1,74 @@
+{
+  "observedAtUTC": "2026-10-20T11:59:56.405550+00:00",
+  "version": "0.4.0 (10)",
+  "syntheticOnly": true,
+  "finalSnapshotPresent": true,
+  "processingVersion": 3,
+  "findings": 5,
+  "pendingJobsAfterRecovery": 0,
+  "originalQuotesVerified": true,
+  "viewRendered": true,
+  "screenshots": [
+    "../images/paimon-session.png",
+    "../images/paimon-evidence.png"
+  ],
+  "systemPressureLevelAtObservation": 2,
+  "recoveryTrigger": "Not independently logged; no claim about the exact normal-pressure transition or whether recovery ran on relaunch.",
+  "snapshot": {
+    "throughRow": 100,
+    "id": "A05796A2-A732-4EFF-A0A5-B1B85B38FFE8",
+    "summaryTemplate": "meeting",
+    "created": 814188719.263948,
+    "findings": [
+      {
+        "text": "Compra de micrófonos",
+        "quote": "Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.",
+        "kind": "topic",
+        "id": "17E0E31B-ABFA-44EF-9E78-8D5AD7186D64",
+        "segmentID": "system-90",
+        "end": 10.77025,
+        "start": 0.09025
+      },
+      {
+        "text": "Se acordó comprar dos micrófonos y enviar una cotización. Se debe decidir dónde instalar los equipos. Estas propuestas no tienen aprobación explícita.",
+        "quote": "Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.",
+        "kind": "overview",
+        "id": "03495E7F-8657-45BB-BDB8-E74161ECC041",
+        "segmentID": "system-90",
+        "end": 10.77025,
+        "start": 0.09025
+      },
+      {
+        "text": "Comprar dos micrófonos",
+        "quote": "Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.",
+        "kind": "decision",
+        "id": "48BA2A4C-C79D-4182-8110-278C3A424B8D",
+        "segmentID": "system-90",
+        "end": 10.77025,
+        "start": 0.09025
+      },
+      {
+        "text": "Enviar la cotización",
+        "quote": "Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.",
+        "kind": "task",
+        "id": "632A8DE5-295C-4743-BCE7-FE16CEC6D0C1",
+        "segmentID": "system-90",
+        "end": 10.77025,
+        "start": 0.09025,
+        "due": "viernes"
+      },
+      {
+        "text": "Decidir dónde instalar los equipos",
+        "quote": "Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.",
+        "kind": "question",
+        "id": "D50C5A1A-ED6F-47F1-9796-CF2F3F3FC50A",
+        "segmentID": "system-90",
+        "end": 10.77025,
+        "start": 0.09025
+      }
+    ],
+    "sessionID": "EAEE5171-05E5-4315-82BB-F454493E5A40",
+    "processingVersion": 3,
+    "isFinal": true
+  }
+}
