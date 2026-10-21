@@ -7,6 +7,16 @@ Transformando sonido en conocimiento.
 
 Aplicación nativa para Apple Silicon y macOS 26+, SwiftUI, Swift 6 y procesamiento local. Captura de sistema con Core Audio Process Taps sin dispositivos virtuales, micrófono opcional, SpeechAnalyzer, Foundation Models, historial SQLite y exportación TXT/Markdown/PDF/JSON. Procesamiento local por defecto, sin telemetría. Google AI (Gemini) es una alternativa de resumen externa, opcional y desactivada inicialmente.
 
+## Nueva opción: clave de Google AI para reducir la carga local
+
+**Se agregó la posibilidad de configurar una clave API propia de Google AI (Gemini) como alternativa al resumen local cuando la RAM disponible limita su uso**, especialmente en equipos como el Apple M1 con 8 GB de memoria compartida. Al elegir Google AI, la inferencia del resumen se realiza en sus servidores; la captura de audio y la transcripción siguen ejecutándose en el Mac. No se han medido ahorros de RAM con esta opción.
+
+- **Activación manual:** Configuración → Google AI → guardar la clave en el Llavero. Para una sesión existente, marcar **Usar Google AI para esta sesión** y pulsar **Actualizar resumen**. [Instrucciones completas](#google-ai--resumen-externo-opcional).
+- **Privacidad y conexión:** se envían a Google fragmentos de transcripción, contexto y resúmenes previos; nunca el audio. Requiere Internet y está sujeto a la cuota y facturación de la cuenta del usuario. La clave no se incluye en el repositorio ni en las exportaciones.
+- **Protección de memoria actual:** mientras macOS notifica presión de memoria, PAIMON aplaza la generación con cualquier motor, incluido Google AI. Esta opción no libera RAM por sí sola ni garantiza funcionar durante un estado crítico. Cuando baja la presión, el resumen final pendiente puede recuperarse. No hay cambio automático de proveedor ni envío a Google por detectar poca RAM.
+
+El modo local sigue siendo el predeterminado y funciona sin clave API ni servicios de IA en la nube.
+
 ![PAIMON: transcripción, resumen, acuerdos, compromisos y preguntas abiertas](docs/images/paimon-session.png)
 
 Captura de la versión 0.4.0 instalada con una muestra de voz sintética local. No contiene conversaciones del usuario. El texto original permanece separado del resumen y cada icono de cita abre su evidencia.
@@ -77,6 +87,8 @@ También existe un paquete Swift reproducible, sin dependencias de terceros en e
 - Los **términos frecuentes** se calculan sin IA sobre una muestra de los fragmentos de la vista: hasta 300 fragmentos y 100.000 caracteres. Pulsarlos busca en esa sesión, sin distinguir acentos o mayúsculas. La frecuencia no equivale a importancia semántica ni representa necesariamente toda la grabación.
 
 ## Google AI · resumen externo opcional
+
+Esta alternativa permite evitar la inferencia local del resumen cuando la memoria del equipo limita su uso. Se selecciona expresamente por el usuario; no se activa automáticamente ante presión de RAM. El control de presión de memoria sigue vigente para todos los motores y puede aplazar la generación hasta que el sistema se recupere.
 
 1. En **Configuración → Google AI**, activa **Usar Google AI para resumir nuevas sesiones**. Las sesiones anteriores conservan su motor; en su panel Resumen puedes marcar **Usar Google AI para esta sesión** y pulsar **Actualizar resumen**.
 2. Obtén tu propia clave en [Google AI Studio](https://aistudio.google.com/apikey), introdúcela en el campo seguro y pulsa **Guardar en el Llavero**. No la escribas en archivos del proyecto. Puedes eliminarla desde la misma pantalla.
