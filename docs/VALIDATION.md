@@ -1,5 +1,15 @@
 # Validación — 21 de octubre de 2026
 
+## Versión 0.5.1 (12) · ajuste de ventana
+
+**Release: BUILD SUCCEEDED.** Firma estricta de la app instalada y de los dos ZIP extraídos: PASS. Actual: 0.5.1 (12); anterior: 0.5.0 (11). Las recompilaciones de la misma versión conservaron el archivo anterior intacto. [Verificación actual](evidence/performance-install-verification.json).
+
+La regresión se reprodujo en la app instalada: el área útil tenía 748 puntos de alto, pero NavigationSplitView calculaba 1.593 y centraba el contenido fuera de la ventana. Se acotaron ambas columnas al espacio que reciben. Después, navegación y área útil coincidieron en 748 puntos; al reducir la ventana también coincidieron en 650. Se retiraron del código final las mediciones temporales, que solo registraban rectángulos.
+
+**Revisión visual: PASS.** Sesión vacía y sesión guardada; cabecera, controles, título único, marca de PAIMON y firma visibles. Tamaños observados: 1.240 × 800, 1.440 × 870, 1.440 × 702 y 1.000 × 702 puntos, con barra de herramientas incluida. Se probaron el menú nativo de redimensionado, abrir/cancelar Contexto en tamaño pequeño y aumentar/reducir el divisor por accesibilidad. La proporción del divisor se conserva en SceneStorage. No se publicaron capturas de la conversación del usuario.
+
+Esta corrección modifica únicamente la composición de la interfaz y su versión. La batería de 75 pruebas de los motores y la persistencia sigue siendo la referencia de 0.5.0; no se presenta como una nueva prueba de captura, reconocimiento o Gemini.
+
 ## Versión 0.5.0 (11)
 
 **75 pruebas aprobadas**, con Swift 6 y el mismo M1 de referencia. Incluyen las 55 anteriores y cobertura de Google desactivado por defecto, consentimiento por sesión, compatibilidad de los valores locales anteriores, claves fuera de URL/cuerpo, consultas de conexión sin transcripción, JSON truncado y bloqueado, cuotas, tamaño máximo de respuesta, revocación en curso y durante lectura de la clave, referencias originales y rechazo de responsables o acuerdos no respaldados. También comprueban contexto acotado, identidad estable, reconstrucción al cambiar de motor/contexto, vista ejecutiva sin modificar hallazgos, términos con acentos, progreso persistido, importación con búferes de hasta 4.096 frames y conservación de finales al interrumpir. [Registro actual](evidence/performance-tests.log).
@@ -8,7 +18,7 @@
 
 **Google AI:** pruebas de contrato con transporte y clave sintéticos; estas pruebas automatizadas no envían conversaciones ni usan credenciales del usuario. Un fallo HTTP 503 informado por el usuario motivó la regresión de recuperación: 503/502 seguidos de éxito, mismos datos POST, máximo tres intentos, Retry-After largo sin repetición temprana, cancelación al revocar la clave durante la espera y ningún reintento para 400/401/403/404/429. En la app instalada se observó posteriormente «Síntesis final actualizada», con la casilla de Google AI seleccionada y sin error pendiente. La clave fue configurada por el usuario; no se incluye contenido de esa sesión en las evidencias. Esto confirma la finalización observada, sin medir cuotas, latencia remota ni auditar la calidad semántica. Los dobles de transporte solo están en las pruebas. La aplicación implementa HTTPS al endpoint oficial. [Estrategia oficial de reintentos](https://ai.google.dev/gemini-api/docs/troubleshooting).
 
-**Release: BUILD SUCCEEDED.** Instalación y firma estricta verificadas, incluidos ambos ZIP extraídos. La recompilación de 0.5.0 (11) conservó intacto el ZIP anterior 0.4.0 (10). [Verificación actual](evidence/performance-install-verification.json).
+**Release: BUILD SUCCEEDED.** Instalación y firma estricta verificadas, incluidos ambos ZIP extraídos. La recompilación de 0.5.0 (11) conservó intacto el ZIP anterior 0.4.0 (10). [Verificación de 0.5.0](https://github.com/AD0441/PAIMON/blob/6583215/docs/evidence/performance-install-verification.json).
 
 **Interfaz de contexto: PASS.** En Release se comprobaron abrir, cancelar un borrador, guardar y volver a abrir. El contexto aparece en una sheet separada y los controles de captura y los paneles permanecen visibles. ⌘N limpia la selección sin abrir otra ventana. Se usó un borrador sintético sin modificar la transcripción del usuario. La captura en vivo de 0.4.0 sigue siendo evidencia histórica; la importación de un archivo no se presenta como una nueva prueba de Core Audio.
 

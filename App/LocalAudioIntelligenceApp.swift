@@ -19,6 +19,7 @@ struct PaimonApp: App {
                 }
         }
         .defaultSize(width:1240,height:800)
+        .windowToolbarStyle(.unified)
         .commands {
             CommandGroup(replacing:.newItem) {
                 Button("Nueva sesión") { model.newSession() }.keyboardShortcut("n").disabled(model.active)

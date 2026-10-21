@@ -25,7 +25,7 @@ struct SidebarView:View {
                             }.frame(maxWidth:.infinity,alignment:.leading).contentShape(Rectangle())
                         }.buttonStyle(.plain).accessibilityIdentifier("searchHit-\(hit.id)")
                     }
-                }.listStyle(.sidebar)
+                }.listStyle(.sidebar).frame(minHeight:0,maxHeight:.infinity)
                 if !model.searching { Text(model.globalQuery.count<2 ? "Escribe al menos dos caracteres.":model.searchHits.isEmpty ? "Sin coincidencias.":"\(model.searchHits.count) resultados · máximo 50").font(.caption2).foregroundStyle(.secondary).padding(10) }
             } else {
             TextField("Buscar sesiones",text:$model.sessionSearch).textFieldStyle(.roundedBorder).padding(.horizontal,12).padding(.bottom,10)
@@ -40,7 +40,7 @@ struct SidebarView:View {
                     .tag(session.id)
                     .contextMenu { Button("Eliminar sesión…",role:.destructive) { deleting=session }.disabled(model.current?.id==session.id && model.active) }
                 }
-            }.listStyle(.sidebar)
+            }.listStyle(.sidebar).frame(minHeight:0,maxHeight:.infinity)
             if model.historyPage>0 || model.moreSessions {
                 HStack {
                     Button { Task { await model.refreshSessions(page:model.historyPage-1) } } label: { Image(systemName:"chevron.left") }.disabled(model.historyPage==0)
@@ -60,7 +60,7 @@ struct SidebarView:View {
                     }
                 }
                 Text("Transformando sonido en conocimiento.").font(.caption).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
-            }.frame(maxWidth:.infinity,alignment:.leading).padding(16)
+            }.frame(maxWidth:.infinity,alignment:.leading).padding(16).fixedSize(horizontal:false,vertical:true)
         }
         .task(id:model.globalQuery+String(model.globalSearchMode)+String(model.indexingSearch)) { await model.searchAllTranscripts() }
         .onChange(of:model.globalSearchMode) { _,value in if value { searchFocused=true } }

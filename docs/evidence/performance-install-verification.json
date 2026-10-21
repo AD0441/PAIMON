@@ -1,39 +1,60 @@
 {
-  "version": "0.5.0",
-  "build": "11",
+  "version": "0.5.1",
+  "build": "12",
   "installedSignatureValid": true,
   "projectAppIsLink": true,
   "projectAppTarget": "/Applications/PAIMON.app",
   "portablePackages": [
     {
       "file": "PAIMON-actual.zip",
-      "version": "0.5.0",
-      "build": "11",
-      "bytes": 2600128,
-      "sha256": "2a3082e7eefb5a9b21fc5d8f2e8d7865b6112e07d75af1da4112403eb6373370",
+      "version": "0.5.1",
+      "build": "12",
+      "bytes": 2615810,
+      "sha256": "551442b506bc8eb1c72c90ce7f97f338f2e342cff4044977d76c7d24e65ce502",
+      "executableSHA256": "f336bbe017572542edc313d46e8ffc2a0f2efed453dc931841ab5fa575f7d5f5",
       "signatureValidAfterExtraction": true,
       "matchesInstalled": true
     },
     {
       "file": "PAIMON-anterior.zip",
-      "version": "0.4.0",
-      "build": "10",
-      "bytes": 2410205,
-      "sha256": "5914039c642e7dcaccb1e61b601ff1081ef12feed9b305058bc96e1b55329ebc",
+      "version": "0.5.0",
+      "build": "11",
+      "bytes": 2600128,
+      "sha256": "7112c18c9c59d8d90f8d3c918c67e030e9a52a415e87f75f34c5ecdc5cae41be",
+      "executableSHA256": "cff9b6779cd64c547251656d38f3c72476113619ac6ba2d4b7cf7213c95eb2dd",
       "signatureValidAfterExtraction": true,
       "matchesInstalled": false
     }
   ],
-  "previousPreservedAcrossSameVersionRebuild": true,
-  "scope": "Release build, bundle signatures, portable archives and retention. Live Core Audio was not re-tested in this version.",
+  "sameVersionRebuildDidNotRotateIntermediateBuild": true,
   "ui": {
-    "contextSheetOpenCancelSaveReopen": true,
-    "captureHeaderRemainsVisible": true,
-    "newSessionShortcutDoesNotCreateAnotherWindow": true,
-    "googleSummaryCompletionObserved": true,
-    "googleSessionSelectedWhenCompletionObserved": true,
+    "headerAndFooterVisible": true,
+    "singleVisibleSessionTitle": true,
+    "sidebarBrandingVisible": true,
+    "contextSheetOpenAndCancel": true,
+    "dividerAccessibilityIncrementAndDecrement": true,
+    "resizeThroughNativeWindowMenu": true,
+    "windowSizesInPointsObserved": [
+      [
+        1240,
+        800
+      ],
+      [
+        1440,
+        870
+      ],
+      [
+        1440,
+        702
+      ],
+      [
+        1000,
+        702
+      ]
+    ],
+    "emptyAndStoredSessionReviewed": true,
     "privateTranscriptPublished": false,
-    "remoteLatencyOrQuotaMeasured": false,
-    "retryScenariosExercisedBy": "synthetic HTTP transport tests"
-  }
+    "temporaryGeometryLoggingRemoved": true
+  },
+  "scope": "Release build and manual layout checks. Core Audio, transcription and AI engines were unchanged and not re-tested in this layout patch. The 75-test core suite is the prior 0.5.0 baseline."
 }
