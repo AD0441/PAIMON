@@ -7,7 +7,7 @@ struct ContentView:View {
             SidebarView(model:model).navigationSplitViewColumnWidth(min:220,ideal:255,max:340)
         } detail: {
             VStack(spacing:0) {
-                CaptureHeader(model:model)
+                CaptureHeader(model:model).layoutPriority(1)
                 Divider()
                 if let message=model.message {
                     HStack(alignment:.top) {
@@ -23,7 +23,7 @@ struct ContentView:View {
                 }
                 Divider()
                 HStack(spacing:16) {
-                    Label("Procesamiento local",systemImage:"lock.shield").foregroundStyle(.secondary)
+                    Label(model.settings.googleEnabled==true ? "Audio local · Google AI opcional":"Procesamiento local",systemImage:model.settings.googleEnabled==true ? "cloud":"lock.shield").foregroundStyle(.secondary)
                     if model.active,model.pendingSummarySegments>0 { Text("\(model.pendingSummarySegments) fragmentos por resumir").foregroundStyle(.secondary) }
                     Spacer()
                     if model.pressure { Label("Memoria bajo presión",systemImage:"memorychip").foregroundStyle(.orange) }
@@ -40,5 +40,9 @@ struct ContentView:View {
                 ToolbarItem { SettingsLink { Image(systemName:"slider.horizontal.3") }.help("Configuración") }
             }
         }.sheet(isPresented:$model.showExport) { ExportSheet(model:model) }
+            .dropDestination(for:URL.self) { urls,_ in
+                guard !model.active,let url=urls.first else { return false }
+                model.beginImport(url); return true
+            }
     }
 }

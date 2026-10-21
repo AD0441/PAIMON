@@ -1,6 +1,7 @@
 import SwiftUI
 import Observation
 import AppKit
+import UniformTypeIdentifiers
 import LAICore
 @MainActor @Observable
 final class AppModel {
@@ -51,6 +52,15 @@ final class AppModel {
     var speechStatus="Comprobando motor…"
     var summaryStatus="Comprobando modelo…"
     var summaryWorking=false
+    var googleRetryStatus:String?
+    var sessionContext=SessionContext()
+    var processingProgress=SessionProcessingProgress()
+    var terms:[SessionTerm]=[]
+    var importFraction:Double=0
+    var importDuration:Double=0
+    var googleKeySaved=false
+    var googleStatus="Google AI desactivado"
+    var googleTesting=false
     var metrics=ResourceMetrics.current()
     var pressure=false
     var showExport=false
@@ -61,6 +71,10 @@ final class AppModel {
     private var clockTask:Task<Void,Never>?
     private var summaryTask:Task<Void,Never>?
     private var summaryRequests=0
+    private let googleClient=GoogleAIClient()
+    private var importTask:Task<Void,Never>?
+    private var progressTask:Task<Void,Never>?
+    private var termsTask:Task<Void,Never>?
     private var finalRecoveryTask:Task<Void,Never>?
     @ObservationIgnored private var displayBuffer=LiveDisplayBuffer()
     @ObservationIgnored private var displayTask:Task<Void,Never>?
@@ -74,11 +88,11 @@ final class AppModel {
     #if DEBUG
     var validationTask:Task<Void,Never>?
     #endif
-    var active:Bool { [.preparing,.recording,.paused,.stopping].contains(state) }
+    var active:Bool { [.preparing,.recording,.paused,.stopping,.importing].contains(state) }
     var recordingSession:Bool { current?.id==selected && active }
     var canAddBookmark:Bool { selectedSession != nil && state != .preparing && state != .stopping }
     var selectedSession:Session? { (current?.id==selected ? current:nil) ?? sessions.first{$0.id==selected} ?? (selectedRecord?.id==selected ? selectedRecord:nil) }
-    var statusTitle:String { switch state { case .idle:"Listo"; case .preparing:"Preparando"; case .recording:"Capturando"; case .paused:"En pausa"; case .stopping:"Finalizando"; case .failed:"Requiere atención" } }
+    var statusTitle:String { switch state { case .idle:"Listo"; case .preparing:"Preparando"; case .recording:"Capturando"; case .paused:"En pausa"; case .stopping:"Finalizando"; case .importing:"Importando audio"; case .failed:"Requiere atención" } }
     init() {
         do { let value=try SessionStore(); store=value; pipeline=RecordingPipeline(store:value); coordinator=SummaryCoordinator(store:value) }
         catch { message=error.localizedDescription }
@@ -88,6 +102,8 @@ final class AppModel {
         do { try await store?.recoverInterrupted(); await refreshSessions()
             let saved=UserDefaults.standard.string(forKey:"lastSelectedSession").flatMap(UUID.init(uuidString:))
             if let id=saved ?? sessions.first?.id { await select(id) } } catch { message=error.localizedDescription }
+        await googleClient.setEnabled(settings.googleEnabled==true)
+        googleKeySaved=(try? await googleClient.hasKey()) ?? false
         await checkAvailability()
         let source=DispatchSource.makeMemoryPressureSource(eventMask:[.normal,.warning,.critical],queue:.global(qos:.utility))
         // Dispatch invokes this callback on its background queue. @Sendable
@@ -138,9 +154,87 @@ final class AppModel {
     func captureDiagnostics() async -> CaptureDiagnostics { await pipeline?.captureDiagnostics() ?? CaptureDiagnostics() }
     func checkAvailability() async {
         speechStatus=await AppleSpeechEngine.availability(locale:settings.locale) ?? "SpeechTranscriber · recursos instalados"
-        summaryStatus=await makeSummaryEngine().availability(locale:settings.locale) ?? "Modelo local listo"
+        summaryStatus=await makeSummaryEngine().availability(locale:settings.locale) ?? (settings.googleEnabled==true ? "Google AI configurado; conexión sin comprobar":"Modelo local listo")
     }
-    private func makeSummaryEngine(template:SummaryTemplate = .meeting) -> any SummarizationEngine { settings.summary == .apple ? FoundationSummaryEngine(template:template) : MLXSummaryEngine(settings:settings,template:template) }
+    private func makeSummaryEngine(template:SummaryTemplate = .meeting,session:Session?=nil) -> any SummarizationEngine {
+        let value=session?.settings ?? settings.forNewSession()
+        let context=session?.context ?? sessionContext
+        let backend=value.summaryBackend(googleAllowed:settings.googleEnabled==true)
+        switch backend {
+        case .apple: return FoundationSummaryEngine(template:template,context:context)
+        case .mlx: return MLXSummaryEngine(settings:settings,template:template,context:context)
+        case .google: return GoogleSummaryEngine(client:googleClient,model:value.googleModel ?? GoogleAIClient.defaultModel,template:template,context:context)
+        }
+    }
+    var selectedUsesGoogle:Bool {
+        if let session=selectedSession { return session.settings.googleSummarySelected==true }
+        return settings.googleEnabled==true
+    }
+    var summaryProviderTitle:String {
+        let value=selectedSession?.settings ?? settings.forNewSession()
+        return value.summaryBackend(googleAllowed:settings.googleEnabled==true).title
+    }
+    func setGoogleEnabled(_ value:Bool) async {
+        settings.googleEnabled=value
+        await googleClient.setEnabled(value)
+        if !value { await coordinator?.cancelAll() }
+        googleStatus=value ? "Solo las sesiones que seleccionen Google AI enviarán texto.":"Google AI desactivado; procesamiento local."
+        await checkAvailability()
+    }
+    func saveGoogleKey(_ value:String) async -> Bool {
+        do { try await googleClient.saveKey(value); googleKeySaved=true; googleStatus="Clave guardada en el Llavero de este Mac."; return true }
+        catch { googleStatus=error.localizedDescription; return false }
+    }
+    func deleteGoogleKey() async {
+        do { try await googleClient.deleteKey(); googleKeySaved=false; googleStatus="Clave eliminada del Llavero." }
+        catch { googleStatus=error.localizedDescription }
+    }
+    func testGoogleConnection() async {
+        guard !googleTesting else { return }; googleTesting=true; defer { googleTesting=false }
+        do { let name=try await googleClient.testConnection(model:settings.googleModel ?? GoogleAIClient.defaultModel); googleStatus="Conexión comprobada: \(name). No se envió ninguna transcripción." }
+        catch { googleStatus=error.localizedDescription }
+    }
+    func setSessionGoogle(_ value:Bool) async {
+        guard !active,!summaryWorking else { return }
+        if value && settings.googleEnabled != true { return }
+        guard var session=selectedSession else { return }
+        session.settings.googleSummarySelected=value
+        if !value { session.settings.summary=settings.summary == .mlx ? .mlx:.apple }
+        session.settings.googleModel=settings.googleModel
+        do {
+            try await store?.save(session)
+            selectedRecord=session; if current?.id==session.id { current=session }
+            await refreshSessions()
+            summaryStatus="Motor cambiado a \(session.settings.summaryBackend(googleAllowed:settings.googleEnabled==true).title). Pulsa Actualizar resumen para aplicarlo a esta sesión."
+        } catch { message=error.localizedDescription }
+    }
+    func saveSessionContext() async {
+        guard !active,!summaryWorking else { return }
+        sessionContext=sessionContext.bounded
+        guard var session=selectedSession else { return }
+        session.context=sessionContext
+        do {
+            try await store?.save(session); selectedRecord=session
+            if current?.id==session.id { current=session }
+            await refreshSessions(); summaryStatus="Contexto guardado. Pulsa Actualizar resumen para aplicarlo."
+        } catch { message=error.localizedDescription }
+    }
+    func refreshProcessingProgress() async {
+        googleRetryStatus=await googleClient.retryStatus
+        guard let id=selected else { processingProgress = .init(); return }
+        do { let value=try await store?.processingProgress(session:id) ?? .init(); if selected==id { processingProgress=value } }
+        catch { message=error.localizedDescription }
+    }
+    func refreshTerms() {
+        termsTask?.cancel()
+        let values=segments,id=selected
+        termsTask=Task { @concurrent [weak self] in
+            do { try await Task.sleep(for:.milliseconds(500)); try Task.checkCancellation() } catch { return }
+            let ranked=SessionTerm.rank(values)
+            guard !Task.isCancelled else { return }
+            await MainActor.run { if self?.selected==id { self?.terms=ranked } }
+        }
+    }
     var selectedTemplate:SummaryTemplate { selectedSession?.template ?? settings.summaryTemplate ?? .meeting }
     func setSummaryTemplate(_ template:SummaryTemplate) async {
         guard !active,!summaryWorking else { return }
@@ -185,16 +279,18 @@ final class AppModel {
     }
     func select(_ id:UUID?) async {
         selected=id; selectedRecord=nil; displayBuffer=LiveDisplayBuffer(); partials=[:]; segments=[]; findings=[]; findingPage=0; moreFindings=false; transcriptTarget=nil; bookmarks=[]; bookmarkPage=0; moreBookmarks=false
+        termsTask?.cancel(); terms=[]; processingProgress = .init()
         guard let id else { return }
         if let session=selectedSession { title=session.title }
         let query=transcriptSearch
         do {
             let record=try await store?.session(id:id)
             guard selected==id else { return }
-            selectedRecord=record; if let record { title=record.title }
+            selectedRecord=record; if let record { title=record.title; sessionContext=record.context ?? .init() }
             let rows=try await store?.segments(session:id,limit:300,search:query,newest:true) ?? []
             guard selected==id,transcriptSearch==query else { return }
             segments=rows.map(\.1).sorted{$0.start<$1.start}; oldestRow=rows.first?.0 ?? 0; canLoadEarlier=rows.count==300
+            refreshTerms(); await refreshProcessingProgress()
             let snapshot=try await store?.latestSummary(session:id)
             let markers=try await store?.bookmarks(session:id) ?? []
             guard selected==id,transcriptSearch==query else { return }
@@ -229,6 +325,7 @@ final class AppModel {
             guard !rows.isEmpty else { message="El fragmento original no está disponible en esta sesión."; return }
             autoScroll=false; transcriptSearch=""
             segments=rows.map(\.1).sorted{$0.start<$1.start}
+            refreshTerms()
             oldestRow=rows.first?.0 ?? 0; canLoadEarlier = !earlier.isEmpty
             transcriptTarget=segmentID; evidenceNavigation=UUID()
         } catch { message=error.localizedDescription }
@@ -279,13 +376,14 @@ final class AppModel {
             let rows=try await store?.segments(session:id,limit:300,search:transcriptSearch,newest:true,before:oldestRow) ?? []
             guard selected==id else { return }
             segments=rows.map(\.1).sorted{$0.start<$1.start}; oldestRow=rows.first?.0 ?? 0; canLoadEarlier=rows.count==300; autoScroll=false
+            refreshTerms()
         } catch { message=error.localizedDescription }
     }
     func start() async {
         guard !active,let pipeline else { return }
         state = .preparing; message=nil; findings=[]; findingPage=0; moreFindings=false; displayBuffer=LiveDisplayBuffer(); segments=[]; partials=[:]; bookmarks=[]; bookmarkPage=0; moreBookmarks=false
         do {
-            let (session,events)=try await pipeline.start(title:title,settings:settings)
+            let (session,events)=try await pipeline.start(title:title,settings:settings.forNewSession(),context:sessionContext.bounded)
             current=session; selected=session.id; sessions.insert(session,at:0)
             started=ProcessInfo.processInfo.systemUptime; elapsed=0; reportDuration=0; lastSummary=0; state = .recording
             eventTask=Task { [weak self] in
@@ -298,6 +396,7 @@ final class AppModel {
                                 self.displayBuffer.finalized(segment.source); self.partials[segment.source]=nil
                                 if let i=self.segments.firstIndex(where:{$0.id==segment.id}) { self.segments[i]=segment } else { self.segments.append(segment) }
                                 self.segments.sort{$0.start<$1.start}; if self.segments.count>300 { self.segments.removeFirst(self.segments.count-300) }
+                                self.refreshTerms()
                             }
                         } else if self.selected==segment.sessionID { self.displayBuffer.partial(segment); self.scheduleDisplayFlush() }
                     case .activity(let source,let level,let active):
@@ -314,6 +413,72 @@ final class AppModel {
                 }
             }
         } catch { state = .failed; message=error.localizedDescription; await refreshSessions() }
+    }
+    func chooseAudioFile() {
+        guard !active else { return }
+        let panel=NSOpenPanel(); panel.allowedContentTypes=[.audio]; panel.allowsMultipleSelection=false
+        panel.message="Importar una grabación para transcribirla en este Mac."
+        if panel.runModal() == .OK,let url=panel.url { beginImport(url) }
+    }
+    func beginImport(_ url:URL) {
+        guard !active,let store else { return }
+        guard url.isFileURL else { message="Selecciona un archivo de audio local."; return }
+        let title=url.deletingPathExtension().lastPathComponent
+        var session=Session(title:title,settings:settings.forNewSession()); session.context=sessionContext.bounded; session.importedFileName=url.lastPathComponent; session.status="importing"
+        current=session; selected=session.id; selectedRecord=session; self.title=title
+        segments=[]; partials=[:]; findings=[]; terms=[]; findingPage=0; moreFindings=false
+        state = .importing; message=nil; importFraction=0; importDuration=0; elapsed=0; reportDuration=0; processingProgress = .init()
+        let value=session
+        importTask=Task { @concurrent [weak self,store] in
+            let scoped=url.startAccessingSecurityScopedResource()
+            defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+            let pair=AsyncStream<PipelineEvent>.makeStream(bufferingPolicy:.bufferingNewest(128))
+            let display=Task { @MainActor [weak self] in
+                for await event in pair.stream {
+                    guard let self else { break }
+                    if case .segment(let segment)=event,self.selected==segment.sessionID {
+                        if segment.isFinal {
+                            self.partials[.file]=nil
+                            if let index=self.segments.firstIndex(where:{$0.id==segment.id}) { self.segments[index]=segment } else { self.segments.append(segment) }
+                            self.segments.sort{$0.start<$1.start}
+                            if self.segments.count>300 { self.segments.removeFirst(self.segments.count-300) }
+                            self.refreshTerms()
+                        } else { self.partials[.file]=segment }
+                    }
+                }
+            }
+            do {
+                let completed=try await AudioFileTranscriber.importSession(url:url,session:value,store:store,events:pair.continuation,progress:{ [weak self] seconds,total in await self?.importProgress(seconds:seconds,total:total) })
+                await display.value
+                await self?.finishImport(completed,error:nil,cancelled:false)
+            } catch {
+                await display.value
+                let saved=(try? await store.session(id:value.id)) ?? value
+                await self?.finishImport(saved,error:error.localizedDescription,cancelled:error is CancellationError)
+            }
+        }
+    }
+    private func importProgress(seconds:Double,total:Double) async {
+        guard state == .importing else { return }
+        elapsed=seconds; importDuration=total; importFraction=total>0 ? min(1,seconds/total):0
+        await refreshProcessingProgress()
+    }
+    private func finishImport(_ session:Session,error:String?,cancelled:Bool) async {
+        current=session; reportDuration=session.duration; partials=[:]; state = .stopping
+        if let error { message=cancelled ? "Importación cancelada. Los fragmentos reconocidos permanecen guardados.":error }
+        await refreshSessions()
+        if selected==session.id { await select(session.id) }
+        if error==nil {
+            try? await store?.requestFinalSummary(session:session.id)
+            if !pressure { await updateSummary(final:true,for:session) }
+            else { summaryStatus="Síntesis en espera hasta que baje la presión de memoria." }
+        }
+        state = .idle; importTask=nil; await refreshProcessingProgress()
+    }
+    func cancelImport() { importTask?.cancel() }
+    func stopActiveWork() async {
+        if state == .importing { importTask?.cancel(); await importTask?.value }
+        else { await stop() }
     }
     private func scheduleDisplayFlush() {
         guard displayTask==nil else { return }
@@ -332,6 +497,7 @@ final class AppModel {
         if Int(elapsed)%30==0 { reportDuration=elapsed }
         if Int(elapsed)%5==0 { metrics=ResourceMetrics.current(); try? await pipeline?.checkpoint() }
         if Int(elapsed)%5==0,let id=current?.id {
+            await refreshProcessingProgress()
             let cursor=try? await store?.latestSummary(session:id)?.throughRow
             let pending=(try? await store?.pendingContent(session:id,after:cursor ?? 0)) ?? .init()
             pendingSummarySegments=pending.segments
@@ -374,20 +540,32 @@ final class AppModel {
         guard let session=sessionOverride ?? (active ? current:selectedSession),let coordinator else { return }
         guard !pressure else { if final { try? await store?.requestFinalSummary(session:session.id) }; return }
         summaryRequests += 1; summaryWorking=true
-        defer { summaryRequests -= 1; summaryWorking=summaryRequests>0 }
-        summaryStatus=rebuild ? "Reconstruyendo desde la transcripción original…":"Generando resumen local…"
-        let engine=makeSummaryEngine(template:session.template)
+        if progressTask==nil {
+            progressTask=Task { @concurrent [weak self] in
+                while !Task.isCancelled {
+                    await self?.refreshProcessingProgress()
+                    do { try await Task.sleep(for:.seconds(2)) } catch { break }
+                }
+            }
+        }
+        defer {
+            summaryRequests -= 1; summaryWorking=summaryRequests>0
+            if !summaryWorking { progressTask?.cancel(); progressTask=nil; googleRetryStatus=nil }
+        }
+        summaryStatus=rebuild ? "Reconstruyendo desde la transcripción original…":"Generando resumen · \(summaryProviderTitle)…"
+        let engine=makeSummaryEngine(template:session.template,session:session)
         if let reason=await engine.availability(locale:session.settings.locale) { summaryStatus=reason; return }
         do {
             _=try await coordinator.update(session:session,engine:engine,final:final,rebuild:rebuild)
             if selected==session.id { await loadFindings(page:findingPage) }
             summaryStatus=findings.isEmpty ? "No hay hallazgos con evidencia todavía":final ? "Síntesis final actualizada":"Resumen actualizado · \(Date().formatted(date:.omitted,time:.shortened))"
             if final { try await store?.completeFinalSummary(session:session.id) }
+            await refreshProcessingProgress()
         } catch is CancellationError { summaryStatus="Resumen en espera; la transcripción permanece guardada." }
         catch { summaryStatus="Resumen pendiente: \(error.localizedDescription)" }
         await engine.unload()
     }
-    func newSession() { guard !active else { return }; selected=nil; selectedRecord=nil; title="Nueva sesión"; segments=[]; findings=[]; findingPage=0; moreFindings=false; partials=[:]; bookmarks=[]; bookmarkPage=0; transcriptTarget=nil; moreBookmarks=false }
+    func newSession() { guard !active else { return }; selected=nil; selectedRecord=nil; title="Nueva sesión"; segments=[]; findings=[]; findingPage=0; moreFindings=false; partials=[:]; bookmarks=[]; bookmarkPage=0; transcriptTarget=nil; moreBookmarks=false; sessionContext = .init(); processingProgress = .init(); termsTask?.cancel(); terms=[]; message=nil; googleRetryStatus=nil; summaryStatus="El resumen aparecerá cuando haya texto definitivo." }
     func delete(_ session:Session) async {
         guard current?.id != session.id || !active else { return }
         do { await coordinator?.cancel(session:session.id); try await store?.delete(session:session.id); if selected==session.id { newSession() }; await refreshSessions() } catch { message=error.localizedDescription }
@@ -401,9 +579,12 @@ final class AppModel {
         do { try await AppleSpeechEngine.install(locale:settings.locale); await checkAvailability() } catch { speechStatus=error.localizedDescription }
     }
     var report:SessionReport? {
+        presentedReport(.complete)
+    }
+    func presentedReport(_ presentation:ReportPresentation) -> SessionReport? {
         guard var session=selectedSession else { return nil }
         if recordingSession { session.duration=reportDuration }
-        return SessionReportFormatter.document(session:session,findings:findings)
+        return SessionReportFormatter.document(session:session,findings:presentation.select(findings))
     }
     @discardableResult func copySessionReport() async -> Bool {
         guard let session=selectedSession,let store else { return false }

@@ -3,6 +3,7 @@ import LAICore
 struct SummaryView:View {
     @Bindable var model:AppModel
     @State private var copied=false
+    @State private var presentation:ReportPresentation = .complete
     var body:some View {
         VStack(spacing:0) {
             HStack {
@@ -19,10 +20,26 @@ struct SummaryView:View {
                     }
             }.padding(16)
             Divider()
+            VStack(alignment:.leading,spacing:8) {
+                HStack {
+                    Picker("Vista",selection:$presentation) { ForEach(ReportPresentation.allCases,id:\.self) { Text($0.title).tag($0) } }.pickerStyle(.segmented).labelsHidden()
+                    Text(model.summaryProviderTitle).font(.caption).foregroundStyle(.secondary)
+                }
+                if model.settings.googleEnabled==true,model.selectedSession != nil {
+                    Toggle("Usar Google AI para esta sesión",isOn:Binding(get:{model.selectedUsesGoogle},set:{ value in Task { await model.setSessionGoogle(value) } }))
+                        .toggleStyle(.checkbox).font(.caption).disabled(model.active || model.summaryWorking).accessibilityIdentifier("sessionGoogleAI")
+                    if model.selectedUsesGoogle { Text("Al resumir se enviará texto y contexto a Google; el audio permanece en este Mac.").font(.caption2).foregroundStyle(.secondary) }
+                }
+                Text("Transcrito hasta \(timestamp(model.processingProgress.transcribedThrough)) · resumido hasta \(timestamp(model.processingProgress.summarizedThrough))")
+                    .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                if model.processingProgress.pendingSegments>0 { Text("\(model.processingProgress.pendingSegments) fragmentos pendientes").font(.caption).foregroundStyle(.secondary) }
+                Text("Copiar y exportar incluyen el informe completo.").font(.caption2).foregroundStyle(.secondary)
+            }.padding(.horizontal,16).padding(.vertical,10)
+            Divider()
             ScrollView {
                 VStack(alignment:.leading,spacing:24) {
-                    Text(model.summaryStatus).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
-                    if let report=model.report,!report.sections.isEmpty {
+                    Text(model.summaryWorking ? model.googleRetryStatus ?? model.summaryStatus:model.summaryStatus).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    if let report=model.presentedReport(presentation),!report.sections.isEmpty {
                         VStack(alignment:.leading,spacing:6) {
                             Text(report.title).font(.title2.weight(.semibold)).textSelection(.enabled)
                             Text(report.metadata).font(.caption).foregroundStyle(.secondary)

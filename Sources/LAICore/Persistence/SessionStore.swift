@@ -13,7 +13,7 @@ public actor SessionStore {
         sqlite3_busy_timeout(connection, 3000)
         sqlite3_create_function_v2(connection,"lai_contains",2,SQLITE_UTF8|SQLITE_DETERMINISTIC,nil,{ context,_,values in
             guard let values,let a=sqlite3_value_text(values[0]),let b=sqlite3_value_text(values[1]) else { sqlite3_result_int(context,0); return }
-            sqlite3_result_int(context,String(cString:a).localizedCaseInsensitiveContains(String(cString:b)) ? 1:0)
+            sqlite3_result_int(context,String(cString:a).range(of:String(cString:b),options:[.caseInsensitive,.diacriticInsensitive],locale:Locale(identifier:"es")) != nil ? 1:0)
         },nil,nil,nil)
         let schema="""
         PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA secure_delete=ON;
@@ -85,14 +85,27 @@ public actor SessionStore {
         while sqlite3_step(s)==SQLITE_ROW { result.append(try decode(Session.self,s)) }; return result
     }
     public func recoverInterrupted() throws {
-        let s=try statement("SELECT data FROM sessions WHERE json_extract(data,'$.status') IN ('recording','paused')"); defer { sqlite3_finalize(s) }
+        let s=try statement("SELECT data FROM sessions WHERE json_extract(data,'$.status') IN ('recording','paused','importing')"); defer { sqlite3_finalize(s) }
         while sqlite3_step(s)==SQLITE_ROW { var session=try decode(Session.self,s); session.status="interrupted"; try save(session) }
     }
     public func segments(session: UUID, after: Int64 = 0, limit: Int = 200, search: String = "", newest: Bool = false, before: Int64 = Int64.max) throws -> [(Int64,TranscriptSegment)] {
         let order=newest ? "DESC" : "ASC"
-        let s=try statement("SELECT seq,data FROM segments WHERE session=? AND seq>? AND seq<? AND (?='' OR json_extract(data,'$.text') LIKE ? ESCAPE '\\') ORDER BY seq \(order) LIMIT ?",values:[session.uuidString,String(after),String(before),search,"%"+search.replacingOccurrences(of:"\\",with:"\\\\").replacingOccurrences(of:"%",with:"\\%").replacingOccurrences(of:"_",with:"\\_")+"%",String(limit)])
+        let s=try statement("SELECT seq,data FROM segments WHERE session=? AND seq>? AND seq<? AND (?='' OR lai_contains(json_extract(data,'$.text'),?)) ORDER BY seq \(order) LIMIT ?",values:[session.uuidString,String(after),String(before),search,search,String(limit)])
         defer { sqlite3_finalize(s) }; var result:[(Int64,TranscriptSegment)]=[]
         while sqlite3_step(s)==SQLITE_ROW { result.append((sqlite3_column_int64(s,0),try decode(TranscriptSegment.self,s,1))) }; return newest ? result.reversed() : result
+    }
+    public func processingProgress(session:UUID) throws -> SessionProcessingProgress {
+        let snapshot=try latestSummary(session:session)
+        var result=SessionProcessingProgress()
+        let s=try statement("SELECT MAX(CAST(json_extract(data,'$.end') AS REAL)),MAX(CASE WHEN seq<=? THEN CAST(json_extract(data,'$.end') AS REAL) ELSE 0 END),SUM(CASE WHEN seq>? AND json_extract(data,'$.duplicateOf') IS NULL THEN 1 ELSE 0 END) FROM segments WHERE session=?",values:[String(snapshot?.throughRow ?? 0),String(snapshot?.throughRow ?? 0),session.uuidString])
+        defer { sqlite3_finalize(s) }
+        if sqlite3_step(s)==SQLITE_ROW {
+            result.transcribedThrough=sqlite3_column_double(s,0)
+            result.summarizedThrough=sqlite3_column_double(s,1)
+            result.pendingSegments=Int(sqlite3_column_int64(s,2))
+        }
+        result.isFinal=snapshot?.isFinal==true && result.pendingSegments==0
+        return result
     }
     /// Facts and the cursor commit together. A failed generation never advances either.
     public func save(_ snapshot: SummarySnapshot,additionalFindings:[Finding]=[],replaceRegister:Bool=false) throws {

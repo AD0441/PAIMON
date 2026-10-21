@@ -5,11 +5,11 @@
 **Local Audio Intelligence**  
 Transformando sonido en conocimiento.
 
-Aplicación nativa para Apple Silicon y macOS 26+, SwiftUI, Swift 6 y procesamiento local. Captura de sistema con Core Audio Process Taps sin dispositivos virtuales, micrófono opcional, SpeechAnalyzer, Foundation Models, historial SQLite y exportación TXT/Markdown/PDF/JSON. No incluye telemetría ni clientes de IA remotos.
+Aplicación nativa para Apple Silicon y macOS 26+, SwiftUI, Swift 6 y procesamiento local. Captura de sistema con Core Audio Process Taps sin dispositivos virtuales, micrófono opcional, SpeechAnalyzer, Foundation Models, historial SQLite y exportación TXT/Markdown/PDF/JSON. Procesamiento local por defecto, sin telemetría. Google AI (Gemini) es una alternativa de resumen externa, opcional y desactivada inicialmente.
 
 ![PAIMON: transcripción, resumen, acuerdos, compromisos y preguntas abiertas](docs/images/paimon-session.png)
 
-Captura real de la aplicación instalada con una muestra de voz sintética local. No contiene conversaciones del usuario. El texto original permanece separado del resumen y cada icono de cita abre su evidencia.
+Captura de la versión 0.4.0 instalada con una muestra de voz sintética local. No contiene conversaciones del usuario. El texto original permanece separado del resumen y cada icono de cita abre su evidencia.
 
 <details>
 <summary>Ver cómo se comprueba una cita</summary>
@@ -20,7 +20,7 @@ Captura real de la aplicación instalada con una muestra de voz sintética local
 
 ## Estado de la versión
 
-**0.4.0 (10), en validación.** 55 pruebas automáticas aprobadas. Captura, transcripción, pausa, reanudación, detención y exportación comprobadas en un Apple M1 con 8 GB y macOS 27.2. El deployment target es macOS 26.0; falta probar ese sistema y sesiones reales de varias horas. El resumen final aplazado por presión de memoria se recuperó posteriormente y se comprobó en la interfaz. Consulta los [resultados y su alcance](docs/VALIDATION.md).
+**0.5.0 (11).** Incorpora importación de audio, contexto por sesión, progreso, vista ejecutiva, términos navegables y Google AI opcional. Las pruebas y su alcance se documentan abajo. Pasaron 75 pruebas, incluida importación con reconocimiento nativo real. La versión anterior tenía 55 pruebas aprobadas. Captura, transcripción, pausa, reanudación, detención y exportación comprobadas en un Apple M1 con 8 GB y macOS 27.2. El deployment target es macOS 26.0; falta probar ese sistema y sesiones reales de varias horas. El resumen final aplazado por presión de memoria se recuperó posteriormente y se comprobó en la interfaz. Consulta los [resultados y su alcance](docs/VALIDATION.md).
 
 La copia ejecutable se distribuye como ZIP en [Releases](https://github.com/AD0441/PAIMON/releases). Es una compilación local con firma ad hoc, sin notarización Developer ID; no equivale a una distribución firmada para todos los Mac. Los modelos opcionales no están incluidos. El repositorio contiene el código, el proyecto Xcode, las pruebas y la documentación; las sesiones, grabaciones y credenciales permanecen fuera de Git.
 
@@ -28,11 +28,13 @@ La copia ejecutable se distribuye como ZIP en [Releases](https://github.com/AD04
 
 La aplicación instalada está en **/Applications/PAIMON.app**. Se abre desde Finder → Aplicaciones o buscando PAIMON en Spotlight. No necesita abrir Xcode. La firma «Creado con desprecio por Sebastián Pastén F.» aparece al pie de la ventana. El historial permanece en el almacenamiento local del usuario al actualizar la aplicación.
 
-Junto a `LocalAudioIntelligence.xcodeproj` y al código fuente están **PAIMON.app** y **PAIMON-0.4.0.zip**. En esta carpeta sincronizada, PAIMON.app es un enlace a la aplicación instalada: File Provider añadía FinderInfo al bundle físico e invalidaba su firma. El ZIP conserva una copia completa y portátil; el instalador la extrae temporalmente y verifica su firma. `./script/build_and_run.sh --install` actualiza la aplicación, el acceso del proyecto y el ZIP de la versión. Para llevar la app a otro Mac, usa el ZIP.
+Junto al código fuente está **PAIMON.app**, un enlace a la aplicación instalada. Las dos copias portátiles están en **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip**: actualmente 0.5.0 (11) y 0.4.0 (10), respectivamente. No hay copias completas duplicadas del proyecto; el historial del código se conserva en Git.
+
+`./script/build_and_run.sh --install` conserva únicamente la compilación actual y la anterior. Reinstalar o recompilar la misma versión y número de compilación no reemplaza la anterior. Ambos paquetes se extraen y verifican antes de instalar; la carpeta temporal de comprobación se elimina al terminar. El enlace evita que File Provider añada FinderInfo al bundle del proyecto e invalide su firma. Para llevar la app a otro Mac, usa el ZIP actual.
 
 El icono original entregado por el usuario se conserva en `Resources/Brand/Sinora_icono.png`. `Resources/Paimon.icns` contiene sus tamaños estándar para macOS, generado con `./script/rebuild_icon.sh` mediante `sips` e `iconutil`, sin modificar el original. Xcode lo incluye como recurso del bundle. El nombre del proyecto y del esquema se mantiene por compatibilidad con las herramientas; el producto compilado es **PAIMON.app**.
 
-El cambio de nombre conserva el identificador `local.audio.intelligence`, las preferencias y la carpeta local de datos. Al instalar, las aplicaciones del nombre anterior se mueven a una carpeta temporal de respaldo indicada por el script, después de verificar la nueva copia.
+El cambio de nombre conserva el identificador `local.audio.intelligence`, las preferencias y la carpeta local de datos. Al instalar, las aplicaciones del nombre anterior se envían a la Papelera después de verificar la nueva copia.
 
 1. Abre `LocalAudioIntelligence.xcodeproj` en Xcode 27.1, la versión verificada aquí, con SDK macOS 27 y Swift 6.4. El target conserva deployment target 26.0 y arquitectura arm64; las APIs nuevas tienen comprobaciones de disponibilidad para ejecutar en macOS 26.
 2. Selecciona el esquema **LocalAudioIntelligence**, destino **My Mac**, y ejecuta. Firma local ad hoc; para distribuir usa tu identidad Developer ID.
@@ -65,6 +67,24 @@ Usa audífonos con sistema + micrófono para evitar la captación acústica de l
 El script selecciona Xcode mediante `DEVELOPER_DIR` sin modificar la configuración global. DerivedData y los binarios de pruebas se crean en el directorio temporal del usuario: el proyecto está dentro de una ubicación administrada por File Provider, que puede añadir FinderInfo e impedir la firma si se compila allí.
 
 También existe un paquete Swift reproducible, sin dependencias de terceros en el producto principal. `swift build` compila biblioteca, interfaz y diagnóstico. Usa una `.app` para ejecutar la interfaz y sus permisos; no ejecutes su binario SwiftPM directamente.
+
+## Preparar, importar y revisar sesiones
+
+- **Añadir / Editar contexto de la sesión** abre un editor separado para objetivo, temario y glosario, sin cambiar la distribución de la ventana principal. Se limita a 250, 600 y 350 caracteres. Sirve como orientación; las afirmaciones, nombres, fechas y acuerdos siguen necesitando evidencia original. Cambiar el contexto de una sesión guardada requiere **Actualizar resumen**; el historial del original se conserva.
+- **Importar audio**, **⌘O** o arrastrar un archivo abre una grabación compatible con AVAudioFile, como AIFF, WAV, M4A o MP3. Se lee por bloques y se transcribe con los mismos motores locales. Apple aplica contrapresión para no llenar la cola; la importación puede avanzar más rápido que la reproducción, según el equipo y el motor. No se duplica ni guarda el audio importado. **Cancelar importación** conserva los fragmentos definitivos ya reconocidos. Captura e importación se realizan de una en una.
+- El panel Resumen muestra hasta dónde se ha guardado texto, hasta dónde se ha resumido y cuántos fragmentos quedan pendientes. Durante la generación se actualiza cada dos segundos. Un final aplazado por recursos sigue pendiente de recuperación.
+- **Ejecutiva / Completa** cambia la presentación usando los hallazgos guardados. No genera de nuevo ni carga modelos. Copiar y exportar conservan el informe completo con su formato y evidencia.
+- Los **términos frecuentes** se calculan sin IA sobre una muestra de los fragmentos de la vista: hasta 300 fragmentos y 100.000 caracteres. Pulsarlos busca en esa sesión, sin distinguir acentos o mayúsculas. La frecuencia no equivale a importancia semántica ni representa necesariamente toda la grabación.
+
+## Google AI · resumen externo opcional
+
+1. En **Configuración → Google AI**, activa **Usar Google AI para resumir nuevas sesiones**. Las sesiones anteriores conservan su motor; en su panel Resumen puedes marcar **Usar Google AI para esta sesión** y pulsar **Actualizar resumen**.
+2. Obtén tu propia clave en [Google AI Studio](https://aistudio.google.com/apikey), introdúcela en el campo seguro y pulsa **Guardar en el Llavero**. No la escribas en archivos del proyecto. Puedes eliminarla desde la misma pantalla.
+3. Configura el identificador del modelo, inicialmente `gemini-3.8-flash`, y usa **Probar conexión**. Esta acción consulta el modelo; no envía ninguna transcripción. **Aplicar a la sesión seleccionada** permite cambiar su modelo antes de actualizar el resumen.
+
+Gemini recibe fragmentos de texto, contexto y resúmenes previos, mediante HTTPS al endpoint oficial de Google. Nunca recibe audio. La respuesta JSON se valida con los mismos controles de citas y acuerdos que el motor nativo. Se conservan las actualizaciones por lotes y la síntesis jerárquica; no se envía toda la transcripción en cada actualización. Cambiar de motor, modelo o contexto reconstruye el resumen desde el original para evitar mezclar cursores incompatibles.
+
+La clave permanece en el Llavero local, fuera de SQLite, preferencias, exportaciones y Git. Desactivar Google AI cancela la solicitud en curso y vuelve al motor local. Los errores de conexión, cuota, permisos, respuesta truncada o bloqueo se muestran sin perder la transcripción. Los fallos temporales HTTP 500/502/503/504 admiten hasta dos reintentos con espera exponencial, variación aleatoria y respeto de Retry-After hasta 30 s. Una espera mayor se deja para el usuario; no se reintentan automáticamente errores de clave, cuota ni solicitudes de red con resultado incierto. Esta modalidad requiere Internet y está sujeta a la cuota, facturación y tratamiento de datos de tu proyecto Google; el funcionamiento local sigue disponible sin clave.
 
 ## Motores opcionales
 

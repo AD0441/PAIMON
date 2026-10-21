@@ -68,11 +68,19 @@ public actor AppleSpeechEngine: TranscriptionEngine {
         let input=AnalyzerInput(buffer:buffer,bufferStartTime:CMTime(value:frame,timescale:rate))
         stream.nextFrame=frame+Int64(buffer.frameLength)
         streams[chunk.source]=stream
-        switch stream.input.yield(input) {
-        case .dropped: throw LAIError.message("El reconocimiento no alcanza la velocidad del audio; se ha alcanzado el límite de la cola")
-        case .terminated: throw LAIError.message("El motor de voz se ha detenido")
-        case .enqueued: break
-        @unknown default: break
+        let deadline=ContinuousClock.now.advanced(by:.seconds(30))
+        while true {
+            try Task.checkCancellation()
+            switch stream.input.yield(input) {
+            case .dropped:
+                guard chunk.source == .file,ContinuousClock.now<deadline else { throw LAIError.message("El reconocimiento no alcanza la velocidad del audio; se ha alcanzado el límite de la cola") }
+                // bufferingOldest rejects the new element. Retry that same file
+                // buffer rather than reading more PCM or losing its timestamps.
+                try await Task.sleep(for:.milliseconds(10))
+            case .terminated: throw LAIError.message("El motor de voz se ha detenido")
+            case .enqueued: return
+            @unknown default: return
+            }
         }
     }
     public func finish() async throws {

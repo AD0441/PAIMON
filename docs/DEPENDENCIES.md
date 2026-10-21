@@ -2,7 +2,7 @@
 
 ## Producto principal
 
-Swift/SwiftUI, AppKit, Core Audio, AVFoundation, Speech, FoundationModels, CoreText, CoreGraphics, CryptoKit y SQLite del sistema. Sin dependencias externas. Toolchain verificado: Xcode 27.1, SDK macOS 27 y Swift 6.4; destino de ejecución macOS 26.0+, arm64. Se necesita un SDK que declare las APIs nuevas, aunque se compruebe su disponibilidad en ejecución. No se requieren cuentas de pago ni claves API para ejecutar la aplicación localmente.
+Swift/SwiftUI, AppKit, Core Audio, AVFoundation, Speech, FoundationModels, CoreText, CoreGraphics, CryptoKit, Security, URLSession y SQLite del sistema. Sin dependencias externas. Toolchain verificado: Xcode 27.1, SDK macOS 27 y Swift 6.4; destino de ejecución macOS 26.0+, arm64. Se necesita un SDK que declare las APIs nuevas, aunque se compruebe su disponibilidad en ejecución. No se requieren cuentas de pago ni claves API para ejecutar la aplicación localmente.
 
 Documentación oficial verificada al implementar:
 
@@ -40,3 +40,9 @@ LAI_PYTHON=/ruta/a/python3.11 ./script/prepare_mlx.sh
 Prepara, con autorización explícita, una carpeta del modelo [Qwen2.5-1.5B-Instruct-4bit](https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit). Revisa su licencia. Por ejemplo, con el CLI de Hugging Face instalado, `hf download mlx-community/Qwen2.5-1.5B-Instruct-4bit --local-dir Models/Qwen2.5-1.5B-Instruct-4bit` es una descarga manual; no la ejecuta la aplicación.
 
 Configura Python de `Integrations/.venv/bin/python`, `Integrations/mlx_summary.py` y la carpeta del modelo. El proceso usa Metal/CPU a través de MLX, **no** ANE, contexto acotado, generación greedy y JSON validado. Se termina tras cada resumen para liberar pesos y caché. La compatibilidad de la versión y los pesos debe probarse antes de usar este backend en una reunión importante.
+
+## Google AI opcional · sin SDK externo
+
+El backend Gemini usa directamente la API REST oficial con URLSession. El modo local no requiere claves. Gemini requiere una clave propia, Internet y cuota del proyecto de Google; su disponibilidad y facturación pertenecen a Google. El modelo inicial es `gemini-3.8-flash`, editable. La clave se conserva en el Llavero de macOS, no en este repositorio.
+
+Documentación oficial consultada el 21 de octubre de 2026: [modelos](https://ai.google.dev/gemini-api/docs/models), [claves](https://ai.google.dev/gemini-api/docs/api-key), [generateContent y responseFormat](https://ai.google.dev/api/generate-content), [salidas estructuradas](https://ai.google.dev/gemini-api/docs/structured-output). Se utiliza `generationConfig.responseFormat.text` con `mimeType: APPLICATION_JSON` y schema. No se integra ningún cliente de audio remoto ni servicio de traducción.

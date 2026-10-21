@@ -1,10 +1,12 @@
 .DS_Store
 .build/
+.swiftpm/
+/Versiones/
 dist/
 DerivedData/
 *.xcuserstate
 xcuserdata/
-Models/
+/Models/
 .venv/
 *.trace
 Integrations/FluidWorker/Vendor/

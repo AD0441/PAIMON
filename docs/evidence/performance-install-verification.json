@@ -1,40 +1,39 @@
 {
-  "bundles": [
+  "version": "0.5.0",
+  "build": "11",
+  "installedSignatureValid": true,
+  "projectAppIsLink": true,
+  "projectAppTarget": "/Applications/PAIMON.app",
+  "portablePackages": [
     {
-      "location": "Applications",
-      "version": "0.4.0",
-      "build": "10",
-      "bundleID": "local.audio.intelligence",
-      "isLink": false,
-      "sha256": "5c1fbf913c614eeb919cc113ddfd3ce2335192612908667fe18686f91deae967",
-      "signatureValid": true
+      "file": "PAIMON-actual.zip",
+      "version": "0.5.0",
+      "build": "11",
+      "bytes": 2600128,
+      "sha256": "2a3082e7eefb5a9b21fc5d8f2e8d7865b6112e07d75af1da4112403eb6373370",
+      "signatureValidAfterExtraction": true,
+      "matchesInstalled": true
     },
     {
-      "location": "project",
+      "file": "PAIMON-anterior.zip",
       "version": "0.4.0",
       "build": "10",
-      "bundleID": "local.audio.intelligence",
-      "isLink": true,
-      "sha256": "5c1fbf913c614eeb919cc113ddfd3ce2335192612908667fe18686f91deae967",
-      "signatureValid": true
+      "bytes": 2410205,
+      "sha256": "5914039c642e7dcaccb1e61b601ff1081ef12feed9b305058bc96e1b55329ebc",
+      "signatureValidAfterExtraction": true,
+      "matchesInstalled": false
     }
   ],
-  "portable": {
-    "file": "PAIMON-0.4.0.zip",
-    "bytes": 2410205,
-    "signatureValidAfterExtraction": true,
-    "matchesInstalled": true
-  },
-  "identicalExecutables": true,
-  "installedProcessRunning": true,
-  "captureSourceRestoredToGlobal": true,
-  "validationPreferenceBackupCleared": true,
-  "activeStoredCaptures": 0,
-  "screenReview": "Release 10 capture, ASR, pause/resume/stop, JSON export and subsequently recovered final summary with evidence popover reviewed. Synthetic sample only.",
-  "systemAudioPermissionObservedOn": true,
-  "completeCaptureValidatedBuild": 10,
-  "currentBuild": 10,
-  "captureTranscriptionUIValidatedBuild": 10,
-  "summaryDeferredOnMemoryWarning": true,
-  "summaryRecoveryObserved": true
+  "previousPreservedAcrossSameVersionRebuild": true,
+  "scope": "Release build, bundle signatures, portable archives and retention. Live Core Audio was not re-tested in this version.",
+  "ui": {
+    "contextSheetOpenCancelSaveReopen": true,
+    "captureHeaderRemainsVisible": true,
+    "newSessionShortcutDoesNotCreateAnotherWindow": true,
+    "googleSummaryCompletionObserved": true,
+    "googleSessionSelectedWhenCompletionObserved": true,
+    "privateTranscriptPublished": false,
+    "remoteLatencyOrQuotaMeasured": false,
+    "retryScenariosExercisedBy": "synthetic HTTP transport tests"
+  }
 }

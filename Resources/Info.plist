@@ -15,13 +15,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.4.0</string>
+	<string>0.5.0</string>
 	<key>CFBundleVersion</key>
-	<string>10</string>
+	<string>11</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>26.0</string>
 	<key>NSAudioCaptureUsageDescription</key>
-	<string>Capturar el audio del sistema para transcribirlo y resumirlo exclusivamente en este Mac.</string>
+	<string>Capturar el audio del sistema para transcribirlo en este Mac. Google AI solo recibe texto si lo seleccionas explícitamente para resumir.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>

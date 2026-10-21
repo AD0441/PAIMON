@@ -14,7 +14,7 @@ public actor RecordingPipeline {
     private var outward:AsyncStream<PipelineEvent>.Continuation?
     private var archive:AudioArchive?
     public init(store:SessionStore) { self.store=store }
-    public func start(title:String,settings:AppSettings) async throws -> (Session,AsyncStream<PipelineEvent>) {
+    public func start(title:String,settings:AppSettings,context:SessionContext?=nil) async throws -> (Session,AsyncStream<PipelineEvent>) {
         guard session==nil else { throw LAIError.message("Ya hay una sesión activa") }
         guard settings.systemAudio || settings.microphone else { throw LAIError.message("Selecciona al menos una fuente de audio") }
         let selected:any TranscriptionEngine
@@ -23,6 +23,7 @@ public actor RecordingPipeline {
         else if settings.transcription == .automatic && !settings.fluidWorker.isEmpty { selected=FluidSpeechEngine() }
         else { throw LAIError.message(await AppleSpeechEngine.availability(locale:settings.locale) ?? "Motor no disponible") }
         var value=Session(title:title.isEmpty ? "Nueva sesión":title,settings:settings)
+        value.context=context?.bounded
         let events=AsyncStream<PipelineEvent>.makeStream(bufferingPolicy:.bufferingOldest(256))
         let ui=AsyncStream<PipelineEvent>.makeStream(bufferingPolicy:.bufferingNewest(128))
         let audio=AsyncStream<AudioChunk>.makeStream(bufferingPolicy:.bufferingOldest(256))

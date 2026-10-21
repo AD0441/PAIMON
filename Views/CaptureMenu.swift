@@ -9,7 +9,8 @@ struct CaptureMenu:View {
         if model.active { Text(timestamp(model.elapsed)) }
         Divider()
         Button("Abrir ventana") { openWindow(id:"main"); NSApp.activate(ignoringOtherApps:true) }
-        if [.recording,.paused].contains(model.state) {
+        if model.state == .importing { Button("Cancelar importación") { model.cancelImport() } }
+        else if [.recording,.paused].contains(model.state) {
             Button(model.state == .paused ? "Reanudar":"Pausar") { Task { await model.pauseOrResume() } }
             Button("Detener y resumir") { Task { await model.stop() } }
             Button("Añadir marcador") { Task { await model.addBookmark(capture:true) } }

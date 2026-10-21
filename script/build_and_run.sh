@@ -31,45 +31,69 @@ case "$MODE" in
     fi
     done
     /usr/bin/codesign --verify --deep --strict "$APP_BUNDLE"
-    /usr/bin/ditto --norsrc "$APP_BUNDLE" "$INSTALLED_BUNDLE"
-    /usr/bin/codesign --verify --deep --strict "$INSTALLED_BUNDLE"
-    APP_VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INSTALLED_BUNDLE/Contents/Info.plist")
-    PORTABLE_ARCHIVE="$ROOT_DIR/PAIMON-$APP_VERSION.zip"
-    /usr/bin/ditto --norsrc -c -k --keepParent "$INSTALLED_BUNDLE" "$PORTABLE_ARCHIVE"
+    VERSIONS_DIR="$ROOT_DIR/Versiones"
+    PORTABLE_ARCHIVE="$VERSIONS_DIR/PAIMON-actual.zip"
+    PREVIOUS_ARCHIVE="$VERSIONS_DIR/PAIMON-anterior.zip"
     PACKAGE_CHECK=$(mktemp -d "${TMPDIR:-/tmp}/paimon-package-check.XXXXXX")
-    /usr/bin/ditto -x -k "$PORTABLE_ARCHIVE" "$PACKAGE_CHECK"
-    /usr/bin/codesign --verify --deep --strict "$PACKAGE_CHECK/PAIMON.app"
-    MANAGED_PROJECT=false
-    if [[ -L "$PROJECT_BUNDLE" ]] || /usr/bin/xattr -p 'com.apple.fileprovider.fpfs#P' "$PROJECT_BUNDLE" >/dev/null 2>&1; then MANAGED_PROJECT=true; fi
-    if [[ "$MANAGED_PROJECT" == false ]]; then
-      /usr/bin/ditto --norsrc "$APP_BUNDLE" "$PROJECT_BUNDLE"
-      /usr/bin/xattr -dr com.apple.ResourceFork "$PROJECT_BUNDLE" 2>/dev/null || true
-      /usr/bin/xattr -dr com.apple.FinderInfo "$PROJECT_BUNDLE" 2>/dev/null || true
-      if ! /usr/bin/codesign --verify --deep --strict "$PROJECT_BUNDLE"; then MANAGED_PROJECT=true; fi
-    fi
-    # File Provider can reattach FinderInfo after a successful verification.
-    # Keep a portable zip plus a working app link instead of a damaged bundle.
-    if [[ "$MANAGED_PROJECT" == true ]]; then
-      if [[ -L "$PROJECT_BUNDLE" ]]; then /bin/rm "$PROJECT_BUNDLE"
-      elif [[ -e "$PROJECT_BUNDLE" ]]; then
-        PROJECT_BACKUP=$(mktemp -d "${TMPDIR:-/tmp}/paimon-project-bundle.XXXXXX")
-        /bin/mv "$PROJECT_BUNDLE" "$PROJECT_BACKUP/PAIMON.app"
-        printf 'Copia anterior del proyecto conservada en: %s\n' "$PROJECT_BACKUP/PAIMON.app"
+    INSTALL_VALIDATED=false
+    cleanup_package() {
+      # Restore the original bundle if replacement or signature verification fails.
+      if [[ "$INSTALL_VALIDATED" == false && -e "$PACKAGE_CHECK/replaced.app" ]]; then
+        /bin/rm -rf -- "$INSTALLED_BUNDLE"
+        /bin/mv "$PACKAGE_CHECK/replaced.app" "$INSTALLED_BUNDLE" || return
       fi
-      /bin/ln -s "$INSTALLED_BUNDLE" "$PROJECT_BUNDLE"
-      printf 'File Provider: el proyecto usa un enlace a la app firmada y una copia ZIP portátil.\n'
+      /bin/rm -rf -- "$PACKAGE_CHECK"
+    }
+    trap cleanup_package EXIT
+    package_verified() {
+      /usr/bin/ditto --norsrc -c -k --keepParent "$1" "$2"
+      /usr/bin/ditto -x -k "$2" "$3"
+      /usr/bin/codesign --verify --deep --strict "$3/PAIMON.app"
+    }
+    signature_id() {
+      /usr/bin/codesign -d --verbose=4 "$1" 2>&1 | /usr/bin/awk '/^CDHash=/{print $0}'
+    }
+    version_id() {
+      /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$1/Contents/Info.plist"
+      /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$1/Contents/Info.plist"
+    }
+    trash_bundle() {
+      /usr/bin/xcrun swift -module-cache-path "$SWIFTPM_MODULECACHE_OVERRIDE" -e '
+        import Foundation
+        try FileManager.default.trashItem(at: URL(fileURLWithPath: CommandLine.arguments[1]), resultingItemURL: nil)
+      ' "$1"
+    }
+    package_verified "$APP_BUNDLE" "$PACKAGE_CHECK/actual.zip" "$PACKAGE_CHECK/current"
+    # Recompiling the same declared version/build only replaces the current ZIP.
+    # Keep the previous released build rather than an intermediate UI revision.
+    if [[ -e "$INSTALLED_BUNDLE" ]]; then
+      /usr/bin/codesign --verify --deep --strict "$INSTALLED_BUNDLE"
+      if [[ "$(version_id "$INSTALLED_BUNDLE")" != "$(version_id "$APP_BUNDLE")" ]] && [[ "$(signature_id "$INSTALLED_BUNDLE")" != "$(signature_id "$APP_BUNDLE")" ]]; then
+        package_verified "$INSTALLED_BUNDLE" "$PACKAGE_CHECK/anterior.zip" "$PACKAGE_CHECK/previous"
+      fi
     fi
+    # Replace instead of merging bundles: old resources can invalidate a new signature.
+    if [[ -e "$INSTALLED_BUNDLE" ]]; then
+      /bin/mv "$INSTALLED_BUNDLE" "$PACKAGE_CHECK/replaced.app"
+    fi
+    /usr/bin/ditto --norsrc "$PACKAGE_CHECK/current/PAIMON.app" "$INSTALLED_BUNDLE"
+    /usr/bin/codesign --verify --deep --strict "$INSTALLED_BUNDLE"
+    INSTALL_VALIDATED=true
+    /bin/mkdir -p "$VERSIONS_DIR"
+    if [[ -e "$PACKAGE_CHECK/anterior.zip" ]]; then
+      /bin/mv -f "$PACKAGE_CHECK/anterior.zip" "$PREVIOUS_ARCHIVE"
+    fi
+    /bin/mv -f "$PACKAGE_CHECK/actual.zip" "$PORTABLE_ARCHIVE"
+    # A link avoids File Provider modifying the signed bundle in this folder.
+    if [[ -L "$PROJECT_BUNDLE" ]]; then /bin/rm "$PROJECT_BUNDLE"
+    elif [[ -e "$PROJECT_BUNDLE" ]]; then trash_bundle "$PROJECT_BUNDLE"; fi
+    /bin/ln -s "$INSTALLED_BUNDLE" "$PROJECT_BUNDLE"
     /usr/bin/codesign --verify --deep --strict "$PROJECT_BUNDLE"
-    # Retire only this app's previous name, preserving the bundles for recovery.
-    PREVIOUS_DIR=""
     for LEGACY in "$ROOT_DIR/Local Audio Intelligence.app" "/Applications/Local Audio Intelligence.app"; do
       if [[ -e "$LEGACY" ]] && [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$LEGACY/Contents/Info.plist")" == "local.audio.intelligence" ]]; then
-        if [[ -z "$PREVIOUS_DIR" ]]; then PREVIOUS_DIR=$(mktemp -d "${TMPDIR:-/tmp}/paimon-previous.XXXXXX"); fi
-        if [[ "$LEGACY" == /Applications/* ]]; then PREVIOUS_NAME="Applications.app"; else PREVIOUS_NAME="Project.app"; fi
-        /bin/mv "$LEGACY" "$PREVIOUS_DIR/$PREVIOUS_NAME"
+        trash_bundle "$LEGACY"
       fi
     done
-    if [[ -n "$PREVIOUS_DIR" ]]; then printf 'Versiones anteriores conservadas en: %s\n' "$PREVIOUS_DIR"; fi
     /usr/bin/open -n "$INSTALLED_BUNDLE"
     printf 'Aplicación junto al proyecto: %s\n' "$PROJECT_BUNDLE"
     printf 'Aplicación instalada: %s\n' "$INSTALLED_BUNDLE"

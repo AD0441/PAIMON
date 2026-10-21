@@ -3,6 +3,7 @@ import AppKit
 import LAICore
 struct CaptureHeader:View {
     @Bindable var model:AppModel
+    @State private var showingContext=false
     private var apps:[NSRunningApplication] { NSWorkspace.shared.runningApplications.filter{$0.activationPolicy == .regular && $0.bundleIdentifier != Bundle.main.bundleIdentifier}.sorted{($0.localizedName ?? "")<($1.localizedName ?? "")} }
     var body:some View {
         VStack(alignment:.leading,spacing:16) {
@@ -19,10 +20,13 @@ struct CaptureHeader:View {
                     }.font(.callout)
                 }
                 Spacer()
-                if [.recording,.paused].contains(model.state) {
+                if model.state == .importing {
+                    Button("Cancelar importación",role:.cancel) { model.cancelImport() }.controlSize(.large)
+                } else if [.recording,.paused].contains(model.state) {
                     Button { Task { await model.pauseOrResume() } } label: { Label(model.state == .paused ? "Reanudar":"Pausar",systemImage:model.state == .paused ? "play.fill":"pause.fill") }.controlSize(.large)
                     Button(role:.destructive) { Task { await model.stop() } } label: { Label("Detener",systemImage:"stop.fill") }.controlSize(.large)
                 } else {
+                    Button { model.chooseAudioFile() } label: { Label("Importar audio",systemImage:"square.and.arrow.down") }.controlSize(.large).disabled(model.active || model.store==nil)
                     Button { Task { await model.start() } } label: { Label(model.state == .preparing ? "Preparando…":"Iniciar",systemImage:"record.circle") }
                         .buttonStyle(.borderedProminent).controlSize(.large).disabled(model.active || model.store==nil)
                         .keyboardShortcut("r",modifiers:[.command,.shift])
@@ -49,9 +53,50 @@ struct CaptureHeader:View {
                     }
                 }
             }.font(.callout).disabled(model.active)
+            if let file=model.selectedSession?.importedFileName {
+                Label("Fuente de esta sesión: \(file)",systemImage:"doc.text").font(.caption).foregroundStyle(.secondary)
+            }
+            if model.state == .importing {
+                VStack(alignment:.leading,spacing:5) {
+                    ProgressView(value:model.importFraction)
+                    Text(model.importFraction>=1 ? "Finalizando reconocimiento y guardado…":"Leído \(timestamp(model.elapsed)) de \(timestamp(model.importDuration)) · transcripción local")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            Button { showingContext=true } label: {
+                Label(model.sessionContext.isEmpty ? "Añadir contexto de la sesión":"Editar contexto de la sesión",systemImage:"list.bullet.clipboard")
+            }.buttonStyle(.borderless).font(.caption).disabled(model.active || model.summaryWorking).accessibilityIdentifier("editSessionContext")
             if model.settings.microphone && model.settings.systemAudio && !model.active {
                 Text("Usa audífonos para evitar que el micrófono vuelva a captar los altavoces. Las dos fuentes se guardan identificadas.").font(.caption).foregroundStyle(.secondary)
             }
-        }.padding(20)
+        }.padding(20).fixedSize(horizontal:false,vertical:true)
+            .sheet(isPresented:$showingContext) { SessionContextEditor(model:model) }
+    }
+}
+
+private struct SessionContextEditor:View {
+    @Bindable var model:AppModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft=SessionContext()
+    var body:some View {
+        VStack(alignment:.leading,spacing:16) {
+            Text("Contexto de la sesión").font(.title2.weight(.semibold))
+            Text("Orienta el resumen; los hechos deben aparecer en la transcripción.").font(.callout).foregroundStyle(.secondary)
+            Form {
+                TextField("Objetivo",text:$draft.objective,axis:.vertical).lineLimit(2...2)
+                TextField("Temario",text:$draft.agenda,axis:.vertical).lineLimit(3...3)
+                TextField("Glosario",text:$draft.glossary,axis:.vertical).lineLimit(2...2)
+            }.formStyle(.grouped)
+            Text("Objetivo: 250 caracteres · temario: 600 · glosario: 350").font(.caption).foregroundStyle(.secondary)
+            HStack {
+                Spacer()
+                Button("Cancelar",role:.cancel) { dismiss() }.keyboardShortcut(.cancelAction)
+                Button("Guardar contexto") {
+                    model.sessionContext=draft.bounded
+                    Task { await model.saveSessionContext(); dismiss() }
+                }.keyboardShortcut(.defaultAction)
+            }
+        }.padding(24).frame(width:560,height:480)
+            .onAppear { draft=model.sessionContext }
     }
 }

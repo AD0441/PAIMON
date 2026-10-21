@@ -2,6 +2,7 @@ import SwiftUI
 import LAICore
 struct SettingsView:View {
     @Bindable var model:AppModel
+    @State private var googleKey=""
     var body:some View {
         TabView {
             Form {
@@ -23,6 +24,32 @@ struct SettingsView:View {
                 Button("Comprobar disponibilidad") { Task { await model.checkAvailability() } }
             }.formStyle(.grouped).tabItem { Label("Inteligencia",systemImage:"sparkles") }
             Form {
+                Section("Google AI · opcional") {
+                    Toggle("Usar Google AI para resumir nuevas sesiones",isOn:Binding(get:{model.settings.googleEnabled==true},set:{ value in Task { await model.setGoogleEnabled(value) } })).toggleStyle(.checkbox).accessibilityIdentifier("enableGoogleAI")
+                    Text("Al seleccionarlo se envían fragmentos de transcripción, contexto y resúmenes previos a Google. El reconocimiento de voz y el audio permanecen en el Mac. Requiere Internet y utiliza la cuota de tu proyecto de Google.").font(.caption).foregroundStyle(.secondary)
+                    Text("Las sesiones anteriores conservan su motor. Puedes seleccionar Google AI en el panel Resumen de cada sesión.").font(.caption).foregroundStyle(.secondary)
+                    Link("Crear o administrar una clave en Google AI Studio",destination:URL(string:"https://aistudio.google.com/apikey")!)
+                }
+                Section("Credenciales de este Mac") {
+                    SecureField(model.googleKeySaved ? "Reemplazar clave API":"Clave API de Google AI",text:$googleKey).accessibilityIdentifier("googleAPIKey")
+                    HStack {
+                        Button("Guardar en el Llavero") { let value=googleKey; Task { if await model.saveGoogleKey(value) { googleKey="" } } }.disabled(googleKey.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty)
+                        Button("Eliminar clave",role:.destructive) { Task { await model.deleteGoogleKey() } }.disabled(!model.googleKeySaved)
+                    }
+                    Text(model.googleKeySaved ? "Hay una clave guardada en el Llavero. No se incluye en sesiones ni exportaciones.":"Todavía no hay una clave guardada.").font(.caption).foregroundStyle(.secondary)
+                }
+                Section("Modelo y conexión") {
+                    TextField("Modelo",text:Binding(get:{model.settings.googleModel ?? GoogleAIClient.defaultModel},set:{model.settings.googleModel=$0})).accessibilityIdentifier("googleModel")
+                    HStack {
+                        Button("Probar conexión") { Task { await model.testGoogleConnection() } }.disabled(model.settings.googleEnabled != true || !model.googleKeySaved || model.googleTesting)
+                        if model.googleTesting { ProgressView().controlSize(.small) }
+                        Button("Aplicar a la sesión seleccionada") { Task { await model.setSessionGoogle(true) } }.disabled(model.settings.googleEnabled != true || model.selectedSession==nil || model.active || model.summaryWorking)
+                    }
+                    Text(model.googleStatus).font(.caption).textSelection(.enabled)
+                    Text("Probar conexión consulta el modelo sin enviar transcripciones. Actualizar resumen aplica los cambios al contenido de la sesión.").font(.caption).foregroundStyle(.secondary)
+                }
+            }.formStyle(.grouped).tabItem { Label("Google AI",systemImage:"cloud") }
+            Form {
                 Section("Dispositivos") {
                     Picker("Micrófono",selection:$model.settings.microphoneDevice) { Text("Predeterminado").tag(UInt32(0)); ForEach(AudioHardware.devices(input:true)) { Text($0.name).tag($0.id) } }
                     Picker("Salida capturada",selection:$model.settings.outputDeviceUID) { Text("Todas las salidas").tag(""); ForEach(AudioHardware.devices(input:false)) { Text($0.name).tag($0.uid) } }
@@ -41,7 +68,7 @@ struct SettingsView:View {
             Form {
                 Section("Recursos de Apple") {
                     Button("Autorizar descarga del idioma seleccionado") { Task { await model.installSpeech() } }
-                    Text("La descarga es la única operación de red de esta aplicación. Apple Intelligence se configura desde Ajustes del Sistema.").font(.caption).foregroundStyle(.secondary)
+                    Text("Las descargas requieren autorización. Apple Intelligence se configura desde Ajustes del Sistema. Google AI solo usa red cuando se activa explícitamente.").font(.caption).foregroundStyle(.secondary)
                 }
                 Section("FluidAudio · instalación opcional") {
                     pathRow("FluidWorker",key:\.fluidWorker,folder:false)
@@ -55,7 +82,7 @@ struct SettingsView:View {
                     Text("Instalación explícita con script/prepare_mlx.sh. Recomendado: Qwen2.5 1.5B Instruct 4 bit. MLX usa GPU Metal; no ANE.").font(.caption).foregroundStyle(.secondary)
                 }
             }.formStyle(.grouped).disabled(model.active).tabItem { Label("Modelos",systemImage:"shippingbox") }
-        }.padding(12).frame(width:680,height:590)
+        }.padding(12).frame(width:720,height:640).onDisappear { googleKey="" }
     }
     private func pathRow(_ title:String,key:WritableKeyPath<AppSettings,String>,folder:Bool) -> some View {
         HStack { TextField(title,text:Binding(get:{model.settings[keyPath:key]},set:{model.settings[keyPath:key]=$0})); Button("Elegir…") { model.choosePath(key,folder:folder) } }

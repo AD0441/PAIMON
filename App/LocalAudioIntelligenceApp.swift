@@ -20,8 +20,9 @@ struct PaimonApp: App {
         }
         .defaultSize(width:1240,height:800)
         .commands {
-            CommandGroup(after:.newItem) {
+            CommandGroup(replacing:.newItem) {
                 Button("Nueva sesión") { model.newSession() }.keyboardShortcut("n").disabled(model.active)
+                Button("Importar audio…") { model.chooseAudioFile() }.keyboardShortcut("o").disabled(model.active)
                 Button("Añadir marcador") { Task { await model.addBookmark() } }.keyboardShortcut("m",modifiers:[.command,.shift]).disabled(!model.canAddBookmark)
                 Button("Buscar en todas las transcripciones") { model.beginGlobalSearch() }.keyboardShortcut("f",modifiers:[.command,.shift])
                 Button(model.state == .paused ? "Reanudar":"Pausar") { Task { await model.pauseOrResume() } }.keyboardShortcut("p",modifiers:[.command,.shift]).disabled(![.recording,.paused].contains(model.state))
@@ -43,6 +44,6 @@ struct PaimonApp: App {
     func applicationShouldTerminate(_ sender:NSApplication) -> NSApplication.TerminateReply {
         guard let model,model.active else { return .terminateNow }
         if model.state == .preparing || model.state == .stopping { return .terminateCancel }
-        Task { await model.stop(); NSApp.reply(toApplicationShouldTerminate:true) }; return .terminateLater
+        Task { await model.stopActiveWork(); NSApp.reply(toApplicationShouldTerminate:true) }; return .terminateLater
     }
 }

@@ -13,6 +13,21 @@ struct TranscriptView:View {
                 model.transcriptSearch=value
                 Task { await model.select(model.selected) }
             })).textFieldStyle(.roundedBorder).padding(.horizontal,16).padding(.bottom,12)
+            if !model.terms.isEmpty {
+                VStack(alignment:.leading,spacing:5) {
+                    Text("Términos frecuentes · muestra de esta vista").font(.caption2).foregroundStyle(.secondary).help("Hasta 300 fragmentos y 100.000 caracteres; frecuencia, no importancia semántica")
+                    ScrollView(.horizontal) {
+                        HStack(spacing:6) {
+                            ForEach(model.terms) { term in
+                                Button("\(term.text) · \(term.count)") {
+                                    model.transcriptSearch=term.text
+                                    Task { await model.select(model.selected) }
+                                }.buttonStyle(.bordered).controlSize(.mini).help("Buscar este término en la sesión")
+                            }
+                        }
+                    }.scrollIndicators(.hidden)
+                }.padding(.horizontal,16).padding(.bottom,10)
+            }
             DisclosureGroup(isExpanded:$model.showBookmarks) {
                 if model.bookmarks.isEmpty { Text("Sin marcadores en esta página.").font(.caption).foregroundStyle(.secondary).padding(8) }
                 else {

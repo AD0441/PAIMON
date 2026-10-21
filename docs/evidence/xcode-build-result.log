@@ -1,4 +1,0 @@
-Command: ./script/build_and_run.sh --verify
-Xcode 27.1 (27A9275), Swift 6.4, macOS 27.2, Apple M1 / 8 GB
-** BUILD SUCCEEDED **
-UI verification: Copy report button changed to Copiado; all five report section headings visible.

@@ -84,7 +84,9 @@ public actor SummaryCoordinator {
             try Task.checkCancellation()
             var previous=try await store.latestSummary(session:session.id)
             let version=await engine.processingVersion()
+            let identity=await engine.identifier()
             var replaceRegister=request.rebuild || (previous?.summaryTemplate ?? .meeting) != session.template || (previous != nil && (previous?.processingVersion ?? 0)<version)
+            if let identity,let previous,previous.engineIdentifier != identity { replaceRegister=true }
             if replaceRegister { previous=nil }
             cursor=previous?.throughRow ?? 0
             pendingCount=try await store.pendingContent(session:session.id,after:cursor).segments
@@ -110,7 +112,8 @@ public actor SummaryCoordinator {
                 let findings=result.memory
                 if version>=2,batch.contains(where:{SummaryGrounding.informative($0.text)}),!findings.contains(where:{$0.kind == .overview}) { throw SummaryResponseError.insufficient }
                 try Task.checkCancellation()
-                let snapshot=SummarySnapshot(sessionID:session.id,throughRow:end,isFinal:false,findings:findings,template:session.template,processingVersion:version)
+                var snapshot=SummarySnapshot(sessionID:session.id,throughRow:end,isFinal:false,findings:findings,template:session.template,processingVersion:version)
+                snapshot.engineIdentifier=identity
                 try await store.save(snapshot,additionalFindings:result.facts,replaceRegister:replaceRegister)
                 replaceRegister=false
                 previous=snapshot; cursor=end; didWork=true
@@ -124,7 +127,8 @@ public actor SummaryCoordinator {
                 if version>=2,!integrated.contains(where:{$0.kind == .overview}) { throw SummaryResponseError.insufficient }
                 try Task.checkCancellation()
                 let retained=EvidenceValidator.merge(previous:prior.findings.filter{$0.kind != .overview && $0.kind != .topic},new:integrated)
-                let snapshot=SummarySnapshot(sessionID:session.id,throughRow:cursor,isFinal:true,findings:retained,template:session.template,processingVersion:version)
+                var snapshot=SummarySnapshot(sessionID:session.id,throughRow:cursor,isFinal:true,findings:retained,template:session.template,processingVersion:version)
+                snapshot.engineIdentifier=identity
                 try await store.save(snapshot); previous=snapshot; didWork=true
             }
             await record(session:session.id,start:start,before:before,pending:pendingCount,batches:batches,reductions:reductions,cursor:cursor,final:final,outcome:"completed")
