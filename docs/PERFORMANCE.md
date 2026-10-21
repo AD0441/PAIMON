@@ -1,6 +1,18 @@
-# PAIMON 0.4.0 — rendimiento y estabilidad
+# PAIMON 0.5.1 — rendimiento, memoria y alcance
 
-Trabajo realizado el 19 y 20 de octubre de 2026 sobre el proyecto existente. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local. No se añadieron dependencias, modelos ni conexiones de red.
+Estado actualizado al 21 de octubre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
+
+## Estado actual y RAM
+
+- La referencia de 0.5.0 contiene 75 pruebas aprobadas e importación real con SpeechTranscriber. 0.5.1 corrige la composición de la ventana; su compilación y revisión visual están documentadas en [VALIDATION.md](VALIDATION.md).
+- Google AI permite evitar la inferencia del resumen en el Mac mediante una clave propia. No se han medido ahorros de RAM, CPU o batería frente a Foundation Models; no se extrapolan las métricas locales de 0.4.0 al servicio remoto.
+- La presión de memoria aplaza todos los motores de resumen, incluido Google. La elección externa es manual, no libera RAM por sí sola y no omite el control de protección. El final pendiente queda en SQLite para recuperación posterior.
+- El cliente remoto mantiene una solicitud en curso, peticiones de hasta 96 KB, respuestas de hasta 256 KB y hasta dos reintentos con espera solo para fallos HTTP temporales. Los errores de cuota, clave y red con resultado incierto no se repiten automáticamente.
+- No se realizó un nuevo perfil de Instruments ni una sesión real de varias horas en 0.5.x. La memoria de los servicios de Apple y la memoria del resto del sistema deben medirse por separado del footprint de PAIMON.
+
+## Referencia histórica · 0.4.0
+
+Las mediciones siguientes corresponden al trabajo del 19 y 20 de octubre de 2026. En esa etapa no se añadieron conexiones de red, dependencias ni modelos. Se conservan con su versión y alcance originales.
 
 ## Cambios verificables
 
@@ -98,3 +110,7 @@ Las vistas ejecutiva/completa y los términos navegables no cargan modelos. Los 
 La importación lee un único búfer de 4.096 frames. Apple aplica contrapresión a su cola de 48 AnalyzerInput en lugar de leer toda la grabación en RAM. Captura e importación no se ejecutan simultáneamente. Los resúmenes siguen serializados por el coordinador. El cliente Google tiene una solicitud en curso como máximo, 96 KB de petición, 256 KB de respuesta y cancelación; no carga un modelo adicional en el Mac.
 
 Pasaron 75 pruebas, incluida importación real con SpeechTranscriber de la muestra sintética local. No se realizó un nuevo perfil de Instruments ni una reunión prolongada para esta versión, y no se midieron latencia o cuota con una clave real de Gemini. Las cifras de 0.4.0 permanecen como referencia histórica.
+
+## Ventana y presentación · 0.5.1
+
+Las columnas se acotan al área disponible para evitar que su tamaño intrínseco desplace la cabecera y el pie fuera de la ventana. El divisor conserva su proporción sin almacenar contenido ni cargar modelos. Se comprobaron sesiones vacías y guardadas, cuatro tamaños de ventana y apertura/cierre del contexto. Esto valida el diseño observado; no equivale a una medición nueva de inferencia, CPU o memoria.

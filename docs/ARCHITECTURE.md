@@ -1,4 +1,4 @@
-# Arquitectura y privacidad
+# Arquitectura y privacidad · PAIMON 0.5.1
 
 El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** y el lema **Transformando sonido en conocimiento.** El nombre visible, el ejecutable y el bundle `.app` usan PAIMON. Se conserva `local.audio.intelligence` como identidad de preferencias y permisos, así como la carpeta de datos anterior para evitar migraciones innecesarias. El PNG original del usuario vive en `Resources/Brand`; el ICNS generado se carga mediante los mecanismos nativos de macOS. No intervienen modelos ni recursos remotos en la identidad visual.
 
@@ -9,13 +9,21 @@ El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** 
 - Los callbacks Core Audio y AVAudioEngine escriben en anillos SPSC en C, con almacenamiento preasignado, atomics acquire/release y sin asignaciones, bloqueos, Swift Tasks, acceso a disco ni inferencia. Cada fuente tiene un productor y un consumidor. El único `@unchecked Sendable` protege este handle opaco y documenta su invariante.
 - El productor vacía los anillos cada 40 ms en una cola acotada de 256 bloques. La inferencia consume independientemente. Se informa de pérdidas; nunca hay acumulación PCM ilimitada. Las fuentes usan hostTime convertido al mismo reloj monotónico. Pausa conserva el hueco temporal.
 - Los motores implementan `TranscriptionEngine`. SpeechAnalyzer recibe `AnalyzerInput` incremental y produce parciales/finales con rangos. FluidAudio recibe frases separadas por VAD energético con histéresis y límite de 15 s, sin solapamientos artificiales.
-- `SummarizationEngine` permite Foundation Models y MLX. Cada generación utiliza una sesión nueva. En 26.4+ se cuentan tokens de prompt, instrucciones y esquema; en 26.0 se limita conservadoramente el tamaño. La ruta Apple v3 procesa solo el lote nuevo con un esquema compacto: título, resumen general obligatorio de hasta 650 caracteres y hasta cuatro puntos con referencias locales. No pide al modelo que reproduzca citas. Los puntos previos se conservan fuera de la generación. El cursor solo avanza cuando el resultado válido está guardado.
+- `SummarizationEngine` permite Foundation Models, MLX local opcional y Google AI remoto opcional. La UI utiliza el mismo protocolo y el coordinador persiste sus resultados. Cada generación local utiliza una sesión nueva. Para Foundation Models, en 26.4+ se cuentan tokens de prompt, instrucciones y esquema; en 26.0 se limita conservadoramente el tamaño. La ruta Apple v3 procesa solo el lote nuevo con un esquema compacto: título, resumen general obligatorio de hasta 650 caracteres y hasta cuatro puntos con referencias locales. No pide al modelo que reproduzca citas. Los puntos previos se conservan fuera de la generación. El cursor solo avanza cuando el resultado válido está guardado.
 - `SessionStore` es un actor SQLite en WAL. Conserva transcripción original, ajustes de sesión, resúmenes versionados y cursor incremental. Recupera sesiones interrumpidas al abrir. Nunca comparte punteros SQLite con UI ni callbacks.
 - `InferenceGate` serializa las inferencias opcionales y resúmenes, con hasta ocho esperas y cancelación de entradas en cola. La captura no entra en esa compuerta. `SummaryCoordinator` agrupa solicitudes pendientes de la misma sesión; la petición final no se descarta cuando otra generación está en curso. Los modelos de Apple son gestionados por el sistema; la aplicación no fuerza su descarga ni garantiza el acelerador interno.
 
 ## Memoria
 
 Anillos fijos, lotes pequeños, 300 fragmentos, 120 hallazgos y 50 sesiones por página, lecturas de SQLite paginadas, exportaciones incrementales, una sesión de generación por solicitud, cancelación/finalización y liberación explícita. Los parciales y medidores se agrupan cada 300 ms; los finales se guardan antes de enviarse a la interfaz. Si se llena la cola de persistencia, la entrega de un final espera hasta tres segundos y, si no progresa, informa del fallo; no descarta el texto silenciosamente. Avisos de presión de memoria cancelan inferencias de forma cooperativa y posponen resúmenes; la temperatura elevada también los pospone con ahorro activado. Se muestran footprint y estado térmico muestreados cada cinco segundos. La memoria del modelo nativo puede residir en procesos del sistema y no aparecer en el RSS de la aplicación.
+
+## Resumen remoto opcional y presión de RAM
+
+Google AI se ofrece para trasladar la inferencia del resumen fuera del Mac cuando la memoria disponible limita el uso del modelo local, especialmente en equipos con 8 GB compartidos. No modifica la captura ni el reconocimiento local de voz, no libera por sí solo recursos de otros procesos y no se han medido ahorros de RAM o batería.
+
+La selección requiere habilitación global y consentimiento por sesión; las sesiones históricas conservan su proveedor. `googleSummarySelected` evita migrar automáticamente los ajustes locales anteriores a un motor externo. La clave se guarda únicamente en el Llavero de ese Mac. No se envía texto por detectar presión de memoria ni hay selección automática de Google.
+
+La protección de memoria es común a todos los proveedores: `AppModel.updateSummary` aplaza las solicitudes mientras `pressure` esté activo y el coordinador cancela cooperativamente las inferencias. Los trabajos finales permanecen en SQLite para recuperarse cuando baja la presión, al reabrir la app o mediante Actualizar resumen. Google evita la inferencia local del resumen, pero no constituye una vía para omitir esta protección durante un estado crítico.
 
 ## Herramientas de sesión
 

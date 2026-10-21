@@ -1,6 +1,6 @@
 # PAIMON
 
-<img src="Resources/Brand/Sinora_icono.png" alt="Icono de PAIMON" width="96" />
+<img src="https://github.com/AD0441/PAIMON/releases/download/v0.5.1/Sinora_icono.png" alt="Icono de PAIMON" width="96" />
 
 **Local Audio Intelligence**  
 Transformando sonido en conocimiento.
@@ -17,14 +17,17 @@ Aplicación nativa para Apple Silicon y macOS 26+, SwiftUI, Swift 6 y procesamie
 
 El modo local sigue siendo el predeterminado y funciona sin clave API ni servicios de IA en la nube.
 
-![PAIMON: transcripción, resumen, acuerdos, compromisos y preguntas abiertas](docs/images/paimon-session.png)
+**[Descargar PAIMON 0.5.1 para Apple Silicon](https://github.com/AD0441/PAIMON/releases/download/v0.5.1/PAIMON-0.5.1.zip)** · [Notas de la versión preliminar](https://github.com/AD0441/PAIMON/releases/tag/v0.5.1)
+
+
+![PAIMON: transcripción, resumen, acuerdos, compromisos y preguntas abiertas](https://github.com/AD0441/PAIMON/releases/download/v0.5.1/paimon-session.png)
 
 Captura de la versión 0.4.0 instalada con una muestra de voz sintética local. No contiene conversaciones del usuario. El texto original permanece separado del resumen y cada icono de cita abre su evidencia.
 
 <details>
 <summary>Ver cómo se comprueba una cita</summary>
 
-![Evidencia con el texto original y sus marcas temporales](docs/images/paimon-evidence.png)
+![Evidencia con el texto original y sus marcas temporales](https://github.com/AD0441/PAIMON/releases/download/v0.5.1/paimon-evidence.png)
 
 </details>
 
@@ -32,11 +35,16 @@ Captura de la versión 0.4.0 instalada con una muestra de voz sintética local. 
 
 **0.5.1 (12).** Corrige el ajuste interno de la ventana: título único, pie visible y paneles limitados al área disponible al redimensionar. Conserva importación de audio, contexto por sesión, progreso, vista ejecutiva, términos navegables y Google AI opcional. Las pruebas y su alcance se documentan abajo. Pasaron 75 pruebas, incluida importación con reconocimiento nativo real. La referencia 0.4.0 tenía 55 pruebas aprobadas. Captura, transcripción, pausa, reanudación, detención y exportación comprobadas en un Apple M1 con 8 GB y macOS 27.2. El deployment target es macOS 26.0; falta probar ese sistema y sesiones reales de varias horas. El resumen final aplazado por presión de memoria se recuperó posteriormente y se comprobó en la interfaz. Consulta los [resultados y su alcance](docs/VALIDATION.md).
 
-La copia ejecutable se distribuye como ZIP en [Releases](https://github.com/AD0441/PAIMON/releases). Es una compilación local con firma ad hoc, sin notarización Developer ID; no equivale a una distribución firmada para todos los Mac. Los modelos opcionales no están incluidos. El repositorio contiene el código, el proyecto Xcode, las pruebas y la documentación; las sesiones, grabaciones y credenciales permanecen fuera de Git.
+La copia ejecutable actual se distribuye como ZIP en [PAIMON 0.5.1 · compilación 12](https://github.com/AD0441/PAIMON/releases/tag/v0.5.1). Las versiones históricas permanecen en [Releases](https://github.com/AD0441/PAIMON/releases). Es una compilación local con firma ad hoc, sin notarización Developer ID; no equivale a una distribución firmada para todos los Mac. Los modelos opcionales no están incluidos. El repositorio contiene el código, el proyecto Xcode, las pruebas y la documentación; las sesiones, grabaciones y credenciales permanecen fuera de Git.
 
-## Abrir y ejecutar
+## Descargar, instalar y ejecutar
 
-La aplicación instalada está en **/Applications/PAIMON.app**. Se abre desde Finder → Aplicaciones o buscando PAIMON en Spotlight. No necesita abrir Xcode. La firma «Creado con desprecio por Sebastián Pastén F.» aparece al pie de la ventana. El historial permanece en el almacenamiento local del usuario al actualizar la aplicación.
+1. Descarga `PAIMON-0.5.1.zip` y su archivo `.sha256` desde la [versión preliminar 0.5.1](https://github.com/AD0441/PAIMON/releases/tag/v0.5.1). El paquete es para Apple Silicon, macOS 26.0 o posterior; la ejecución se ha comprobado en macOS 27.2.
+2. Opcionalmente, verifica la integridad desde la carpeta de descarga: `shasum -a 256 -c PAIMON-0.5.1.zip.sha256`.
+3. Descomprime el ZIP, cierra PAIMON si está abierto y copia **PAIMON.app** a **Aplicaciones**. No se necesita Xcode para usar esta descarga. La firma ad hoc y la falta de notarización pueden hacer que macOS impida su apertura en otros equipos; la distribución con Developer ID sigue pendiente.
+4. Abre la aplicación y comprueba los recursos de voz y Apple Intelligence en Configuración. Autoriza el audio del sistema al capturar y el micrófono solo si lo activas. Para Google AI, configura tu propia clave y selecciona expresamente qué sesiones pueden enviar texto.
+
+La aplicación instalada queda en **/Applications/PAIMON.app**. Se abre desde Finder → Aplicaciones o buscando PAIMON en Spotlight. No necesita abrir Xcode. La firma «Creado con desprecio por Sebastián Pastén F.» aparece al pie de la ventana. El historial permanece en el almacenamiento local del usuario al actualizar la aplicación.
 
 Junto al código fuente está **PAIMON.app**, un enlace a la aplicación instalada. Las dos copias portátiles están en **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip**: actualmente 0.5.1 (12) y 0.5.0 (11), respectivamente. No hay copias completas duplicadas del proyecto; el historial del código se conserva en Git.
 
@@ -45,6 +53,8 @@ Junto al código fuente está **PAIMON.app**, un enlace a la aplicación instala
 El icono original entregado por el usuario se conserva en `Resources/Brand/Sinora_icono.png`. `Resources/Paimon.icns` contiene sus tamaños estándar para macOS, generado con `./script/rebuild_icon.sh` mediante `sips` e `iconutil`, sin modificar el original. Xcode lo incluye como recurso del bundle. El nombre del proyecto y del esquema se mantiene por compatibilidad con las herramientas; el producto compilado es **PAIMON.app**.
 
 El cambio de nombre conserva el identificador `local.audio.intelligence`, las preferencias y la carpeta local de datos. Al instalar, las aplicaciones del nombre anterior se envían a la Papelera después de verificar la nueva copia.
+
+## Compilar desde el código fuente
 
 1. Abre `LocalAudioIntelligence.xcodeproj` en Xcode 27.1, la versión verificada aquí, con SDK macOS 27 y Swift 6.4. El target conserva deployment target 26.0 y arquitectura arm64; las APIs nuevas tienen comprobaciones de disponibilidad para ejecutar en macOS 26.
 2. Selecciona el esquema **LocalAudioIntelligence**, destino **My Mac**, y ejecuta. Firma local ad hoc; para distribuir usa tu identidad Developer ID.
@@ -60,7 +70,7 @@ La síntesis de Apple exige un **Resumen general** antes de marcarse como final.
 
 - **Marcar** o **⌘⇧M** guarda el momento actual. También puedes marcar un fragmento desde su menú contextual. En **Marcadores y notas**, escribe una anotación y pulsa **Guardar** o Intro; pulsa su hora para volver al texto. La barra de menús permite marcar la captura en curso. Las notas se guardan por separado y no se envían al modelo.
 - **⌘⇧F** abre la búsqueda en todas las transcripciones. Escribe dos caracteres o más y abre un resultado para ir a la sesión y al fragmento correspondiente. Tolera mayúsculas y acentos; varias palabras deben coincidir en el mismo fragmento. Muestra hasta 50 resultados. El historial anterior se indexa por lotes cuando no hay captura ni presión de memoria.
-- El selector **Plantilla** ofrece **Reunión**, **Clase** y **Video o podcast**. Cambia el énfasis del resumen usando el mismo motor local. Se elige antes de iniciar; para aplicarla a una sesión guardada, cambia la plantilla y pulsa **Actualizar resumen**. Esta acción vuelve a procesar el contenido original; las actualizaciones normales siguen siendo incrementales. Configuración permite fijar la plantilla predeterminada.
+- El selector **Plantilla** ofrece **Reunión**, **Clase** y **Video o podcast**. Cambia el énfasis del resumen usando el proveedor seleccionado para la sesión. Se elige antes de iniciar; para aplicarla a una sesión guardada, cambia la plantilla y pulsa **Actualizar resumen**. Esta acción vuelve a procesar el contenido original; las actualizaciones normales siguen siendo incrementales. Configuración permite fijar la plantilla predeterminada.
 
 La exportación incluye una opción **Marcadores y notas**, con horas y anotaciones en TXT, Markdown, PDF y JSON. Las negritas y las tablas del informe se mantienen en los formatos que las admiten. Estas funciones no añaden modelos, descargas ni consultas de IA por cada búsqueda o marcador.
 

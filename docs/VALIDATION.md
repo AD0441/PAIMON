@@ -22,6 +22,12 @@ Esta corrección modifica únicamente la composición de la interfaz y su versi�
 
 **Interfaz de contexto: PASS.** En Release se comprobaron abrir, cancelar un borrador, guardar y volver a abrir. El contexto aparece en una sheet separada y los controles de captura y los paneles permanecen visibles. ⌘N limpia la selección sin abrir otra ventana. Se usó un borrador sintético sin modificar la transcripción del usuario. La captura en vivo de 0.4.0 sigue siendo evidencia histórica; la importación de un archivo no se presenta como una nueva prueba de Core Audio.
 
+## Publicación y distribución
+
+La versión preliminar vigente es [0.5.1 (12)](https://github.com/AD0441/PAIMON/releases/tag/v0.5.1). El ZIP publicado corresponde al paquete actual verificado, no a una nueva compilación de los motores. Se adjunta SHA-256 para comprobar su integridad. La firma sigue siendo ad hoc, sin Developer ID ni notarización. El icono y las dos imágenes adjuntas son recursos públicos existentes: las capturas mantienen su condición histórica de 0.4.0 y usan únicamente la muestra sintética. No se adjuntan sesiones privadas, credenciales ni pesos de modelos.
+
+Google AI es una alternativa manual para evitar inferencia local del resumen cuando la RAM limita su uso; la protección actual aplaza todos los proveedores mientras detecta presión de memoria. No se ha medido un ahorro de RAM ni se valida un cambio automático de motor. Los resultados de las pruebas se conservan con su versión; la publicación de documentación no representa otra prueba de audio o inferencia.
+
 ## Entorno comprobado
 
 MacBook Pro con Apple M1 y 8 GB de memoria unificada. Sistema instalado: macOS 27.2, build 26B5101f. Xcode 27.1, build 27A9275, Swift 6.4. Deployment target del producto: macOS 26.0, arm64. No se afirma haber ejecutado la aplicación en macOS 26: esa validación sigue pendiente.

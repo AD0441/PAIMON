@@ -1,8 +1,10 @@
-# Dependencias y modelos
+# Dependencias y modelos · PAIMON 0.5.1
 
 ## Producto principal
 
 Swift/SwiftUI, AppKit, Core Audio, AVFoundation, Speech, FoundationModels, CoreText, CoreGraphics, CryptoKit, Security, URLSession y SQLite del sistema. Sin dependencias externas. Toolchain verificado: Xcode 27.1, SDK macOS 27 y Swift 6.4; destino de ejecución macOS 26.0+, arm64. Se necesita un SDK que declare las APIs nuevas, aunque se compruebe su disponibilidad en ejecución. No se requieren cuentas de pago ni claves API para ejecutar la aplicación localmente.
+
+El modo predeterminado mantiene captura, transcripción y resumen en el Mac una vez preparados sus recursos. La opción de Google AI añade únicamente un cliente HTTPS nativo para resúmenes; no incorpora un SDK ni requiere instalar otro modelo local.
 
 Documentación oficial verificada al implementar:
 
@@ -13,7 +15,7 @@ Documentación oficial verificada al implementar:
 - [SystemLanguageModel](https://developer.apple.com/documentation/foundationmodels/systemlanguagemodel)
 - [Managing the context window](https://developer.apple.com/documentation/foundationmodels/managing-the-context-window)
 
-También se comprobaron los headers CATapDescription/AudioHardwareTapping y las interfaces Swift de los SDK instalados. `bundleIDs` e `isProcessRestoreEnabled` requieren macOS 26. `tokenCount(for:)` requiere 26.4 y tiene comprobación de disponibilidad; se consulta `contextSize` y se estiman tokens conservadoramente en 26.0–26.3. CryptoKit solo calcula claves estables de los hallazgos, sin cargar modelos ni comunicarse por red.
+También se comprobaron los headers CATapDescription/AudioHardwareTapping y las interfaces Swift de los SDK instalados. `bundleIDs` e `isProcessRestoreEnabled` requieren macOS 26. `tokenCount(for:)` requiere 26.4 y tiene comprobación de disponibilidad; se consulta `contextSize` y se estiman tokens conservadoramente en 26.0–26.3. CryptoKit calcula identificadores estables de hallazgos y de configuración/contexto, sin cargar modelos ni comunicarse por red.
 
 ## FluidAudio opcional
 
@@ -44,5 +46,9 @@ Configura Python de `Integrations/.venv/bin/python`, `Integrations/mlx_summary.p
 ## Google AI opcional · sin SDK externo
 
 El backend Gemini usa directamente la API REST oficial con URLSession. El modo local no requiere claves. Gemini requiere una clave propia, Internet y cuota del proyecto de Google; su disponibilidad y facturación pertenecen a Google. El modelo inicial es `gemini-3.8-flash`, editable. La clave se conserva en el Llavero de macOS, no en este repositorio.
+
+Se configura en Configuración → Google AI: habilitar el proveedor, guardar la clave en el Llavero, comprobar el modelo y seleccionar la sesión que puede enviar texto. Probar conexión consulta metadatos; Actualizar resumen procesa la transcripción. Para desactivarlo, desmarca la opción global; para retirar la credencial del Mac, usa Eliminar clave. Una actualización o un ZIP no transportan la clave de otro equipo.
+
+Su objetivo es evitar la inferencia local del resumen cuando la RAM limita el motor local. La captura y la transcripción siguen necesitando recursos del Mac. El control actual de presión de memoria aplaza todos los proveedores, incluido Google; no hay cambio automático por saturación ni una garantía de ahorro medido. El modo local sigue disponible sin cuenta de Google.
 
 Documentación oficial consultada el 21 de octubre de 2026: [modelos](https://ai.google.dev/gemini-api/docs/models), [claves](https://ai.google.dev/gemini-api/docs/api-key), [generateContent y responseFormat](https://ai.google.dev/api/generate-content), [salidas estructuradas](https://ai.google.dev/gemini-api/docs/structured-output). Se utiliza `generationConfig.responseFormat.text` con `mimeType: APPLICATION_JSON` y schema. No se integra ningún cliente de audio remoto ni servicio de traducción.
