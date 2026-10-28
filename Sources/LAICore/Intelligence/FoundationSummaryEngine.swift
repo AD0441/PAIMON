@@ -106,7 +106,7 @@ public actor FoundationSummaryEngine: SummarizationEngine {
     """
     public init(template:SummaryTemplate = .meeting,context:SessionContext = .init()) { self.template=template; self.context=context.bounded }
     public func identifier() -> String? { context.engineIdentifier(backend:"apple") }
-    public nonisolated func processingVersion() -> Int { 3 }
+    public nonisolated func processingVersion() -> Int { 4 }
     public static func instructions(for template:SummaryTemplate) -> String { instructions+"\n"+template.instructions }
     public func availability(locale: String) -> String? {
         switch SystemLanguageModel.default.availability {
@@ -192,7 +192,7 @@ public actor FoundationSummaryEngine: SummarizationEngine {
         let source=String(decoding:try JSONSerialization.data(withJSONObject:rows,options:[.sortedKeys,.withoutEscapingSlashes]),as:UTF8.self)
         let prompt="""
         Redacta title (tema breve) y overview (síntesis general de 2 a 4 frases, máximo 650 caracteres).
-        Cubre el contenido completo de estas fuentes, desde el principio hasta el final. Menciona propuestas y conceptos concretos; no te limites al último fragmento. Conserva las reservas: propuesta no significa aprobación. No repitas puntos.
+        Cubre el contenido completo de estas fuentes, desde el principio hasta el final. Menciona propuestas y conceptos concretos; no te limites al último fragmento. Conserva solo las dudas expresadas en las fuentes. No añadas advertencias genéricas sobre ausencia de aprobación. Un acuerdo explícito debe conservarse como acuerdo. No repitas puntos.
         \(maximumPoints>0 ? "Añade hasta \(maximumPoints) puntos relevantes y sus identificadores S. owner y due vacíos salvo si aparecen literalmente en la fuente elegida.":"Integra los resúmenes y los hechos documentados en una síntesis coherente. Incluye las decisiones y los compromisos explícitos relevantes, aunque sean del inicio. No añadas información externa.")
         FUENTES:\n\(source)
         """

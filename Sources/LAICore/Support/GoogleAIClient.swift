@@ -34,7 +34,8 @@ protocol GoogleAICredentialStore:Sendable {
 }
 
 actor GoogleAIKeychain:GoogleAICredentialStore {
-    private let service="local.audio.intelligence.google-ai"
+    private let service:String
+    init(service:String="local.audio.intelligence.google-ai") { self.service=service }
     private var query:[String:Any] { [kSecClass as String:kSecClassGenericPassword,kSecAttrService as String:service,kSecAttrAccount as String:"personal-api-key",kSecAttrSynchronizable as String:false] }
     func read() throws -> String? {
         var query=query
@@ -109,7 +110,7 @@ public actor GoogleAIClient {
     private var authorizationRevision=0
     private var active:Task<GoogleAIHTTPReply,any Error>?
     public private(set) var retryStatus:String?
-    public init() { credentials=GoogleAIKeychain(); transport=GoogleAIURLTransport(); retryPause={ try await Task.sleep(for:$0) } }
+    public init(keychainService:String="local.audio.intelligence.google-ai") { credentials=GoogleAIKeychain(service:keychainService); transport=GoogleAIURLTransport(); retryPause={ try await Task.sleep(for:$0) } }
     init(credentials:any GoogleAICredentialStore,transport:any GoogleAITransport,retryPause:@escaping @Sendable (Duration) async throws -> Void = { try await Task.sleep(for:$0) }) {
         self.credentials=credentials; self.transport=transport; self.retryPause=retryPause
     }

@@ -1,4 +1,4 @@
-# Dependencias y modelos · PAIMON 0.5.1
+# Dependencias y modelos · PAIMON 0.6.0
 
 ## Producto principal
 
@@ -52,3 +52,7 @@ Se configura en Configuración → Google AI: habilitar el proveedor, guardar la
 Su objetivo es evitar la inferencia local del resumen cuando la RAM limita el motor local. La captura y la transcripción siguen necesitando recursos del Mac. El control actual de presión de memoria aplaza todos los proveedores, incluido Google; no hay cambio automático por saturación ni una garantía de ahorro medido. El modo local sigue disponible sin cuenta de Google.
 
 Documentación oficial consultada el 21 de octubre de 2026: [modelos](https://ai.google.dev/gemini-api/docs/models), [claves](https://ai.google.dev/gemini-api/docs/api-key), [generateContent y responseFormat](https://ai.google.dev/api/generate-content), [salidas estructuradas](https://ai.google.dev/gemini-api/docs/structured-output). Se utiliza `generationConfig.responseFormat.text` con `mimeType: APPLICATION_JSON` y schema. No se integra ningún cliente de audio remoto ni servicio de traducción.
+
+## Recursos visuales e idioma · 0.6.0
+
+Sin nuevas dependencias externas: catálogo nativo `Resources/Localizable.xcstrings`, SwiftUI, AppKit y Core Graphics. `script/render_brand.swift` genera las fuentes SVG, PNG y portada; `script/rebuild_icon.sh` usa `sips` e `iconutil` de macOS. [Procedencia del sello y marca](BRAND.md). Ko-fi es un enlace que abre el navegador al pulsarlo; la app no descarga su badge.

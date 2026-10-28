@@ -13,7 +13,7 @@ struct SidebarView:View {
                 TextField("Buscar en todas las transcripciones",text:$model.globalQuery).textFieldStyle(.roundedBorder).focused($searchFocused).padding(.horizontal,12).padding(.bottom,10)
                     .accessibilityIdentifier("globalTranscriptSearch")
                 if model.searching { ProgressView().controlSize(.small).padding(6) }
-                if model.indexingSearch { Text(model.active ? "Índice del historial en espera durante la captura.":"Preparando el índice del historial…").font(.caption).foregroundStyle(.secondary).padding(.horizontal,12) }
+                if model.indexingSearch { Text(model.ui(model.active ? "Índice del historial en espera durante la captura.":"Preparando el índice del historial…")).font(.caption).foregroundStyle(.secondary).padding(.horizontal,12) }
                 if let error=model.searchError { Text(error).font(.caption).foregroundStyle(.secondary).padding(12) }
                 List {
                     ForEach(model.searchHits) { hit in
@@ -50,16 +50,17 @@ struct SidebarView:View {
             }
             }
             Divider()
-            VStack(alignment:.leading,spacing:6) {
+            VStack(alignment:.leading,spacing:12) {
                 HStack(spacing:10) {
-                    Image(nsImage:NSApp.applicationIconImage).resizable().scaledToFit()
-                        .frame(width:40,height:40).accessibilityHidden(true)
-                    VStack(alignment:.leading,spacing:3) {
-                        Text("PAIMON").font(.headline)
-                        Text("Local Audio Intelligence").font(.caption).foregroundStyle(.secondary)
-                    }
-                }
-                Text("Transformando sonido en conocimiento.").font(.caption).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
+                    Image(nsImage:SidebarView.symbol).renderingMode(.template).resizable().scaledToFit()
+                        .frame(width:34,height:34).accessibilityHidden(true)
+                    Text("PAIMON").font(.headline)
+                }.foregroundStyle(.tint)
+                Label("Audio en tu Mac",systemImage:"lock.shield").font(.callout).foregroundStyle(.secondary)
+                SettingsLink { Label("Ajustes",systemImage:"gearshape") }
+                    .buttonStyle(.plain).font(.body).help("Configuración").accessibilityIdentifier("sidebarSettings")
+                Text("Creado por Sebastián Pastén F.").font(.caption).foregroundStyle(.secondary)
+                    .textSelection(.enabled).fixedSize(horizontal:false,vertical:true)
             }.frame(maxWidth:.infinity,alignment:.leading).padding(16).fixedSize(horizontal:false,vertical:true)
         }
         .task(id:model.globalQuery+String(model.globalSearchMode)+String(model.indexingSearch)) { await model.searchAllTranscripts() }
@@ -73,4 +74,8 @@ struct SidebarView:View {
             Button("Eliminar",role:.destructive) { if let session=deleting { Task { await model.delete(session) } }; deleting=nil }
         } message: { Text("Se eliminarán la transcripción, los resúmenes y cualquier audio guardado de esta sesión.") }
     }
+    private static let symbol:NSImage = {
+        guard let url=Bundle.main.url(forResource:"PAIMON-symbol",withExtension:"png"),let image=NSImage(contentsOf:url) else { return NSImage() }
+        image.isTemplate=true; return image
+    }()
 }

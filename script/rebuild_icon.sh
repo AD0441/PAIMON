@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SOURCE="$ROOT_DIR/Resources/Brand/Sinora_icono.png"
+SOURCE="$ROOT_DIR/Resources/Brand/PAIMON-icon.png"
 STAGING_DIR=$(mktemp -d "${TMPDIR:-/tmp}/paimon-icon.XXXXXX")
 trap 'rm -rf "$STAGING_DIR"' EXIT
 ICONSET="$STAGING_DIR/Paimon.iconset"

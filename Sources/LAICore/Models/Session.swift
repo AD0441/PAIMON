@@ -3,6 +3,17 @@ public enum AudioSource: String, Codable, Sendable, CaseIterable { case system, 
     public var title: String { switch self { case .system: "Sistema"; case .microphone: "Micrófono"; case .file: "Archivo" } }
 }
 public enum CaptureState: String, Sendable { case idle, preparing, recording, paused, stopping, importing, failed }
+public enum AppPalette:String,Codable,CaseIterable,Sendable,Identifiable {
+    case petroleum,sage,copper,graphite
+    public var id:String { rawValue }
+    public var title:String { switch self { case .petroleum:"Petróleo"; case .sage:"Salvia"; case .copper:"Cobre"; case .graphite:"Grafito" } }
+}
+public enum AppLanguage:String,Codable,CaseIterable,Sendable,Identifiable {
+    case spanish="es",english="en"
+    public var id:String { rawValue }
+    public var title:String { switch self { case .spanish:"Español"; case .english:"English" } }
+    public var locale:Locale { Locale(identifier:rawValue) }
+}
 public enum TranscriptionBackend: String, Codable, CaseIterable, Sendable { case automatic, apple, fluid }
 public enum SummaryBackend: String, Codable, CaseIterable, Sendable { case apple, mlx, google
     public var title:String { switch self { case .apple:"Apple · local"; case .mlx:"MLX · local"; case .google:"Google AI · externo" } }
@@ -13,6 +24,8 @@ public struct AppSettings: Codable, Sendable {
     public var locale = "es-ES"
     public var summaryInterval: Double = 300
     public var summaryTemplate:SummaryTemplate?
+    public var colorPalette:AppPalette?
+    public var interfaceLanguage:AppLanguage?
     public var googleEnabled:Bool?
     public var googleModel:String?
     public var googleSummarySelected:Bool?
@@ -50,7 +63,7 @@ public struct AppSettings: Codable, Sendable {
         }
         guard let data = defaults.data(forKey: "settings"), let value = try? JSONDecoder().decode(Self.self, from: data) else { return Self() }; return value
     }
-    public func save() { if let data = try? JSONEncoder().encode(self) { UserDefaults.standard.set(data, forKey: "settings") } }
+    public func save(to defaults:UserDefaults = .standard) { if let data = try? JSONEncoder().encode(self) { defaults.set(data, forKey: "settings") } }
 }
 public struct Session: Identifiable, Codable, Sendable, Hashable {
     public var id: UUID

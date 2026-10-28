@@ -1,8 +1,18 @@
-# PAIMON 0.5.1 — rendimiento, memoria y alcance
+# PAIMON 0.6.0 — rendimiento, memoria y alcance
 
-Estado actualizado al 21 de octubre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
+Estado actualizado al 28 de octubre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
 
-## Estado actual y RAM
+## Medición actual · 0.6.0
+
+- 84 pruebas aprobadas e importación española nativa real. Foundation Models v4: doce fragmentos sintéticos, seis hallazgos con citas, 38,19 s; footprint final del cliente 10,25 MB, excluyendo servicios de Apple.
+- Review Release en reposo: Time Profiler de 10 s. Observación `ps` separada de 10,12 s: CPU 0,40 % de un núcleo, RSS 19,61–20,33 MB; `sample`: footprint 64,4 MB, pico de proceso 95,1 MB. No equivale a consumo durante captura, memoria total del modelo, energía ni una comparación antes/después.
+- Búsqueda cancelable con 250 ms de agrupación; consulta solo fragmentos, sin recargar resúmenes y marcadores. La enumeración de aplicaciones responde a apertura/cierre; voz y duración se actualizan en vistas independientes.
+- Los metadatos positivos de recursos Speech se conservan 60 s, sin retener modelos. Instalar o comprobar manualmente invalida o renueva la información. La preparación recibe cancelación explícita.
+- Icono, SVG, portada y catálogo se preparan al compilar. El símbolo lateral usa 256 px; las paletas no cargan modelos ni recursos remotos. La medición de memoria visible se actualiza cada cinco segundos mientras la ventana está abierta.
+
+[Resultados y límites](evidence/performance-install-verification.json). Traces de diagnóstico en `/tmp/paimon-review.trace`; no se publican metadatos de procesos. No se realizó prueba de varias horas ni medición de ahorro de RAM con Google.
+
+## Referencia 0.5.x y RAM
 
 - La referencia de 0.5.0 contiene 75 pruebas aprobadas e importación real con SpeechTranscriber. 0.5.1 corrige la composición de la ventana; su compilación y revisión visual están documentadas en [VALIDATION.md](VALIDATION.md).
 - Google AI permite evitar la inferencia del resumen en el Mac mediante una clave propia. No se han medido ahorros de RAM, CPU o batería frente a Foundation Models; no se extrapolan las métricas locales de 0.4.0 al servicio remoto.

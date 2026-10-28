@@ -1,11 +1,17 @@
 # Procedencia de las evidencias
 
-Los resultados corresponden a pruebas locales del proyecto. Los textos y audios incluidos son muestras sintéticas de diagnóstico; no se incluyen conversaciones privadas del usuario. Las capturas de `../images` muestran una sesión de esa misma muestra en la aplicación real. Únicamente se retiró el margen vacío exterior a la ventana.
+Solo se publican resultados de diagnóstico y muestras sintéticas. Las capturas actuales de `../images` corresponden a PAIMON 0.6.0 en una instancia aislada; no muestran transcripciones privadas ni usan una simulación del reconocimiento o del resumen.
 
-Antes de subir el proyecto a GitHub se sustituyeron las rutas personales de los registros por `$PROJECT_ROOT`, `$USER_HOME` y `$TMPDIR`. Los registros originales se conservaron en un respaldo temporal local. Esta limpieza no cambia los resultados, tiempos, versiones ni recuentos medidos.
+Se conservan cinco archivos de resultados y este índice:
 
-Las pruebas automáticas usan dobles de motor y no certifican por sí solas la captura o la inferencia reales. Los archivos de resultados indican qué backend y qué alcance se comprobaron. Una prueba acelerada de 240 minutos representados no es una reunión real de cuatro horas. Las métricas del proceso cliente excluyen los servicios de modelos de Apple.
+| Archivo | Versión y alcance |
+| --- | --- |
+| `performance-tests.log` | 0.6.0: 84 pruebas, incluida importación nativa real |
+| `performance-environment.json` | Entorno actual M1 de 8 GB, macOS 27.2 |
+| `performance-install-verification.json` | 0.6.0: firma, dos paquetes, SHA-256, resumen nativo, revisión aislada y métricas |
+| `performance-release-ui-validation.json` | Histórico 0.4.0: controles reales de captura y exportación |
+| `performance-summary-recovery.json` | Histórico 0.4.0: recuperación de síntesis pendiente |
 
-Se conservan localmente solo cinco resultados de referencia: pruebas, entorno, instalación, controles históricos de captura y recuperación del resumen. Los registros anteriores están en el [historial de v0.4.0](https://github.com/AD0441/PAIMON/tree/v0.4.0/docs/evidence); las copias locales retiradas se enviaron a la Papelera. Las pruebas corresponden a 0.5.0 y la instalación y revisión de dimensiones a 0.5.1; los controles de captura y recuperación conservan su versión 0.4.0 indicada dentro del archivo. La comprobación de Google registra solo estados de interfaz, sin transcripción, clave ni solicitud. No se generan informes adicionales por cada limpieza.
+Las pruebas con dobles de motor verifican contratos y errores; no certifican hardware o inferencia. Los ensayos nativos se identifican por separado. Las métricas del cliente excluyen servicios de modelos de Apple. No hay prueba real de varias horas ni ejecución en macOS 26. La traza de Instruments permanece en una ubicación temporal y no se publica.
 
-El icono y las dos capturas públicas se adjuntan también a la release 0.5.1 para que el README no dependa de redirecciones a raw.githubusercontent.com. Sus archivos fuente siguen en Resources/Brand y docs/images; las capturas corresponden a 0.4.0, como indica su pie. Esta distribución de imágenes pertenece a la documentación de GitHub y no añade conexiones de red a la aplicación.
+Los resultados reemplazados siguen en el historial de Git y sus tags; no se crean informes adicionales por cada compilación. Las imágenes e iconos se adjuntan a la release 0.6.0 para evitar depender del dominio raw de GitHub. Esto pertenece a la documentación y no añade conexiones de red a PAIMON.

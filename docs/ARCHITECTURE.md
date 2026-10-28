@@ -1,4 +1,4 @@
-# Arquitectura y privacidad · PAIMON 0.5.1
+# Arquitectura y privacidad · PAIMON 0.6.0
 
 El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** y el lema **Transformando sonido en conocimiento.** El nombre visible, el ejecutable y el bundle `.app` usan PAIMON. Se conserva `local.audio.intelligence` como identidad de preferencias y permisos, así como la carpeta de datos anterior para evitar migraciones innecesarias. El PNG original del usuario vive en `Resources/Brand`; el ICNS generado se carga mediante los mecanismos nativos de macOS. No intervienen modelos ni recursos remotos en la identidad visual.
 
@@ -70,3 +70,11 @@ El editor de contexto usa una sheet con borrador local y tamaño fijo; cancelar 
 ## Dimensiones de la ventana · 0.5.1
 
 Cada columna de NavigationSplitView recibe un GeometryReader y un marco igual al espacio propuesto. Así el tamaño intrínseco de los contenidos no expande la navegación fuera de la ventana. La cabecera y el pie reservan su altura, y el espacio restante contiene dos paneles SwiftUI con divisor ajustable y proporción en SceneStorage. El divisor limita los anchos, usa coordenadas globales durante el arrastre y permite ajuste por accesibilidad. Se conserva la barra nativa unificada y el título lógico, retirando únicamente su representación duplicada. No añade modelos, sondeos ni inferencias. Los registros temporales de coordenadas usados para diagnosticar el fallo se retiraron del código final.
+
+## Aislamiento y preferencias · 0.6.0
+
+AppModel admite almacén, preferencias, cliente de credenciales y motor de resumen inyectados para las pruebas. La configuración habitual conserva sus rutas e identificadores. La compilación `PAIMON_REVIEW` usa otro bundle, SQLite temporal, preferencias y servicio de Llavero; no accede al historial ni a la clave de la instalación. No se distribuye ese código de preparación.
+
+Paleta e idioma de interfaz son campos opcionales compatibles con ajustes anteriores. El catálogo nativo cambia los controles SwiftUI; no modifica el idioma de reconocimiento ni el texto persistido. Los tokens de selección impiden que resultados antiguos sustituyan otra sesión. Disponibilidad del motor y estado del informe son propiedades distintas.
+
+La caché Speech conserva únicamente metadatos positivos de recursos por 60 s; no contiene audio, texto ni objetos de modelos. El resumen v4 añade una regresión léxica para una advertencia de aprobación inventada observada durante revisión; no sustituye la revisión humana.

@@ -1,0 +1,2767 @@
+{
+  "sourceLanguage": "es",
+  "strings": {
+    "Sesiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessions"
+          }
+        }
+      }
+    },
+    "Transcripciones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcripts"
+          }
+        }
+      }
+    },
+    "Transcripción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript"
+          }
+        }
+      }
+    },
+    "Resumen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary"
+          }
+        }
+      }
+    },
+    "Nueva sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New session"
+          }
+        }
+      }
+    },
+    "Nombre de la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session name"
+          }
+        }
+      }
+    },
+    "Buscar sesiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search sessions"
+          }
+        }
+      }
+    },
+    "Buscar en": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search in"
+          }
+        }
+      }
+    },
+    "Buscar en todas las transcripciones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search all transcripts"
+          }
+        }
+      }
+    },
+    "Buscar palabras en la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search words in this session"
+          }
+        }
+      }
+    },
+    "Buscar este término en la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search this term in the session"
+          }
+        }
+      }
+    },
+    "Importar audio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import audio"
+          }
+        }
+      }
+    },
+    "Importar audio…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import audio…"
+          }
+        }
+      }
+    },
+    "Iniciar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "Iniciar captura": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start capture"
+          }
+        }
+      }
+    },
+    "Preparando…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing…"
+          }
+        }
+      }
+    },
+    "Preparando": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing"
+          }
+        }
+      }
+    },
+    "Listo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready"
+          }
+        }
+      }
+    },
+    "Capturando": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recording"
+          }
+        }
+      }
+    },
+    "En pausa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paused"
+          }
+        }
+      }
+    },
+    "Finalizando": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finishing"
+          }
+        }
+      }
+    },
+    "Importando audio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importing audio"
+          }
+        }
+      }
+    },
+    "Requiere atención": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Needs attention"
+          }
+        }
+      }
+    },
+    "Pausar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        }
+      }
+    },
+    "Reanudar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume"
+          }
+        }
+      }
+    },
+    "Detener": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        }
+      }
+    },
+    "Detener y resumir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop and summarize"
+          }
+        }
+      }
+    },
+    "Cancelar importación": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel import"
+          }
+        }
+      }
+    },
+    "Abrir ventana": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open window"
+          }
+        }
+      }
+    },
+    "Salir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit"
+          }
+        }
+      }
+    },
+    "Sistema": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        }
+      }
+    },
+    "Micrófono": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Microphone"
+          }
+        }
+      }
+    },
+    "Archivo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        }
+      }
+    },
+    "Fuente": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source"
+          }
+        }
+      }
+    },
+    "Todo el sistema": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entire system"
+          }
+        }
+      }
+    },
+    "Todas las salidas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All outputs"
+          }
+        }
+      }
+    },
+    "Aplicación cerrada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Application closed"
+          }
+        }
+      }
+    },
+    "Plantilla": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Template"
+          }
+        }
+      }
+    },
+    "Reunión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meeting"
+          }
+        }
+      }
+    },
+    "Clase": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Class"
+          }
+        }
+      }
+    },
+    "Video o podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video or podcast"
+          }
+        }
+      }
+    },
+    "Añadir contexto de la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add session context"
+          }
+        }
+      }
+    },
+    "Editar contexto de la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit session context"
+          }
+        }
+      }
+    },
+    "Contexto de la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session context"
+          }
+        }
+      }
+    },
+    "Orienta el resumen; los hechos deben aparecer en la transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guide the summary; facts must appear in the transcript."
+          }
+        }
+      }
+    },
+    "Objetivo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objective"
+          }
+        }
+      }
+    },
+    "Temario": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agenda"
+          }
+        }
+      }
+    },
+    "Glosario": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glossary"
+          }
+        }
+      }
+    },
+    "Objetivo: 250 caracteres · temario: 600 · glosario: 350": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objective: 250 characters · agenda: 600 · glossary: 350"
+          }
+        }
+      }
+    },
+    "Guardar contexto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save context"
+          }
+        }
+      }
+    },
+    "Cancelar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Guardar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "Configuración": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "Configuración…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings…"
+          }
+        }
+      }
+    },
+    "Ajustes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "Audio en tu Mac": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio on your Mac"
+          }
+        }
+      }
+    },
+    "Procesamiento local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local processing"
+          }
+        }
+      }
+    },
+    "Audio local · Google AI opcional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local audio · optional Google AI"
+          }
+        }
+      }
+    },
+    "Audio guardado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio saved"
+          }
+        }
+      }
+    },
+    "Audio sin guardar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio not saved"
+          }
+        }
+      }
+    },
+    "Memoria bajo presión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memory under pressure"
+          }
+        }
+      }
+    },
+    "Creado por Sebastián Pastén F.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Created by Sebastián Pastén F."
+          }
+        }
+      }
+    },
+    "Transformando sonido en conocimiento.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turning sound into knowledge."
+          }
+        }
+      }
+    },
+    "Marcar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark"
+          }
+        }
+      }
+    },
+    "Añadir marcador": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add bookmark"
+          }
+        }
+      }
+    },
+    "Marcar este momento · ⌘⇧M": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark this moment · ⌘⇧M"
+          }
+        }
+      }
+    },
+    "Marcar este fragmento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark this segment"
+          }
+        }
+      }
+    },
+    "Seguir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow"
+          }
+        }
+      }
+    },
+    "Parcial": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partial"
+          }
+        }
+      }
+    },
+    "Posible eco": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Possible echo"
+          }
+        }
+      }
+    },
+    "Marcadores y notas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmarks and notes"
+          }
+        }
+      }
+    },
+    "Sin marcadores en esta página.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bookmarks on this page."
+          }
+        }
+      }
+    },
+    "Añadir nota…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a note…"
+          }
+        }
+      }
+    },
+    "Ir al momento marcado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to bookmarked moment"
+          }
+        }
+      }
+    },
+    "Eliminar marcador": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete bookmark"
+          }
+        }
+      }
+    },
+    "¿Eliminar este marcador y su nota?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this bookmark and its note?"
+          }
+        }
+      }
+    },
+    "Anteriores": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous"
+          }
+        }
+      }
+    },
+    "Siguientes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        }
+      }
+    },
+    "Más recientes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Most recent"
+          }
+        }
+      }
+    },
+    "Vista paginada de 300 fragmentos. Exporta para obtener el documento completo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paginated view of 300 segments. Export for the complete document."
+          }
+        }
+      }
+    },
+    "Términos frecuentes · muestra de esta vista": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frequent terms · sample of this view"
+          }
+        }
+      }
+    },
+    "Hasta 300 fragmentos y 100.000 caracteres; frecuencia, no importancia semántica": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up to 300 segments and 100,000 characters; frequency, not semantic importance"
+          }
+        }
+      }
+    },
+    "Copiar fragmento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy segment"
+          }
+        }
+      }
+    },
+    "Copiar texto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy text"
+          }
+        }
+      }
+    },
+    "Copiado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied"
+          }
+        }
+      }
+    },
+    "Copiar el informe con formato para Word o Pages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy the formatted report for Word or Pages"
+          }
+        }
+      }
+    },
+    "Actualizar resumen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update summary"
+          }
+        }
+      }
+    },
+    "Rehacer desde la transcripción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebuild from transcript"
+          }
+        }
+      }
+    },
+    "Ejecutiva": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Executive"
+          }
+        }
+      }
+    },
+    "Completa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full"
+          }
+        }
+      }
+    },
+    "Vista": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View"
+          }
+        }
+      }
+    },
+    "Usar Google AI para esta sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use Google AI for this session"
+          }
+        }
+      }
+    },
+    "Al resumir se enviará texto y contexto a Google; el audio permanece en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summarizing sends text and context to Google; audio stays on this Mac."
+          }
+        }
+      }
+    },
+    "Copiar y exportar incluyen el informe completo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy and export include the full report."
+          }
+        }
+      }
+    },
+    "Copiar y exportar incluyen el registro completo de esta sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy and export include the complete session record."
+          }
+        }
+      }
+    },
+    "Cada icono de cita permite revisar el fragmento original.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each citation icon opens the original segment."
+          }
+        }
+      }
+    },
+    "Las ideas toman forma": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ideas take shape"
+          }
+        }
+      }
+    },
+    "Ver evidencia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View evidence"
+          }
+        }
+      }
+    },
+    "Evidencia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence"
+          }
+        }
+      }
+    },
+    "Ir al fragmento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to segment"
+          }
+        }
+      }
+    },
+    "Tarea": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Task"
+          }
+        }
+      }
+    },
+    "Responsable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Owner"
+          }
+        }
+      }
+    },
+    "Fecha": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
+          }
+        }
+      }
+    },
+    "Tema de la reunión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meeting topic"
+          }
+        }
+      }
+    },
+    "Resumen general": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview"
+          }
+        }
+      }
+    },
+    "Ideas principales": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key ideas"
+          }
+        }
+      }
+    },
+    "Puntos clave": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key points"
+          }
+        }
+      }
+    },
+    "Acuerdos y decisiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agreements and decisions"
+          }
+        }
+      }
+    },
+    "Tareas pendientes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Action items"
+          }
+        }
+      }
+    },
+    "Compromisos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commitments"
+          }
+        }
+      }
+    },
+    "Conceptos relevantes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relevant concepts"
+          }
+        }
+      }
+    },
+    "Preguntas abiertas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open questions"
+          }
+        }
+      }
+    },
+    "Conclusiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conclusions"
+          }
+        }
+      }
+    },
+    "No especificado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not specified"
+          }
+        }
+      }
+    },
+    "Exportar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export"
+          }
+        }
+      }
+    },
+    "Exportar…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export…"
+          }
+        }
+      }
+    },
+    "Exportar sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export session"
+          }
+        }
+      }
+    },
+    "Formato": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format"
+          }
+        }
+      }
+    },
+    "Transcripción completa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full transcript"
+          }
+        }
+      }
+    },
+    "Anexo de evidencias": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evidence appendix"
+          }
+        }
+      }
+    },
+    "JSON conserva las citas y referencias estructuradas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JSON preserves quotes and structured references."
+          }
+        }
+      }
+    },
+    "Las citas van en un anexo. PDF y Markdown incluyen enlaces desde el resumen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quotes appear in an appendix. PDF and Markdown link to them from the summary."
+          }
+        }
+      }
+    },
+    "Eliminar sesión…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete session…"
+          }
+        }
+      }
+    },
+    "¿Eliminar la sesión?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this session?"
+          }
+        }
+      }
+    },
+    "Eliminar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "Se eliminarán la transcripción, los resúmenes y cualquier audio guardado de esta sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The transcript, summaries and any audio saved for this session will be deleted."
+          }
+        }
+      }
+    },
+    "Escribe al menos dos caracteres.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter at least two characters."
+          }
+        }
+      }
+    },
+    "Sin coincidencias.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matches."
+          }
+        }
+      }
+    },
+    "Índice del historial en espera durante la captura.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History indexing paused during recording."
+          }
+        }
+      }
+    },
+    "Preparando el índice del historial…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing the history index…"
+          }
+        }
+      }
+    },
+    "Escuchando…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening…"
+          }
+        }
+      }
+    },
+    "Listo para escuchar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready to listen"
+          }
+        }
+      }
+    },
+    "El texto aparecerá al reconocer voz.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text will appear when speech is recognized."
+          }
+        }
+      }
+    },
+    "Reproduce audio, elige una fuente y pulsa Iniciar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play audio, choose a source and press Start."
+          }
+        }
+      }
+    },
+    "Inteligencia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intelligence"
+          }
+        }
+      }
+    },
+    "Reconocimiento de voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speech recognition"
+          }
+        }
+      }
+    },
+    "Motor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engine"
+          }
+        }
+      }
+    },
+    "Automático: Apple → Parakeet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic: Apple → Parakeet"
+          }
+        }
+      }
+    },
+    "Idioma de Apple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple language"
+          }
+        }
+      }
+    },
+    "Español": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Español"
+          }
+        }
+      }
+    },
+    "English": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        }
+      }
+    },
+    "Parakeet detecta el idioma automáticamente. SpeechTranscriber de macOS 26 usa el idioma seleccionado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet detects language automatically. macOS 26 SpeechTranscriber uses the selected language."
+          }
+        }
+      }
+    },
+    "Plantilla para nuevas sesiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Template for new sessions"
+          }
+        }
+      }
+    },
+    "Motor local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local engine"
+          }
+        }
+      }
+    },
+    "MLX opcional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional MLX"
+          }
+        }
+      }
+    },
+    "Actualizar cada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update every"
+          }
+        }
+      }
+    },
+    "1 minuto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 minute"
+          }
+        }
+      }
+    },
+    "3 minutos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 minutes"
+          }
+        }
+      }
+    },
+    "5 minutos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 minutes"
+          }
+        }
+      }
+    },
+    "10 minutos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 minutes"
+          }
+        }
+      }
+    },
+    "Si se acumula mucho texto, el resumen puede adelantarse después de un minuto. Los silencios no generan inferencias.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If text builds up, summarization may start after one minute. Silence does not trigger inference."
+          }
+        }
+      }
+    },
+    "Comprobar disponibilidad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check availability"
+          }
+        }
+      }
+    },
+    "Google AI · opcional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google AI · optional"
+          }
+        }
+      }
+    },
+    "Google AI · externo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google AI · external"
+          }
+        }
+      }
+    },
+    "Usar Google AI para resumir nuevas sesiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use Google AI to summarize new sessions"
+          }
+        }
+      }
+    },
+    "Al seleccionarlo se envían fragmentos de transcripción, contexto y resúmenes previos a Google. El reconocimiento de voz y el audio permanecen en el Mac. Requiere Internet y utiliza la cuota de tu proyecto de Google.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled, transcript segments, context and previous summaries are sent to Google. Speech recognition and audio stay on your Mac. Internet access and your Google project quota are required."
+          }
+        }
+      }
+    },
+    "Las sesiones anteriores conservan su motor. Puedes seleccionar Google AI en el panel Resumen de cada sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Existing sessions keep their engine. Choose Google AI in each session's Summary panel."
+          }
+        }
+      }
+    },
+    "Crear o administrar una clave en Google AI Studio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create or manage a key in Google AI Studio"
+          }
+        }
+      }
+    },
+    "Credenciales de este Mac": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credentials on this Mac"
+          }
+        }
+      }
+    },
+    "Reemplazar clave API": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace API key"
+          }
+        }
+      }
+    },
+    "Clave API de Google AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google AI API key"
+          }
+        }
+      }
+    },
+    "Guardar en el Llavero": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save in Keychain"
+          }
+        }
+      }
+    },
+    "Eliminar clave": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete key"
+          }
+        }
+      }
+    },
+    "Hay una clave guardada en el Llavero. No se incluye en sesiones ni exportaciones.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A key is saved in Keychain. It is excluded from sessions and exports."
+          }
+        }
+      }
+    },
+    "Todavía no hay una clave guardada.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No key has been saved yet."
+          }
+        }
+      }
+    },
+    "Modelo y conexión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model and connection"
+          }
+        }
+      }
+    },
+    "Modelo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model"
+          }
+        }
+      }
+    },
+    "Probar conexión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test connection"
+          }
+        }
+      }
+    },
+    "Aplicar a la sesión seleccionada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply to selected session"
+          }
+        }
+      }
+    },
+    "Probar conexión consulta el modelo sin enviar transcripciones. Actualizar resumen aplica los cambios al contenido de la sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test connection checks the model without sending transcripts. Update summary applies changes to the session content."
+          }
+        }
+      }
+    },
+    "Audio y memoria": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio and memory"
+          }
+        }
+      }
+    },
+    "Dispositivos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devices"
+          }
+        }
+      }
+    },
+    "Predeterminado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default"
+          }
+        }
+      }
+    },
+    "Salida capturada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Captured output"
+          }
+        }
+      }
+    },
+    "Privacidad y almacenamiento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy and storage"
+          }
+        }
+      }
+    },
+    "Guardar audio de próximas sesiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save audio for future sessions"
+          }
+        }
+      }
+    },
+    "Desactivado por defecto. El audio opcional se escribe en disco por fuente, con un archivo de sincronización.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off by default. Optional audio is written to disk by source, with a synchronization file."
+          }
+        }
+      }
+    },
+    "Abrir almacenamiento local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open local storage"
+          }
+        }
+      }
+    },
+    "Rendimiento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance"
+          }
+        }
+      }
+    },
+    "Posponer resúmenes con presión de recursos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Defer summaries under resource pressure"
+          }
+        }
+      }
+    },
+    "300 fragmentos, 120 hallazgos por página y una generación de resumen a la vez. Los finales pendientes se recuperan cuando baja la presión o al volver a abrir PAIMON.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "300 segments, 120 findings per page and one summary generation at a time. Pending final summaries resume when pressure drops or PAIMON reopens."
+          }
+        }
+      }
+    },
+    "Los tiempos, errores y recursos del resumen se registran solo en SQLite local; no incluyen texto ni audio.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary timing, errors and resources are logged only in local SQLite, without text or audio."
+          }
+        }
+      }
+    },
+    "Modelos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Models"
+          }
+        }
+      }
+    },
+    "Recursos de Apple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple resources"
+          }
+        }
+      }
+    },
+    "Autorizar descarga del idioma seleccionado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authorize download of selected language"
+          }
+        }
+      }
+    },
+    "Las descargas requieren autorización. Apple Intelligence se configura desde Ajustes del Sistema. Google AI solo usa red cuando se activa explícitamente.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads require authorization. Set up Apple Intelligence in System Settings. Google AI uses the network only when explicitly enabled."
+          }
+        }
+      }
+    },
+    "FluidAudio · instalación opcional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FluidAudio · optional setup"
+          }
+        }
+      }
+    },
+    "Carpeta Parakeet Redux": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parakeet Redux folder"
+          }
+        }
+      }
+    },
+    "Ejecuta script/prepare_fluid.sh para compilar el motor. Los modelos se preparan por separado y no se descargan al iniciar una sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run script/prepare_fluid.sh to build the engine. Models are prepared separately and are not downloaded when a session starts."
+          }
+        }
+      }
+    },
+    "MLX · instalación opcional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MLX · optional setup"
+          }
+        }
+      }
+    },
+    "Python de MLX": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MLX Python"
+          }
+        }
+      }
+    },
+    "Modelo cuantizado local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local quantized model"
+          }
+        }
+      }
+    },
+    "Instalación explícita con script/prepare_mlx.sh. Recomendado: Qwen2.5 1.5B Instruct 4 bit. MLX usa GPU Metal; no ANE.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explicit setup with script/prepare_mlx.sh. Suggested model: Qwen2.5 1.5B Instruct 4-bit. MLX uses the Metal GPU, not ANE."
+          }
+        }
+      }
+    },
+    "Elegir…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose…"
+          }
+        }
+      }
+    },
+    "Apariencia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        }
+      }
+    },
+    "Idioma de la interfaz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interface language"
+          }
+        }
+      }
+    },
+    "Idioma": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        }
+      }
+    },
+    "No cambia el idioma de transcripción ni traduce las sesiones guardadas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This does not change speech recognition language or translate saved sessions."
+          }
+        }
+      }
+    },
+    "Paleta de la aplicación": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App palette"
+          }
+        }
+      }
+    },
+    "Elige un acento. Los fondos y el texto siguen la apariencia clara u oscura de macOS.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose an accent. Backgrounds and text follow macOS light or dark appearance."
+          }
+        }
+      }
+    },
+    "Captura, avisos y errores conservan sus colores de estado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recording, warnings and errors keep their status colors."
+          }
+        }
+      }
+    },
+    "Petróleo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Petroleum"
+          }
+        }
+      }
+    },
+    "Salvia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sage"
+          }
+        }
+      }
+    },
+    "Cobre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copper"
+          }
+        }
+      }
+    },
+    "Grafito": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graphite"
+          }
+        }
+      }
+    },
+    "Apoyar el desarrollo en Ko-fi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Support development on Ko-fi"
+          }
+        }
+      }
+    },
+    "Abrir Ko-fi en tu navegador": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Ko-fi in your browser"
+          }
+        }
+      }
+    },
+    "Tu aporte es voluntario y ayuda a mantener el proyecto.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your contribution is optional and helps maintain the project."
+          }
+        }
+      }
+    },
+    "Usa audífonos para evitar que el micrófono vuelva a captar los altavoces. Las dos fuentes se guardan identificadas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use headphones to prevent the microphone from capturing the speakers again. Both sources retain their identification."
+          }
+        }
+      }
+    },
+    "Arrastra para ajustar el ancho de los paneles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag to resize the panels"
+          }
+        }
+      }
+    },
+    "Divisor entre transcripción y resumen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Divider between transcript and summary"
+          }
+        }
+      }
+    },
+    "Síntesis final guardada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final summary saved"
+          }
+        }
+      }
+    },
+    "Resumen parcial guardado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partial summary saved"
+          }
+        }
+      }
+    },
+    "El resumen aparecerá cuando haya texto definitivo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A summary will appear once final text is available."
+          }
+        }
+      }
+    },
+    "Síntesis final actualizada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final summary updated"
+          }
+        }
+      }
+    },
+    "No hay hallazgos con evidencia todavía": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No supported findings yet"
+          }
+        }
+      }
+    },
+    "Reconstruyendo desde la transcripción original…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rebuilding from the original transcript…"
+          }
+        }
+      }
+    },
+    "Resumen en espera; la transcripción permanece guardada.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary queued; the transcript remains saved."
+          }
+        }
+      }
+    },
+    "Síntesis en espera hasta que baje la presión de memoria.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final summary queued until memory pressure drops."
+          }
+        }
+      }
+    },
+    "Resumen pendiente: ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary pending: "
+          }
+        }
+      }
+    },
+    "Síntesis pendiente: ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final summary pending: "
+          }
+        }
+      }
+    },
+    "Generando resumen · ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generating summary · "
+          }
+        }
+      }
+    },
+    "Resumen actualizado · ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary updated · "
+          }
+        }
+      }
+    },
+    "Comprobando motor…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking engine…"
+          }
+        }
+      }
+    },
+    "Comprobando modelo…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking model…"
+          }
+        }
+      }
+    },
+    "Versión %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version %@"
+          }
+        }
+      }
+    },
+    "Página %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page %lld"
+          }
+        }
+      }
+    },
+    "%lld fragmentos pendientes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pending segments"
+          }
+        }
+      }
+    },
+    "%lld fragmentos por resumir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld segments to summarize"
+          }
+        }
+      }
+    },
+    "%lld resultados · máximo 50": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld results · up to 50"
+          }
+        }
+      }
+    },
+    "Hallazgos · página %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Findings · page %lld"
+          }
+        }
+      }
+    },
+    "Fuente de esta sesión: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source for this session: %@"
+          }
+        }
+      }
+    },
+    "Transcrito hasta %@ · resumido hasta %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcribed through %@ · summarized through %@"
+          }
+        }
+      }
+    },
+    "Leído %@ de %@ · transcripción local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read %@ of %@ · local transcription"
+          }
+        }
+      }
+    },
+    "Finalizando reconocimiento y guardado…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finishing speech recognition and saving…"
+          }
+        }
+      }
+    },
+    "El resumen se actualiza cada %lld minutos con citas de la transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summary updates every %lld minutes with transcript citations."
+          }
+        }
+      }
+    },
+    "SpeechTranscriber · recursos instalados": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SpeechTranscriber · resources installed"
+          }
+        }
+      }
+    },
+    "Apple · local · disponible": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple · local · available"
+          }
+        }
+      }
+    },
+    "MLX · local · disponible": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MLX · local · available"
+          }
+        }
+      }
+    },
+    "Paleta %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palette %@"
+          }
+        }
+      }
+    },
+    "voz detectada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "voice detected"
+          }
+        }
+      }
+    },
+    "sin actividad de voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no voice activity"
+          }
+        }
+      }
+    },
+    "%lld por ciento para transcripción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld percent for transcript"
+          }
+        }
+      }
+    },
+    "Ver evidencia · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View evidence · %@"
+          }
+        }
+      }
+    },
+    "Memoria del proceso; no incluye los servicios de modelos de Apple. Se actualiza cada cinco segundos con la ventana abierta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Process memory, excluding Apple model services. Updates every five seconds while the window is open."
+          }
+        }
+      }
+    },
+    "Google AI desactivado; procesamiento local.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google AI is off; processing locally."
+          }
+        }
+      }
+    },
+    "Clave disponible en el Llavero; conexión sin comprobar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key available in Keychain; connection not checked."
+          }
+        }
+      }
+    },
+    "Google AI activado; falta guardar una clave.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google AI is enabled; save a key to continue."
+          }
+        }
+      }
+    },
+    "Solo las sesiones que seleccionen Google AI enviarán texto.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only sessions using Google AI will send text."
+          }
+        }
+      }
+    },
+    "Clave guardada en el Llavero de este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key saved in this Mac’s Keychain."
+          }
+        }
+      }
+    },
+    "Clave eliminada del Llavero.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key removed from Keychain."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

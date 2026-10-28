@@ -33,6 +33,21 @@ private actor ImportTestEngine:TranscriptionEngine {
     func cancel() {}
 }
 
+@Test(.timeLimit(.minutes(1))) func importClosesEventsWhenInitialSaveFails() async throws {
+    let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:directory) }
+    let store=try SessionStore(directory:directory)
+    var session=Session(title:"Invalid initial save",settings:AppSettings()); session.duration = .nan
+    let pair=AsyncStream<PipelineEvent>.makeStream()
+    let fixture=URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Fixtures/spanish-synthetic.aiff")
+    await #expect(throws:EncodingError.self) {
+        _=try await AudioFileTranscriber.importSession(url:fixture,session:session,store:store,events:pair.continuation,engineOverride:ImportTestEngine())
+    }
+    var events=0
+    for await _ in pair.stream { events += 1 }
+    #expect(events==0)
+}
+
 @Test func sessionContextIsBoundedStableAndBackwardsCompatible() throws {
     let context=SessionContext(objective:String(repeating:"o",count:300),agenda:String(repeating:"a",count:900),glossary:String(repeating:"g",count:700))
     #expect(context.bounded.objective.count==250); #expect(context.bounded.agenda.count==600); #expect(context.bounded.glossary.count==350)

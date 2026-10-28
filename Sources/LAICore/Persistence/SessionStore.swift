@@ -8,7 +8,10 @@ public actor SessionStore {
         self.directory = directory ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("LocalAudioIntelligence", isDirectory: true)
         try FileManager.default.createDirectory(at: self.directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         var connection: OpaquePointer?
-        guard sqlite3_open_v2(self.directory.appendingPathComponent("sessions.sqlite").path, &connection, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, nil)==SQLITE_OK, let connection else { throw LAIError.message("No se pudo abrir SQLite") }
+        guard sqlite3_open_v2(self.directory.appendingPathComponent("sessions.sqlite").path, &connection, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, nil)==SQLITE_OK, let connection else {
+            if let connection { sqlite3_close(connection) }
+            throw LAIError.message("No se pudo abrir SQLite")
+        }
         db=connection
         sqlite3_busy_timeout(connection, 3000)
         sqlite3_create_function_v2(connection,"lai_contains",2,SQLITE_UTF8|SQLITE_DETERMINISTIC,nil,{ context,_,values in

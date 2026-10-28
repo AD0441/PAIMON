@@ -99,6 +99,13 @@ enum SummaryGrounding {
         return .init(kind:kind,text:text,segmentID:first.segmentID,quote:first.quote,start:first.start,end:first.end,owner:literal(owner),due:literal(due),additionalEvidence:Array(evidence.dropFirst()))
     }
     static func validate(_ draft:GroundedSummary,sources:[SummarySource],maximumPoints:Int) throws -> [Finding] {
+        // Reject an observed model disclaimer: instructions about proposals
+        // must not become a factual claim that the sources never made.
+        let overviewText=draft.overview.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)
+        let quoted=sources.flatMap(\.evidence).map(\.quote).joined(separator:"\n").folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)
+        for phrase in ["no tienen aprobacion explicita","no cuentan con aprobacion explicita","sin aprobacion explicita","no explicit approval","not been explicitly approved"] {
+            if overviewText.contains(phrase),!quoted.contains(phrase) { throw SummaryResponseError.insufficient }
+        }
         guard (35...650).contains(draft.overview.count),let overview=finding(kind:.overview,text:draft.overview,sources:sources) else { throw SummaryResponseError.insufficient }
         var result:[Finding]=[]
         if let topic=finding(kind:.topic,text:draft.title,sources:sources) { result.append(topic) }

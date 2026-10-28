@@ -1,171 +1,191 @@
-Building for debugging...
-[Using on-disk description]
-[1 / 10]
-[2 / 5] LAICoreTests-product
-[4 / 7] LAICoreTests-product
-[9 / 11] LAICoreTests-product
-[11 / 12]
-[12 / 15] LocalAudioIntelligence-product
-[14 / 17] LocalAudioIntelligence-product
-[15 / 17] LocalAudioIntelligence-product
-[17 / 19] LocalAudioIntelligence-product
-Build complete! (22,97 s)
-Test Suite 'All tests' started at 2026-10-21 11:45:01.883.
-Test Suite 'All tests' passed at 2026-10-21 11:45:01.888.
-	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.004) seconds
+PAIMON 0.6.0 (13) · 2026-10-28
+Command: PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh
 ◇ Test run started.
 ↳ Testing Library Version: 2084
 ↳ Target Platform: arm64e-apple-macos14.0
-◇ Test googleRejectsTruncationBlockingAndOversizedReplies() started.
-◇ Test queuedCancellationDoesNotWaitForActiveInference() started.
-◇ Test fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators() started.
-◇ Test interruptedImportPreservesAlreadyRecognizedText() started.
-◇ Test exportFormatsAndSelection() started.
-◇ Test repeatedQueuedUpdatesCoalesceAndKeepTheFinalRequest() started.
-◇ Test disablingGoogleCancelsInFlightRequest() started.
-◇ Test nativeAudioImportProducesRealSpanishText() started.
-◇ Test googleRejectsEndpointInjection() started.
-◇ Test groundedSchemaRequiresAnOverviewAndUsesKnownAliases() started.
-◇ Test frequentTermsIgnoreAccentsPartialsAndEchoes() started.
-◇ Test googleOptInNeverChangesHistoricalSessionOrLegacyLocalBackend() started.
-◇ Test finalizedSpeechWaitsForPersistenceCapacityOrReportsFailure() started.
-◇ Test sessionContextIsBoundedStableAndBackwardsCompatible() started.
-◇ Test legacyIndexBackfillResumesAndIndexesNewRowsImmediately() started.
-◇ Test continuousConverterPreservesSamples() started.
 ◇ Test pendingEnglishDecisionCannotBorrowAnAgreementFromAnotherSentence() started.
-◇ Test schedulingDefersPressureAndSilenceButRespondsToVolume() started.
-◇ Test coordinatorCancellationRetainsCheckpointAndAllowsRecovery() started.
-◇ Test partialPresentationIsBoundedAndNeverReintroducesFinalizedText() started.
-◇ Test progressUsesPersistedCursorAndBackendChangeRebuilds() started.
-◇ Test googleRetryLimitAndLongServerWaitPreserveSafeErrors() started.
-◇ Test vadHysteresisAndPCMConversion() started.
-◇ Test deletingKeyWhileItIsBeingReadPreventsTransmission() started.
-◇ Test timestampFormats() started.
-◇ Test identicalTaskWordingDoesNotEraseDifferentExplicitOwnersOrDates() started.
-◇ Test titleOnlyDoesNotAdvanceSummaryCursor() started.
-◇ Test googleErrorsDoNotExposeServiceResponseAndDoNotRetry() started.
-◇ Test memoryPressureCancelsRunningAndQueuedRequestsWithoutDroppingFinalJobs() started.
-◇ Test differentPointsCanShareASourceAndPunctuationDoesNotDuplicateThem() started.
 ◇ Test integratedOverviewDoesNotCiteUnrelatedGreetingsOrMicrophoneProblems() started.
-◇ Test revokingGoogleDuringBackoffPreventsAnotherTransmission() started.
-◇ Test markdownEscapesSourceMarkupAndUsesEvidenceLinks() started.
-◇ Test persistenceSurvivesReopenAndDeletesAll() started.
+◇ Test progressUsesPersistedCursorAndBackendChangeRebuilds() started.
+◇ Test googleRejectsEndpointInjection() started.
 ◇ Test malformedSummaryExplainsRecoveryWithoutMissingDataMessage() started.
-◇ Test reportStructureSeparatesTasksAndOmitsEmptySections() started.
-◇ Test summarySchemaCanBeConstructed() started.
-◇ Test duplicateEvidenceMergesRephrasedTasks() started.
-◇ Test historicalFactMigrationIsResumableAndDoesNotRestoreAnotherTemplate() started.
-◇ Test unsupportedEvidenceAndInventedFieldsAreDiscarded() started.
-◇ Test sourceQuotesAreResolvedLocallyAndAllOverviewReferencesSurviveExports() started.
-◇ Test ringBoundedOverflowDownmixAndRecovery() started.
-◇ Test evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession() started.
-◇ Test explicitRebuildReplacesObsoleteFactsWithoutReimportingOldSnapshots() started.
-◇ Test copyableMeetingReportPreservesEvidenceFields() started.
-◇ Test audioImportPersistsFinalsAndBoundsPCMBuffers() started.
-◇ Test bookmarkExportsPageThroughAllNotesAndRespectSelection() started.
-◇ Test stopDuringManualSummaryProcessesTailAndFinalizesOnce() started.
-◇ Test finalJobsSurviveRelaunchAndCompleteWithTheSnapshotTransaction() started.
-◇ Test executiveViewSelectsExistingFindingsWithoutChangingEvidence() started.
-◇ Test oldSummaryVersionRebuildsTheOriginalOnce() started.
-◇ Test googleIsDisabledByDefaultAndMissingKeysNeverSendRequests() started.
-◇ Test pendingDecisionCannotBorrowAnAgreementFromAnotherSentence() started.
-◇ Test failedRebuildKeepsThePreviousRegisterUntilAValidBatchCommits() started.
-◇ Test pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex() started.
-◇ Test contextOverflowSplitsWithoutAdvancingPastFailedContent() started.
-◇ Test googleClientErrorsNeverTriggerAutomaticRetries() started.
-◇ Test ledgerRevisionsPreferNewerSnapshotsAndPreserveEarlierFacts() started.
-◇ Test googleConnectionProbeSendsNoTranscriptAndKeepsKeyOutOfURL() started.
-◇ Test interruptedValidationRestoresTheOriginalSettingsOnNextLoad() started.
-◇ Test failedSummaryPreservesCheckpointAndCanBeRetried() started.
-◇ Test durableRegisterKeepsOldDecisionsBeyondWorkingMemoryAndAcrossExports() started.
-◇ Test googleStructuredSummaryUsesOnlyTextAndOriginalEvidence() started.
-◇ Test unrelatedIntroCannotBackAClaim() started.
-◇ Test changingTemplateReprocessesOriginalWithoutExtraNormalPasses() started.
-◇ Test incompleteFindingDoesNotDiscardValidSiblings() started.
-◇ Test oldSettingsAndSessionsKeepTheirPreferences() started.
-◇ Test googleRetriesTemporaryServerFailuresWithBoundedBackoff() started.
-◇ Test historyPagesStayBoundedAndSupportUnicodeSearch() started.
-◇ Test longTaskRowsContinueAcrossPDFPagesWithoutLosingText() started.
-◇ Test hierarchicalSummaryAdvancesCursorAndFinalizes() started.
-◇ Test bookmarksPersistEditPaginateAndDeleteWithSession() started.
-◇ Test richReportPreservesBoldAndRealTableThroughRTF() started.
-◇ Test legacyFindingsDecodeWithTheirPrimaryEvidence() started.
 ◇ Test finalWithoutOverviewStaysPartialAndEarlierPointsArePreserved() started.
-✔ Test googleRejectsEndpointInjection() passed after 0.136 seconds.
-✔ Test frequentTermsIgnoreAccentsPartialsAndEchoes() passed after 0.136 seconds.
-✔ Test googleOptInNeverChangesHistoricalSessionOrLegacyLocalBackend() passed after 0.136 seconds.
-✔ Test sessionContextIsBoundedStableAndBackwardsCompatible() passed after 0.136 seconds.
-✔ Test schedulingDefersPressureAndSilenceButRespondsToVolume() passed after 0.136 seconds.
-✔ Test pendingEnglishDecisionCannotBorrowAnAgreementFromAnotherSentence() passed after 0.145 seconds.
-✔ Test groundedSchemaRequiresAnOverviewAndUsesKnownAliases() passed after 0.149 seconds.
-✔ Test timestampFormats() passed after 0.153 seconds.
-✔ Test identicalTaskWordingDoesNotEraseDifferentExplicitOwnersOrDates() passed after 0.153 seconds.
-✔ Test differentPointsCanShareASourceAndPunctuationDoesNotDuplicateThem() passed after 0.160 seconds.
-✔ Test integratedOverviewDoesNotCiteUnrelatedGreetingsOrMicrophoneProblems() passed after 0.161 seconds.
-✔ Test partialPresentationIsBoundedAndNeverReintroducesFinalizedText() passed after 0.161 seconds.
-✔ Test fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators() passed after 0.162 seconds.
-✔ Test malformedSummaryExplainsRecoveryWithoutMissingDataMessage() passed after 0.162 seconds.
-✔ Test unsupportedEvidenceAndInventedFieldsAreDiscarded() passed after 0.162 seconds.
-✔ Test summarySchemaCanBeConstructed() passed after 0.162 seconds.
-✔ Test ringBoundedOverflowDownmixAndRecovery() passed after 0.162 seconds.
-✔ Test persistenceSurvivesReopenAndDeletesAll() passed after 0.162 seconds.
-✔ Test reportStructureSeparatesTasksAndOmitsEmptySections() passed after 0.162 seconds.
-✔ Test vadHysteresisAndPCMConversion() passed after 0.162 seconds.
-✔ Test duplicateEvidenceMergesRephrasedTasks() passed after 0.162 seconds.
-✔ Test markdownEscapesSourceMarkupAndUsesEvidenceLinks() passed after 0.162 seconds.
-✔ Test copyableMeetingReportPreservesEvidenceFields() passed after 0.162 seconds.
-✔ Test continuousConverterPreservesSamples() passed after 0.162 seconds.
-✔ Test executiveViewSelectsExistingFindingsWithoutChangingEvidence() passed after 0.167 seconds.
-✔ Test googleIsDisabledByDefaultAndMissingKeysNeverSendRequests() passed after 0.168 seconds.
-✔ Test pendingDecisionCannotBorrowAnAgreementFromAnotherSentence() passed after 0.168 seconds.
-✔ Test finalJobsSurviveRelaunchAndCompleteWithTheSnapshotTransaction() passed after 0.169 seconds.
-✔ Test historicalFactMigrationIsResumableAndDoesNotRestoreAnotherTemplate() passed after 0.169 seconds.
-✔ Test interruptedValidationRestoresTheOriginalSettingsOnNextLoad() passed after 0.169 seconds.
-✔ Test unrelatedIntroCannotBackAClaim() passed after 0.169 seconds.
-✔ Test ledgerRevisionsPreferNewerSnapshotsAndPreserveEarlierFacts() passed after 0.170 seconds.
-✔ Test incompleteFindingDoesNotDiscardValidSiblings() passed after 0.169 seconds.
-✔ Test oldSettingsAndSessionsKeepTheirPreferences() passed after 0.169 seconds.
-✔ Test historyPagesStayBoundedAndSupportUnicodeSearch() passed after 0.204 seconds.
-✔ Test legacyFindingsDecodeWithTheirPrimaryEvidence() passed after 0.204 seconds.
-✔ Test bookmarksPersistEditPaginateAndDeleteWithSession() passed after 0.213 seconds.
-✔ Test googleRejectsTruncationBlockingAndOversizedReplies() passed after 0.240 seconds.
+◇ Test finalizedSpeechWaitsForPersistenceCapacityOrReportsFailure() started.
+◇ Test googleRejectsTruncationBlockingAndOversizedReplies() started.
+◇ Test changingTemplateReprocessesOriginalWithoutExtraNormalPasses() started.
+◇ Test stopDuringManualSummaryProcessesTailAndFinalizesOnce() started.
+◇ Test coordinatorCancellationRetainsCheckpointAndAllowsRecovery() started.
+◇ Test failedSummaryPreservesCheckpointAndCanBeRetried() started.
+◇ Test identicalTaskWordingDoesNotEraseDifferentExplicitOwnersOrDates() started.
+◇ Test oldSettingsAndSessionsKeepTheirPreferences() started.
+◇ Test bookmarkExportsPageThroughAllNotesAndRespectSelection() started.
+◇ Test revokingGoogleDuringBackoffPreventsAnotherTransmission() started.
+◇ Test evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession() started.
+◇ Test fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators() started.
+◇ Test contextOverflowSplitsWithoutAdvancingPastFailedContent() started.
+◇ Test reportStructureSeparatesTasksAndOmitsEmptySections() started.
+◇ Test interruptedImportPreservesAlreadyRecognizedText() started.
+◇ Test ringBoundedOverflowDownmixAndRecovery() started.
+◇ Test durableRegisterKeepsOldDecisionsBeyondWorkingMemoryAndAcrossExports() started.
+◇ Test failedRebuildKeepsThePreviousRegisterUntilAValidBatchCommits() started.
+◇ Test hierarchicalSummaryAdvancesCursorAndFinalizes() started.
+◇ Test schedulingDefersPressureAndSilenceButRespondsToVolume() started.
+◇ Test unsupportedEvidenceAndInventedFieldsAreDiscarded() started.
+◇ Test historyPagesStayBoundedAndSupportUnicodeSearch() started.
+◇ Test frequentTermsIgnoreAccentsPartialsAndEchoes() started.
+◇ Test ledgerRevisionsPreferNewerSnapshotsAndPreserveEarlierFacts() started.
+◇ Test groundedSchemaRequiresAnOverviewAndUsesKnownAliases() started.
+◇ Test longTaskRowsContinueAcrossPDFPagesWithoutLosingText() started.
+◇ Test disablingGoogleCancelsInFlightRequest() started.
+◇ Test overviewCannotInventAnApprovalDisclaimer() started.
+◇ Test pendingDecisionCannotBorrowAnAgreementFromAnotherSentence() started.
+◇ Test vadHysteresisAndPCMConversion() started.
+◇ Test sourceQuotesAreResolvedLocallyAndAllOverviewReferencesSurviveExports() started.
+◇ Test summarySchemaCanBeConstructed() started.
+◇ Test richReportPreservesBoldAndRealTableThroughRTF() started.
+◇ Test incompleteFindingDoesNotDiscardValidSiblings() started.
+◇ Test sessionContextIsBoundedStableAndBackwardsCompatible() started.
+◇ Test googleConnectionProbeSendsNoTranscriptAndKeepsKeyOutOfURL() started.
+◇ Test timestampFormats() started.
+◇ Test differentPointsCanShareASourceAndPunctuationDoesNotDuplicateThem() started.
+◇ Test googleStructuredSummaryUsesOnlyTextAndOriginalEvidence() started.
+◇ Test partialPresentationIsBoundedAndNeverReintroducesFinalizedText() started.
+◇ Test continuousConverterPreservesSamples() started.
+◇ Test googleClientErrorsNeverTriggerAutomaticRetries() started.
+◇ Test importClosesEventsWhenInitialSaveFails() started.
+◇ Test historicalFactMigrationIsResumableAndDoesNotRestoreAnotherTemplate() started.
+◇ Test googleRetryLimitAndLongServerWaitPreserveSafeErrors() started.
+◇ Test googleRetriesTemporaryServerFailuresWithBoundedBackoff() started.
+◇ Test repeatedQueuedUpdatesCoalesceAndKeepTheFinalRequest() started.
+◇ Test interruptedValidationRestoresTheOriginalSettingsOnNextLoad() started.
+◇ Test executiveViewSelectsExistingFindingsWithoutChangingEvidence() started.
+◇ Test googleIsDisabledByDefaultAndMissingKeysNeverSendRequests() started.
+◇ Test markdownEscapesSourceMarkupAndUsesEvidenceLinks() started.
+◇ Test legacyIndexBackfillResumesAndIndexesNewRowsImmediately() started.
+◇ Test pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex() started.
+◇ Test unrelatedIntroCannotBackAClaim() started.
+◇ Test titleOnlyDoesNotAdvanceSummaryCursor() started.
+◇ Test audioImportPersistsFinalsAndBoundsPCMBuffers() started.
+◇ Test googleErrorsDoNotExposeServiceResponseAndDoNotRetry() started.
+◇ Test oldSummaryVersionRebuildsTheOriginalOnce() started.
+◇ Test legacyFindingsDecodeWithTheirPrimaryEvidence() started.
+◇ Test duplicateEvidenceMergesRephrasedTasks() started.
+◇ Test persistenceSurvivesReopenAndDeletesAll() started.
+◇ Test bookmarksPersistEditPaginateAndDeleteWithSession() started.
+◇ Test memoryPressureCancelsRunningAndQueuedRequestsWithoutDroppingFinalJobs() started.
+◇ Test googleOptInNeverChangesHistoricalSessionOrLegacyLocalBackend() started.
+◇ Test deletingKeyWhileItIsBeingReadPreventsTransmission() started.
+◇ Test nativeAudioImportProducesRealSpanishText() started.
+◇ Test queuedCancellationDoesNotWaitForActiveInference() started.
+◇ Test copyableMeetingReportPreservesEvidenceFields() started.
+◇ Test finalJobsSurviveRelaunchAndCompleteWithTheSnapshotTransaction() started.
+◇ Test explicitRebuildReplacesObsoleteFactsWithoutReimportingOldSnapshots() started.
+◇ Test exportFormatsAndSelection() started.
+✔ Test malformedSummaryExplainsRecoveryWithoutMissingDataMessage() passed after 0.097 seconds.
+✔ Test pendingEnglishDecisionCannotBorrowAnAgreementFromAnotherSentence() passed after 0.107 seconds.
+✔ Test googleRejectsEndpointInjection() passed after 0.109 seconds.
+✔ Test integratedOverviewDoesNotCiteUnrelatedGreetingsOrMicrophoneProblems() passed after 0.113 seconds.
+✔ Test identicalTaskWordingDoesNotEraseDifferentExplicitOwnersOrDates() passed after 0.128 seconds.
+✔ Test oldSettingsAndSessionsKeepTheirPreferences() passed after 0.139 seconds.
+✔ Test ringBoundedOverflowDownmixAndRecovery() passed after 0.139 seconds.
+✔ Test fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators() passed after 0.151 seconds.
+✔ Test schedulingDefersPressureAndSilenceButRespondsToVolume() passed after 0.151 seconds.
+✔ Test unsupportedEvidenceAndInventedFieldsAreDiscarded() passed after 0.153 seconds.
+✔ Test reportStructureSeparatesTasksAndOmitsEmptySections() passed after 0.154 seconds.
+✔ Test frequentTermsIgnoreAccentsPartialsAndEchoes() passed after 0.154 seconds.
+✔ Test groundedSchemaRequiresAnOverviewAndUsesKnownAliases() passed after 0.155 seconds.
+✔ Test overviewCannotInventAnApprovalDisclaimer() passed after 0.155 seconds.
+✔ Test pendingDecisionCannotBorrowAnAgreementFromAnotherSentence() passed after 0.155 seconds.
+✔ Test summarySchemaCanBeConstructed() passed after 0.155 seconds.
+✔ Test ledgerRevisionsPreferNewerSnapshotsAndPreserveEarlierFacts() passed after 0.155 seconds.
+✔ Test incompleteFindingDoesNotDiscardValidSiblings() passed after 0.155 seconds.
+✔ Test differentPointsCanShareASourceAndPunctuationDoesNotDuplicateThem() passed after 0.155 seconds.
+✔ Test timestampFormats() passed after 0.155 seconds.
+✔ Test sessionContextIsBoundedStableAndBackwardsCompatible() passed after 0.155 seconds.
+✔ Test vadHysteresisAndPCMConversion() passed after 0.174 seconds.
+✔ Test continuousConverterPreservesSamples() passed after 0.176 seconds.
+✔ Test executiveViewSelectsExistingFindingsWithoutChangingEvidence() passed after 0.179 seconds.
+✔ Test googleIsDisabledByDefaultAndMissingKeysNeverSendRequests() passed after 0.179 seconds.
+✔ Test partialPresentationIsBoundedAndNeverReintroducesFinalizedText() passed after 0.179 seconds.
+✔ Test markdownEscapesSourceMarkupAndUsesEvidenceLinks() passed after 0.179 seconds.
+✔ Test interruptedValidationRestoresTheOriginalSettingsOnNextLoad() passed after 0.179 seconds.
+✔ Test unrelatedIntroCannotBackAClaim() passed after 0.179 seconds.
+✔ Test historyPagesStayBoundedAndSupportUnicodeSearch() passed after 0.180 seconds.
+✔ Test historicalFactMigrationIsResumableAndDoesNotRestoreAnotherTemplate() passed after 0.181 seconds.
+✔ Test legacyFindingsDecodeWithTheirPrimaryEvidence() passed after 0.179 seconds.
+✔ Test duplicateEvidenceMergesRephrasedTasks() passed after 0.179 seconds.
+✔ Test googleOptInNeverChangesHistoricalSessionOrLegacyLocalBackend() passed after 0.188 seconds.
+✔ Test copyableMeetingReportPreservesEvidenceFields() passed after 0.192 seconds.
+✔ Test persistenceSurvivesReopenAndDeletesAll() passed after 0.192 seconds.
+✔ Test finalJobsSurviveRelaunchAndCompleteWithTheSnapshotTransaction() passed after 0.192 seconds.
+✔ Test bookmarksPersistEditPaginateAndDeleteWithSession() passed after 0.197 seconds.
+✔ Test googleRejectsTruncationBlockingAndOversizedReplies() passed after 0.214 seconds.
+✔ Test googleConnectionProbeSendsNoTranscriptAndKeepsKeyOutOfURL() passed after 0.236 seconds.
+✔ Test failedRebuildKeepsThePreviousRegisterUntilAValidBatchCommits() passed after 0.236 seconds.
+✔ Test interruptedImportPreservesAlreadyRecognizedText() passed after 0.246 seconds.
+✔ Test googleRetriesTemporaryServerFailuresWithBoundedBackoff() passed after 0.246 seconds.
+✔ Test googleStructuredSummaryUsesOnlyTextAndOriginalEvidence() passed after 0.246 seconds.
 ✔ Test googleErrorsDoNotExposeServiceResponseAndDoNotRetry() passed after 0.244 seconds.
-✔ Test explicitRebuildReplacesObsoleteFactsWithoutReimportingOldSnapshots() passed after 0.244 seconds.
-✔ Test failedRebuildKeepsThePreviousRegisterUntilAValidBatchCommits() passed after 0.244 seconds.
-✔ Test googleConnectionProbeSendsNoTranscriptAndKeepsKeyOutOfURL() passed after 0.244 seconds.
-✔ Test titleOnlyDoesNotAdvanceSummaryCursor() passed after 0.250 seconds.
-✔ Test googleRetriesTemporaryServerFailuresWithBoundedBackoff() passed after 0.249 seconds.
-✔ Test interruptedImportPreservesAlreadyRecognizedText() passed after 0.250 seconds.
-✔ Test audioImportPersistsFinalsAndBoundsPCMBuffers() passed after 0.250 seconds.
-✔ Test contextOverflowSplitsWithoutAdvancingPastFailedContent() passed after 0.256 seconds.
-✔ Test googleStructuredSummaryUsesOnlyTextAndOriginalEvidence() passed after 0.256 seconds.
-✔ Test googleRetryLimitAndLongServerWaitPreserveSafeErrors() passed after 0.267 seconds.
-✔ Test progressUsesPersistedCursorAndBackendChangeRebuilds() passed after 0.267 seconds.
-✔ Test oldSummaryVersionRebuildsTheOriginalOnce() passed after 0.272 seconds.
-✔ Test failedSummaryPreservesCheckpointAndCanBeRetried() passed after 0.287 seconds.
-✔ Test changingTemplateReprocessesOriginalWithoutExtraNormalPasses() passed after 0.288 seconds.
-✔ Test deletingKeyWhileItIsBeingReadPreventsTransmission() passed after 0.290 seconds.
-✔ Test finalizedSpeechWaitsForPersistenceCapacityOrReportsFailure() passed after 0.290 seconds.
-✔ Test disablingGoogleCancelsInFlightRequest() passed after 0.291 seconds.
-✔ Test revokingGoogleDuringBackoffPreventsAnotherTransmission() passed after 0.291 seconds.
-✔ Test finalWithoutOverviewStaysPartialAndEarlierPointsArePreserved() passed after 0.291 seconds.
-✔ Test legacyIndexBackfillResumesAndIndexesNewRowsImmediately() passed after 0.292 seconds.
-✔ Test googleClientErrorsNeverTriggerAutomaticRetries() passed after 0.291 seconds.
-✔ Test queuedCancellationDoesNotWaitForActiveInference() passed after 0.295 seconds.
-✔ Test coordinatorCancellationRetainsCheckpointAndAllowsRecovery() passed after 0.295 seconds.
-✔ Test repeatedQueuedUpdatesCoalesceAndKeepTheFinalRequest() passed after 0.295 seconds.
-✔ Test memoryPressureCancelsRunningAndQueuedRequestsWithoutDroppingFinalJobs() passed after 0.295 seconds.
-✔ Test stopDuringManualSummaryProcessesTailAndFinalizesOnce() passed after 0.295 seconds.
-✔ Test hierarchicalSummaryAdvancesCursorAndFinalizes() passed after 0.319 seconds.
-✔ Test evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession() passed after 0.323 seconds.
-✔ Test richReportPreservesBoldAndRealTableThroughRTF() passed after 0.342 seconds.
-✔ Test longTaskRowsContinueAcrossPDFPagesWithoutLosingText() passed after 0.386 seconds.
-✔ Test sourceQuotesAreResolvedLocallyAndAllOverviewReferencesSurviveExports() passed after 0.389 seconds.
-2026-10-21 11:45:02.377 swiftpm-testing-helper[58299:9698497] attributedStringScaled count: 1
-2026-10-21 11:45:02.377 swiftpm-testing-helper[58299:9698497] attributedStringScaled i: 0
-✔ Test bookmarkExportsPageThroughAllNotesAndRespectSelection() passed after 0.422 seconds.
-✔ Test pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex() passed after 0.440 seconds.
-✔ Test exportFormatsAndSelection() passed after 0.450 seconds.
-✔ Test durableRegisterKeepsOldDecisionsBeyondWorkingMemoryAndAcrossExports() passed after 0.588 seconds.
-✔ Test nativeAudioImportProducesRealSpanishText() passed after 1.050 seconds.
-✔ Test run with 75 tests in 0 suites passed after 1.051 seconds.
+✔ Test contextOverflowSplitsWithoutAdvancingPastFailedContent() passed after 0.247 seconds.
+✔ Test titleOnlyDoesNotAdvanceSummaryCursor() passed after 0.246 seconds.
+✔ Test explicitRebuildReplacesObsoleteFactsWithoutReimportingOldSnapshots() passed after 0.241 seconds.
+✔ Test richReportPreservesBoldAndRealTableThroughRTF() passed after 0.260 seconds.
+✔ Test googleRetryLimitAndLongServerWaitPreserveSafeErrors() passed after 0.259 seconds.
+✔ Test progressUsesPersistedCursorAndBackendChangeRebuilds() passed after 0.260 seconds.
+✔ Test audioImportPersistsFinalsAndBoundsPCMBuffers() passed after 0.258 seconds.
+✔ Test importClosesEventsWhenInitialSaveFails() passed after 0.260 seconds.
+✔ Test finalWithoutOverviewStaysPartialAndEarlierPointsArePreserved() passed after 0.260 seconds.
+✔ Test oldSummaryVersionRebuildsTheOriginalOnce() passed after 0.258 seconds.
+✔ Test failedSummaryPreservesCheckpointAndCanBeRetried() passed after 0.280 seconds.
+✔ Test changingTemplateReprocessesOriginalWithoutExtraNormalPasses() passed after 0.284 seconds.
+✔ Test finalizedSpeechWaitsForPersistenceCapacityOrReportsFailure() passed after 0.285 seconds.
+✔ Test revokingGoogleDuringBackoffPreventsAnotherTransmission() passed after 0.286 seconds.
+✔ Test deletingKeyWhileItIsBeingReadPreventsTransmission() passed after 0.283 seconds.
+✔ Test disablingGoogleCancelsInFlightRequest() passed after 0.286 seconds.
+✔ Test googleClientErrorsNeverTriggerAutomaticRetries() passed after 0.288 seconds.
+✔ Test stopDuringManualSummaryProcessesTailAndFinalizesOnce() passed after 0.322 seconds.
+✔ Test queuedCancellationDoesNotWaitForActiveInference() passed after 0.320 seconds.
+✔ Test hierarchicalSummaryAdvancesCursorAndFinalizes() passed after 0.339 seconds.
+✔ Test coordinatorCancellationRetainsCheckpointAndAllowsRecovery() passed after 0.339 seconds.
+✔ Test repeatedQueuedUpdatesCoalesceAndKeepTheFinalRequest() passed after 0.339 seconds.
+✔ Test evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession() passed after 0.339 seconds.
+✔ Test memoryPressureCancelsRunningAndQueuedRequestsWithoutDroppingFinalJobs() passed after 0.337 seconds.
+✔ Test legacyIndexBackfillResumesAndIndexesNewRowsImmediately() passed after 0.346 seconds.
+2026-10-28 20:45:33.802 swiftpm-testing-helper[40300:3561119] attributedStringScaled count: 1
+2026-10-28 20:45:33.802 swiftpm-testing-helper[40300:3561119] attributedStringScaled i: 0
+✔ Test sourceQuotesAreResolvedLocallyAndAllOverviewReferencesSurviveExports() passed after 0.367 seconds.
+✔ Test longTaskRowsContinueAcrossPDFPagesWithoutLosingText() passed after 0.368 seconds.
+✔ Test bookmarkExportsPageThroughAllNotesAndRespectSelection() passed after 0.377 seconds.
+✔ Test pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex() passed after 0.382 seconds.
+✔ Test exportFormatsAndSelection() passed after 0.404 seconds.
+✔ Test durableRegisterKeepsOldDecisionsBeyondWorkingMemoryAndAcrossExports() passed after 0.563 seconds.
+✔ Test nativeAudioImportProducesRealSpanishText() passed after 0.950 seconds.
+✔ Test run with 77 tests in 0 suites passed after 0.953 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite AppModelTests started.
+◇ Test summaryCompletionDoesNotReplaceAnotherSessionsStatus(_:) started.
+◇ Test case passing 1 argument outcome → .unavailable to summaryCompletionDoesNotReplaceAnotherSessionsStatus(_:) started.
+◇ Test case passing 1 argument outcome → .success to summaryCompletionDoesNotReplaceAnotherSessionsStatus(_:) started.
+◇ Test case passing 1 argument outcome → .failure to summaryCompletionDoesNotReplaceAnotherSessionsStatus(_:) started.
+✔ Test summaryCompletionDoesNotReplaceAnotherSessionsStatus(_:) with 3 test cases passed after 0.030 seconds.
+◇ Test checkingAvailabilityPreservesStoredSummaryStatus() started.
+✔ Test checkingAvailabilityPreservesStoredSummaryStatus() passed after 0.076 seconds.
+◇ Test searchKeepsSummaryBookmarksAndEvidenceNavigation() started.
+✔ Test searchKeepsSummaryBookmarksAndEvidenceNavigation() passed after 0.264 seconds.
+◇ Test cancelledSearchDoesNotReplaceVisibleTranscript() started.
+✔ Test cancelledSearchDoesNotReplaceVisibleTranscript() passed after 0.014 seconds.
+◇ Test palettePersistsWithoutChangingPrivateEnginePreferences(_:) started.
+◇ Test case passing 1 argument palette → .petroleum to palettePersistsWithoutChangingPrivateEnginePreferences(_:) started.
+◇ Test case passing 1 argument palette → .sage to palettePersistsWithoutChangingPrivateEnginePreferences(_:) started.
+◇ Test case passing 1 argument palette → .copper to palettePersistsWithoutChangingPrivateEnginePreferences(_:) started.
+◇ Test case passing 1 argument palette → .graphite to palettePersistsWithoutChangingPrivateEnginePreferences(_:) started.
+✔ Test palettePersistsWithoutChangingPrivateEnginePreferences(_:) with 4 test cases passed after 0.039 seconds.
+◇ Test interfaceLanguageKeepsRecognitionAndSessionSettings(_:) started.
+◇ Test case passing 1 argument language → .spanish to interfaceLanguageKeepsRecognitionAndSessionSettings(_:) started.
+◇ Test case passing 1 argument language → .english to interfaceLanguageKeepsRecognitionAndSessionSettings(_:) started.
+✔ Test interfaceLanguageKeepsRecognitionAndSessionSettings(_:) with 2 test cases passed after 0.017 seconds.
+◇ Test localizedCatalogPreservesFormatArguments() started.
+✔ Test localizedCatalogPreservesFormatArguments() passed after 0.007 seconds.
+✔ Suite AppModelTests passed after 0.450 seconds.
+✔ Test run with 7 tests in 1 suite passed after 0.450 seconds.

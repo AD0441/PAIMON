@@ -39,6 +39,9 @@ public enum AudioFileTranscriber {
         } catch { await engine.cancel(); throw error }
     }
     public static func importSession(url:URL,session:Session,store:SessionStore,events:AsyncStream<PipelineEvent>.Continuation,engineOverride:(any TranscriptionEngine)?=nil,progress:(@Sendable (Double,Double) async -> Void)?=nil) async throws -> Session {
+        // Finish the outward stream even if opening/saving the session fails.
+        // The UI waits for that stream before completing the import task.
+        defer { events.finish() }
         var value=session; value.status="importing"; value.importedFileName=url.lastPathComponent
         try await store.save(value)
         let pair=AsyncStream<PipelineEvent>.makeStream(bufferingPolicy:.bufferingOldest(128))

@@ -9,7 +9,7 @@ struct SummaryView:View {
             HStack {
                 Label("Resumen",systemImage:"sparkles").font(.headline)
                 Spacer()
-                Button { Task { copied=await model.copySessionReport() } } label: { Label(copied ? "Copiado":"Copiar texto",systemImage:copied ? "checkmark":"doc.on.doc") }
+                Button { Task { copied=await model.copySessionReport() } } label: { Label(model.ui(copied ? "Copiado":"Copiar texto"),systemImage:copied ? "checkmark":"doc.on.doc") }
                     .accessibilityIdentifier("copySessionReport")
                     .disabled(model.findings.isEmpty || model.selectedSession==nil)
                     .help("Copiar el informe con formato para Word o Pages")
@@ -22,8 +22,8 @@ struct SummaryView:View {
             Divider()
             VStack(alignment:.leading,spacing:8) {
                 HStack {
-                    Picker("Vista",selection:$presentation) { ForEach(ReportPresentation.allCases,id:\.self) { Text($0.title).tag($0) } }.pickerStyle(.segmented).labelsHidden()
-                    Text(model.summaryProviderTitle).font(.caption).foregroundStyle(.secondary)
+                    Picker("Vista",selection:$presentation) { ForEach(ReportPresentation.allCases,id:\.self) { Text(LocalizedStringKey($0.title)).tag($0) } }.pickerStyle(.segmented).labelsHidden()
+                    Text(model.ui(model.summaryProviderTitle)).font(.caption).foregroundStyle(.secondary)
                 }
                 if model.settings.googleEnabled==true,model.selectedSession != nil {
                     Toggle("Usar Google AI para esta sesión",isOn:Binding(get:{model.selectedUsesGoogle},set:{ value in Task { await model.setSessionGoogle(value) } }))
@@ -38,7 +38,10 @@ struct SummaryView:View {
             Divider()
             ScrollView {
                 VStack(alignment:.leading,spacing:24) {
-                    Text(model.summaryWorking ? model.googleRetryStatus ?? model.summaryStatus:model.summaryStatus).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    Text(model.ui(model.summaryWorking ? model.googleRetryStatus ?? model.summaryStatus:model.summaryStatus)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    if model.findings.isEmpty,!model.summaryWorking {
+                        Label(model.ui(model.summaryAvailability),systemImage:"info.circle").font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    }
                     if let report=model.presentedReport(presentation),!report.sections.isEmpty {
                         VStack(alignment:.leading,spacing:6) {
                             Text(report.title).font(.title2.weight(.semibold)).textSelection(.enabled)
@@ -46,7 +49,7 @@ struct SummaryView:View {
                         }
                         ForEach(report.sections) { section in
                             VStack(alignment:.leading,spacing:12) {
-                                Text(section.kind.title).font(.headline)
+                                Text(model.ui(section.kind.title)).font(.headline)
                                 if section.kind == .tasks { taskTable(section.items) }
                                 else {
                                     ForEach(section.items) { item in
@@ -104,8 +107,8 @@ struct SummaryView:View {
             ForEach(items) { item in
                 GridRow(alignment:.top) {
                     Text(item.finding.text).frame(maxWidth:.infinity,alignment:.leading)
-                    Text(item.owner)
-                    Text(item.due)
+                    Text(item.owner == "No especificado" ? model.ui(item.owner):item.owner)
+                    Text(item.due == "No especificado" ? model.ui(item.due):item.due)
                     evidence(item)
                 }.font(.callout).textSelection(.enabled)
                 Divider().gridCellColumns(4).gridCellUnsizedAxes(.horizontal)

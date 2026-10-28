@@ -9,10 +9,8 @@ struct TranscriptView:View {
                 Button { Task { await model.addBookmark() } } label: { Label("Marcar",systemImage:"bookmark") }.controlSize(.small).disabled(!model.canAddBookmark).help("Marcar este momento · ⌘⇧M").accessibilityIdentifier("addBookmark")
                 Toggle("Seguir",isOn:$model.autoScroll).toggleStyle(.checkbox).font(.caption)
             }.padding(16)
-            TextField("Buscar palabras en la sesión",text:Binding(get:{model.transcriptSearch},set:{ value in
-                model.transcriptSearch=value
-                Task { await model.select(model.selected) }
-            })).textFieldStyle(.roundedBorder).padding(.horizontal,16).padding(.bottom,12)
+            TextField("Buscar palabras en la sesión",text:$model.transcriptSearch)
+                .textFieldStyle(.roundedBorder).padding(.horizontal,16).padding(.bottom,12)
             if !model.terms.isEmpty {
                 VStack(alignment:.leading,spacing:5) {
                     Text("Términos frecuentes · muestra de esta vista").font(.caption2).foregroundStyle(.secondary).help("Hasta 300 fragmentos y 100.000 caracteres; frecuencia, no importancia semántica")
@@ -21,7 +19,6 @@ struct TranscriptView:View {
                             ForEach(model.terms) { term in
                                 Button("\(term.text) · \(term.count)") {
                                     model.transcriptSearch=term.text
-                                    Task { await model.select(model.selected) }
                                 }.buttonStyle(.bordered).controlSize(.mini).help("Buscar este término en la sesión")
                             }
                         }
@@ -46,7 +43,7 @@ struct TranscriptView:View {
                 ScrollView {
                     LazyVStack(alignment:.leading,spacing:20) {
                         if model.segments.isEmpty && model.partials.isEmpty {
-                            ContentUnavailableView(model.active ? "Escuchando…":"Listo para escuchar",systemImage:"waveform",description:Text(model.active ? "El texto aparecerá al reconocer voz.":"Reproduce audio, elige una fuente y pulsa Iniciar.")).frame(maxWidth:.infinity,minHeight:300)
+                            ContentUnavailableView(model.ui(model.active ? "Escuchando…":"Listo para escuchar"),systemImage:"waveform",description:Text(model.ui(model.active ? "El texto aparecerá al reconocer voz.":"Reproduce audio, elige una fuente y pulsa Iniciar."))).frame(maxWidth:.infinity,minHeight:300)
                         }
                         ForEach(model.segments) { segment in segmentView(segment).id(segment.id) }
                         ForEach(model.partials.values.sorted{$0.start<$1.start}) { segment in segmentView(segment).opacity(0.6) }
@@ -65,13 +62,13 @@ struct TranscriptView:View {
                 Spacer()
             }.font(.caption).padding(.horizontal,16).padding(.top,8)
             Text("Vista paginada de 300 fragmentos. Exporta para obtener el documento completo.").font(.caption2).foregroundStyle(.secondary).padding(10)
-        }
+        }.task(id:model.transcriptSearch) { await model.filterTranscript() }
     }
     private func segmentView(_ segment:TranscriptSegment) -> some View {
         VStack(alignment:.leading,spacing:7) {
             HStack(spacing:8) {
                 Text(timestamp(segment.start)).monospacedDigit()
-                Text(segment.source.title)
+                Text(model.ui(segment.source.title))
                 if !segment.isFinal { Text("Parcial") }
                 if segment.duplicateOf != nil { Text("Posible eco") }
                 Spacer()

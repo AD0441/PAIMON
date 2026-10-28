@@ -2,23 +2,49 @@
 set -euo pipefail
 MODE="${1:-run}"
 CONFIGURATION="Debug"
-if [[ "$MODE" == "--install" ]]; then CONFIGURATION="Release"; fi
+if [[ "$MODE" == "--install" || "$MODE" == "--review" ]]; then CONFIGURATION="Release"; fi
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_NAME="PAIMON"
+BUILD_OPTIONS=('ARCHS=arm64' 'ONLY_ACTIVE_ARCH=YES')
 if [[ -d /Applications/Xcode.app/Contents/Developer ]]; then export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer; fi
 export CLANG_MODULE_CACHE_PATH="${TMPDIR:-/tmp}/lai-clang-cache"
 export SWIFTPM_MODULECACHE_OVERRIDE="${TMPDIR:-/tmp}/lai-swift-cache"
 DERIVED="${TMPDIR:-/tmp}/LocalAudioIntelligence-DerivedData"
+if [[ "$MODE" == "--review" ]]; then
+  DERIVED="${TMPDIR:-/tmp}/PAIMON-Review-DerivedData"
+  BUILD_OPTIONS+=('PRODUCT_BUNDLE_IDENTIFIER=local.audio.intelligence.review' 'SWIFT_ACTIVE_COMPILATION_CONDITIONS=PAIMON_REVIEW')
+fi
 APP_BUNDLE="$DERIVED/Build/Products/$CONFIGURATION/$APP_NAME.app"
-pkill -x "$APP_NAME" >/dev/null 2>&1 || true
-pkill -x LocalAudioIntelligence >/dev/null 2>&1 || true
 cd "$ROOT_DIR"
-xcodebuild -project LocalAudioIntelligence.xcodeproj -scheme LocalAudioIntelligence -configuration "$CONFIGURATION" -derivedDataPath "$DERIVED" -destination 'platform=macOS' -jobs 2 build
+xcodebuild -project LocalAudioIntelligence.xcodeproj -scheme LocalAudioIntelligence -configuration "$CONFIGURATION" -derivedDataPath "$DERIVED" -destination 'platform=macOS,arch=arm64' -jobs 2 "${BUILD_OPTIONS[@]}" build
 case "$MODE" in
+  --review)
+    REVIEW_BUNDLE="${TMPDIR:-/tmp}/PAIMON Review.app"
+    pkill -x "PAIMON Review" >/dev/null 2>&1 || true
+    /bin/rm -rf -- "$REVIEW_BUNDLE"
+    /usr/bin/ditto --norsrc "$APP_BUNDLE" "$REVIEW_BUNDLE"
+    /bin/mv "$REVIEW_BUNDLE/Contents/MacOS/PAIMON" "$REVIEW_BUNDLE/Contents/MacOS/PAIMON Review"
+    for KEY in CFBundleName CFBundleDisplayName CFBundleExecutable; do
+      /usr/libexec/PlistBuddy -c "Set :$KEY PAIMON Review" "$REVIEW_BUNDLE/Contents/Info.plist"
+    done
+    /usr/bin/codesign --force --sign - --options runtime --entitlements Resources/LocalAudioIntelligence.entitlements "$REVIEW_BUNDLE"
+    /usr/bin/codesign --verify --deep --strict "$REVIEW_BUNDLE"
+    /usr/bin/open -n "$REVIEW_BUNDLE" --args --review-directory "${TMPDIR:-/tmp}/PAIMON-Review-Data" --review-audio "$ROOT_DIR/Tests/Fixtures/spanish-synthetic.aiff"
+    printf 'Instancia aislada: %s\n' "$REVIEW_BUNDLE"
+    ;;
   --build-only) printf '%s\n' "$APP_BUNDLE" ;;
   run) /usr/bin/open -n "$APP_BUNDLE" ;;
   --verify) /usr/bin/open -n "$APP_BUNDLE"; sleep 2; pgrep -x "$APP_NAME" >/dev/null ;;
   --install)
+    # Let the app flush capture and SQLite instead of killing it mid-write.
+    /usr/bin/xcrun swift -module-cache-path "$SWIFTPM_MODULECACHE_OVERRIDE" -e '
+      import AppKit
+      let apps=NSRunningApplication.runningApplications(withBundleIdentifier:"local.audio.intelligence")
+      for app in apps { if !app.terminate() { fputs("Cierra PAIMON antes de instalar.\n",stderr); exit(1) } }
+      let deadline=Date().addingTimeInterval(30)
+      while apps.contains(where:{!$0.isTerminated}) && Date()<deadline { RunLoop.current.run(until:Date().addingTimeInterval(0.1)) }
+      if apps.contains(where:{!$0.isTerminated}) { fputs("PAIMON sigue finalizando. Reintenta la instalación cuando cierre.\n",stderr); exit(1) }
+    '
     PROJECT_BUNDLE="$ROOT_DIR/PAIMON.app"
     INSTALLED_BUNDLE="/Applications/PAIMON.app"
     for DESTINATION in "$PROJECT_BUNDLE" "$INSTALLED_BUNDLE"; do
@@ -102,5 +128,5 @@ case "$MODE" in
   --debug) lldb -- "$APP_BUNDLE/Contents/MacOS/$APP_NAME" ;;
   --logs) /usr/bin/open -n "$APP_BUNDLE"; /usr/bin/log stream --info --style compact --predicate 'process == "PAIMON"' ;;
   --telemetry) /usr/bin/open -n "$APP_BUNDLE"; /usr/bin/log stream --info --style compact --predicate 'subsystem == "local.audio.intelligence"' ;;
-  *) printf 'usage: %s [run|--build-only|--verify|--install|--debug|--logs|--telemetry]\n' "$0" >&2; exit 2 ;;
+  *) printf 'usage: %s [run|--build-only|--review|--verify|--install|--debug|--logs|--telemetry]\n' "$0" >&2; exit 2 ;;
 esac

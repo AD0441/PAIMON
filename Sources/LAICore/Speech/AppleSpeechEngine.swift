@@ -2,6 +2,16 @@ import Foundation
 import Speech
 import AVFoundation
 import CoreMedia
+private actor SpeechResourceCache {
+    static let shared=SpeechResourceCache()
+    private var installed:[String:(Locale,Date)]=[:]
+    func locale(_ identifier:String) -> Locale? {
+        guard let value=installed[identifier],value.1>Date() else { return nil }
+        return value.0
+    }
+    func save(_ locale:Locale,for identifier:String) { installed[identifier]=(locale,Date().addingTimeInterval(60)) }
+    func invalidate(_ identifier:String) { installed[identifier]=nil }
+}
 public actor AppleSpeechEngine: TranscriptionEngine {
     private struct Stream {
         var analyzer: SpeechAnalyzer
@@ -15,26 +25,32 @@ public actor AppleSpeechEngine: TranscriptionEngine {
     private var streams:[AudioSource:Stream]=[:]
     private var locale:Locale?
     public init() {}
-    public static func availability(locale identifier: String) async -> String? {
+    public static func availability(locale identifier: String,refresh:Bool=false) async -> String? {
+        if refresh { await SpeechResourceCache.shared.invalidate(identifier) }
+        if !refresh,await SpeechResourceCache.shared.locale(identifier) != nil { return nil }
         guard SpeechTranscriber.isAvailable else { return "SpeechTranscriber no está disponible en este equipo" }
         guard let locale=await SpeechTranscriber.supportedLocale(equivalentTo:Locale(identifier:identifier)) else { return "SpeechTranscriber no admite \(identifier)" }
         let module=SpeechTranscriber(locale:locale,preset:.timeIndexedProgressiveTranscription)
         let installed=await SpeechTranscriber.installedLocales
         let status=await AssetInventory.status(forModules:[module])
         guard installed.contains(locale) || status == .installed else { return "Faltan los recursos de voz para \(locale.identifier). Descárgalos en Configuración → Modelos." }
+        await SpeechResourceCache.shared.save(locale,for:identifier)
         return nil
     }
     public static func install(locale identifier: String) async throws {
+        await SpeechResourceCache.shared.invalidate(identifier)
         guard let locale=await SpeechTranscriber.supportedLocale(equivalentTo:Locale(identifier:identifier)) else { throw LAIError.message("Idioma no admitido") }
         let module=SpeechTranscriber(locale:locale,preset:.timeIndexedProgressiveTranscription)
         if let request=try await AssetInventory.assetInstallationRequest(supporting:[module]) { try await request.downloadAndInstall() }
     }
     public func start(sessionID: UUID, sources: [AudioSource], settings: AppSettings, events: AsyncStream<PipelineEvent>.Continuation) async throws {
         if let reason=await Self.availability(locale:settings.locale) { throw LAIError.message(reason) }
-        guard let resolved=await SpeechTranscriber.supportedLocale(equivalentTo:Locale(identifier:settings.locale)) else { throw LAIError.message("Idioma no disponible") }
-        locale=resolved; try await AssetInventory.reserve(locale:resolved)
-        do {
+        guard let resolved=await SpeechResourceCache.shared.locale(settings.locale) else { throw LAIError.message("Comprueba los recursos de voz y vuelve a iniciar") }
+        try await withTaskCancellationHandler {
+          do {
+            locale=resolved; try await AssetInventory.reserve(locale:resolved); try Task.checkCancellation()
             for source in sources {
+                try Task.checkCancellation()
                 let module=SpeechTranscriber(locale:resolved,preset:.timeIndexedProgressiveTranscription)
                 guard let format=await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith:[module]) else { throw LAIError.message("SpeechAnalyzer no ofrece un formato compatible") }
                 let pair=AsyncStream<AnalyzerInput>.makeStream(bufferingPolicy:.bufferingOldest(48))
@@ -50,9 +66,11 @@ public actor AppleSpeechEngine: TranscriptionEngine {
                 }
                 streams[source]=Stream(analyzer:analyzer,input:pair.continuation,results:results,format:format)
                 try await analyzer.prepareToAnalyze(in:format)
+                try Task.checkCancellation()
                 try await analyzer.start(inputSequence:pair.stream)
             }
-        } catch { await cancel(); throw error }
+          } catch { await cancel(); throw error }
+        } onCancel: { Task { await self.cancel() } }
     }
     public func append(_ chunk: AudioChunk) async throws {
         guard var stream=streams[chunk.source], !chunk.samples.isEmpty else { return }

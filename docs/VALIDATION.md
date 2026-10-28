@@ -1,8 +1,26 @@
-# Validación — 21 de octubre de 2026
+# Validación — 28 de octubre de 2026
+
+## Versión 0.6.0 (13)
+
+**Release: BUILD SUCCEEDED.** Instalada en `/Applications/PAIMON.app`; el enlace del proyecto apunta a esa copia. Firma estricta comprobada en la app y en los dos ZIP extraídos: actual 0.6.0 (13), anterior 0.5.1 (12). Solo se conservan esos dos archivos. [Resultado y SHA-256](evidence/performance-install-verification.json).
+
+**84 pruebas aprobadas:** 77 del núcleo y 7 de AppModel, estas últimas con 13 casos. Incluyen regresiones de respuestas tardías entre sesiones, disponibilidad separada del documento, búsqueda cancelable, conservación de marcadores/evidencias, compatibilidad de preferencias, cuatro paletas, idioma de interfaz y argumentos del catálogo. También se comprueba cerrar el flujo de importación si falla el guardado inicial y rechazar una advertencia de aprobación ausente que el modelo añadía sin respaldo. [Registro](evidence/performance-tests.log).
+
+**Motores reales:** SpeechTranscriber importó la muestra sintética española y produjo los términos esperados. Foundation Models v4 procesó doce fragmentos sintéticos: resumen general, los tres temas y citas originales, seis hallazgos; 38,19 s y 10,25 MB de footprint final del cliente. Estas cifras excluyen los servicios de modelos de Apple y no representan una reunión completa. El resultado está incorporado a la verificación enlazada arriba.
+
+**Interfaz aislada:** bundle `local.audio.intelligence.review`, SQLite, preferencias y servicio de Llavero separados. Se comprobaron las cuatro paletas, español/inglés sin cambiar reconocimiento `es-ES`, persistencia al relanzar, icono y pie lateral, destino de Ko-fi, renombrado, búsqueda, contexto abrir/cancelar y salto de cita al original. Ventanas de 1240 × 800 y aproximadamente 1000 × 702 puntos conservaron título, controles y pie; también se revisó apariencia oscura. Las tres capturas públicas actuales usan exclusivamente esa muestra sintética. El código de preparación de Review está excluido de la compilación distribuida.
+
+Una importación anterior de Review quedó esperando al servicio nativo. Se añadió cancelación explícita durante la preparación y caché positiva de metadatos de recursos durante 60 s, invalidada al instalar o comprobar manualmente. Las siguientes importaciones finalizaron. No se afirma que todos los posibles bloqueos del servicio de macOS estén eliminados.
+
+**Instruments:** Time Profiler de 10 s en Review en reposo, sin captura ni inferencia activa. Una observación separada de 10,12 s registró 0,40 % de un núcleo, RSS entre 19,61 y 20,33 MB; `sample` informó footprint 64,4 MB y pico de proceso 95,1 MB. Son medidas distintas; no se suman ni prueban ahorro, energía o estabilidad durante horas. La traza permanece temporal y no se publica.
+
+**Alcance pendiente:** no se repitió Core Audio/micrófono con la firma de build 13, ni reuniones de varias horas, macOS 26, pesos FluidAudio/MLX o una petición real de Google. La captura histórica siguiente conserva su versión. La firma es ad hoc, sin notarización; TCC puede requerir renovar el permiso al actualizar. La entrega sigue como versión preliminar [0.6.0](https://github.com/AD0441/PAIMON/releases/tag/v0.6.0).
+
+Entorno actual: Apple M1, 8 GB, macOS 27.2 build 26B118, Xcode 27.1; deployment macOS 26.0 arm64. [Entorno registrado](evidence/performance-environment.json).
 
 ## Versión 0.5.1 (12) · ajuste de ventana
 
-**Release: BUILD SUCCEEDED.** Firma estricta de la app instalada y de los dos ZIP extraídos: PASS. Actual: 0.5.1 (12); anterior: 0.5.0 (11). Las recompilaciones de la misma versión conservaron el archivo anterior intacto. [Verificación actual](evidence/performance-install-verification.json).
+**Release: BUILD SUCCEEDED.** Firma estricta de la app instalada y de los dos ZIP extraídos: PASS. Actual: 0.5.1 (12); anterior: 0.5.0 (11). Las recompilaciones de la misma versión conservaron el archivo anterior intacto. [Verificación histórica de 0.5.1](https://github.com/AD0441/PAIMON/blob/v0.5.1/docs/evidence/performance-install-verification.json).
 
 La regresión se reprodujo en la app instalada: el área útil tenía 748 puntos de alto, pero NavigationSplitView calculaba 1.593 y centraba el contenido fuera de la ventana. Se acotaron ambas columnas al espacio que reciben. Después, navegación y área útil coincidieron en 748 puntos; al reducir la ventana también coincidieron en 650. Se retiraron del código final las mediciones temporales, que solo registraban rectángulos.
 
@@ -12,7 +30,7 @@ Esta corrección modifica únicamente la composición de la interfaz y su versi�
 
 ## Versión 0.5.0 (11)
 
-**75 pruebas aprobadas**, con Swift 6 y el mismo M1 de referencia. Incluyen las 55 anteriores y cobertura de Google desactivado por defecto, consentimiento por sesión, compatibilidad de los valores locales anteriores, claves fuera de URL/cuerpo, consultas de conexión sin transcripción, JSON truncado y bloqueado, cuotas, tamaño máximo de respuesta, revocación en curso y durante lectura de la clave, referencias originales y rechazo de responsables o acuerdos no respaldados. También comprueban contexto acotado, identidad estable, reconstrucción al cambiar de motor/contexto, vista ejecutiva sin modificar hallazgos, términos con acentos, progreso persistido, importación con búferes de hasta 4.096 frames y conservación de finales al interrumpir. [Registro actual](evidence/performance-tests.log).
+**75 pruebas aprobadas**, con Swift 6 y el mismo M1 de referencia. Incluyen las 55 anteriores y cobertura de Google desactivado por defecto, consentimiento por sesión, compatibilidad de los valores locales anteriores, claves fuera de URL/cuerpo, consultas de conexión sin transcripción, JSON truncado y bloqueado, cuotas, tamaño máximo de respuesta, revocación en curso y durante lectura de la clave, referencias originales y rechazo de responsables o acuerdos no respaldados. También comprueban contexto acotado, identidad estable, reconstrucción al cambiar de motor/contexto, vista ejecutiva sin modificar hallazgos, términos con acentos, progreso persistido, importación con búferes de hasta 4.096 frames y conservación de finales al interrumpir. [Registro histórico](https://github.com/AD0441/PAIMON/blob/v0.5.1/docs/evidence/performance-tests.log).
 
 **Importación nativa real: PASS.** `PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh` leyó `Tests/Fixtures/spanish-synthetic.aiff` mediante AVAudioFile y SpeechAnalyzer, sin alimentación artificial a ritmo real, produjo texto definitivo en español y lo guardó en SQLite. Se comprobaron micrófonos, cotización y viernes. La batería completa terminó en 1,051 s en esta ejecución; no es una medición general de velocidad para grabaciones largas. En el ejecutor restringido no se podían consultar los idiomas del sistema; la misma prueba fuera de esa restricción pasó. No se descargaron recursos.
 
@@ -22,13 +40,13 @@ Esta corrección modifica únicamente la composición de la interfaz y su versi�
 
 **Interfaz de contexto: PASS.** En Release se comprobaron abrir, cancelar un borrador, guardar y volver a abrir. El contexto aparece en una sheet separada y los controles de captura y los paneles permanecen visibles. ⌘N limpia la selección sin abrir otra ventana. Se usó un borrador sintético sin modificar la transcripción del usuario. La captura en vivo de 0.4.0 sigue siendo evidencia histórica; la importación de un archivo no se presenta como una nueva prueba de Core Audio.
 
-## Publicación y distribución
+## Publicación histórica · 0.5.1
 
-La versión preliminar vigente es [0.5.1 (12)](https://github.com/AD0441/PAIMON/releases/tag/v0.5.1). El ZIP publicado corresponde al paquete actual verificado, no a una nueva compilación de los motores. Se adjunta SHA-256 para comprobar su integridad. La firma sigue siendo ad hoc, sin Developer ID ni notarización. El icono y las dos imágenes adjuntas son recursos públicos existentes: las capturas mantienen su condición histórica de 0.4.0 y usan únicamente la muestra sintética. No se adjuntan sesiones privadas, credenciales ni pesos de modelos.
+La versión publicada en esa etapa fue [0.5.1 (12)](https://github.com/AD0441/PAIMON/releases/tag/v0.5.1). El ZIP publicado corresponde al paquete actual verificado, no a una nueva compilación de los motores. Se adjunta SHA-256 para comprobar su integridad. La firma sigue siendo ad hoc, sin Developer ID ni notarización. El icono y las dos imágenes adjuntas son recursos públicos existentes: las capturas mantienen su condición histórica de 0.4.0 y usan únicamente la muestra sintética. No se adjuntan sesiones privadas, credenciales ni pesos de modelos.
 
 Google AI es una alternativa manual para evitar inferencia local del resumen cuando la RAM limita su uso; la protección actual aplaza todos los proveedores mientras detecta presión de memoria. No se ha medido un ahorro de RAM ni se valida un cambio automático de motor. Los resultados de las pruebas se conservan con su versión; la publicación de documentación no representa otra prueba de audio o inferencia.
 
-## Entorno comprobado
+## Entorno histórico · 0.5.x
 
 MacBook Pro con Apple M1 y 8 GB de memoria unificada. Sistema instalado: macOS 27.2, build 26B5101f. Xcode 27.1, build 27A9275, Swift 6.4. Deployment target del producto: macOS 26.0, arm64. No se afirma haber ejecutado la aplicación en macOS 26: esa validación sigue pendiente.
 

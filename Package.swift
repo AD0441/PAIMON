@@ -17,5 +17,6 @@ let package = Package(
         .target(name: "LAICore", dependencies: ["AudioRing", "CSQLite"]),
         .executableTarget(name: "LAIApp", dependencies: ["LAICore"], path: ".", exclude: ["Sources", "Tests", "Tools", "docs", "Resources", "script", "Integrations", "README.md", "LocalAudioIntelligence.xcodeproj"]+installedOutputs+packagedArchives, sources: ["App", "Views", "ViewModels"]),
         .executableTarget(name: "LAICheck", dependencies: ["LAICore"], path: "Tools"),
-        .testTarget(name: "LAICoreTests", dependencies: ["LAICore", "AudioRing"])
+        .testTarget(name: "LAICoreTests", dependencies: ["LAICore", "AudioRing"]),
+        .testTarget(name: "LAIAppTests", dependencies: ["LAIApp", "LAICore"])
     ], swiftLanguageModes: [.v6])

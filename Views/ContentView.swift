@@ -25,16 +25,13 @@ struct ContentView:View {
                     SessionPanes(model:model).frame(minHeight:0,maxHeight:.infinity)
                     Divider()
                     HStack(spacing:16) {
-                        Label(model.settings.googleEnabled==true ? "Audio local · Google AI opcional":"Procesamiento local",systemImage:model.settings.googleEnabled==true ? "cloud":"lock.shield").foregroundStyle(.secondary)
+                        Label(model.ui(model.settings.googleEnabled==true ? "Audio local · Google AI opcional":"Procesamiento local"),systemImage:model.settings.googleEnabled==true ? "cloud":"lock.shield").foregroundStyle(.secondary)
                         if model.active,model.pendingSummarySegments>0 { Text("\(model.pendingSummarySegments) fragmentos por resumir").foregroundStyle(.secondary) }
                         Spacer()
                         if model.pressure { Label("Memoria bajo presión",systemImage:"memorychip").foregroundStyle(.orange) }
-                        Text("\(model.metrics.footprintMB,specifier:"%.0f") MB").monospacedDigit().foregroundStyle(.secondary)
-                        Text(model.settings.saveAudio ? "Audio guardado":"Audio sin guardar").foregroundStyle(.secondary)
+                        ResourceStatus(model:model)
+                        Text(model.ui(model.settings.saveAudio ? "Audio guardado":"Audio sin guardar")).foregroundStyle(.secondary)
                     }.font(.caption).padding(.horizontal,18).padding(.vertical,9).fixedSize(horizontal:false,vertical:true)
-                    Text("Creado con desprecio por Sebastián Pastén F.")
-                        .font(.caption2).foregroundStyle(.secondary)
-                        .textSelection(.enabled).padding(.bottom,8).fixedSize(horizontal:false,vertical:true)
                 }.frame(width:area.size.width,height:area.size.height,alignment:.top)
             }
             .navigationTitle(model.selectedSession?.title ?? "PAIMON")
@@ -44,10 +41,25 @@ struct ContentView:View {
                 ToolbarItem(placement:.primaryAction) { Button { model.showExport=true } label: { Label("Exportar",systemImage:"square.and.arrow.up") }.disabled(model.selectedSession==nil) }
                 ToolbarItem(placement:.primaryAction) { SettingsLink { Image(systemName:"slider.horizontal.3") }.help("Configuración") }
             }
-        }.sheet(isPresented:$model.showExport) { ExportSheet(model:model) }
+        }.modifier(AppTheme(palette:model.settings.colorPalette ?? .petroleum,language:model.settings.interfaceLanguage ?? .spanish))
+            .sheet(isPresented:$model.showExport) { ExportSheet(model:model) }
             .dropDestination(for:URL.self) { urls,_ in
                 guard !model.active,let url=urls.first else { return false }
                 model.beginImport(url); return true
+            }
+    }
+}
+
+private struct ResourceStatus:View {
+    var model:AppModel
+    var body:some View {
+        Text("\(model.metrics.footprintMB,specifier:"%.0f") MB").monospacedDigit().foregroundStyle(.secondary)
+            .help("Memoria del proceso; no incluye los servicios de modelos de Apple. Se actualiza cada cinco segundos con la ventana abierta.")
+            .task {
+                while !Task.isCancelled {
+                    if !model.active { model.metrics=ResourceMetrics.current() }
+                    do { try await Task.sleep(for:.seconds(5)) } catch { return }
+                }
             }
     }
 }

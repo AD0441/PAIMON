@@ -3,6 +3,18 @@ import Testing
 import PDFKit
 @testable import LAICore
 
+@Test func overviewCannotInventAnApprovalDisclaimer() throws {
+    let source=SummarySource(TranscriptSegment(sessionID:UUID(),source:.file,start:0,end:8,text:"Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes."))
+    let bad=try JSONDecoder().decode(GroundedSummary.self,from:Data("""
+    {"title":"Micrófonos","overview":"Se acordó comprar dos micrófonos. Estas propuestas no tienen aprobación explícita."}
+    """.utf8))
+    #expect(throws:SummaryResponseError.self) { try SummaryGrounding.validate(bad,sources:[source],maximumPoints:0) }
+    let good=try JSONDecoder().decode(GroundedSummary.self,from:Data("""
+    {"title":"Micrófonos","overview":"Se acordó comprar dos micrófonos y Ana enviará la cotización el viernes."}
+    """.utf8))
+    #expect(try SummaryGrounding.validate(good,sources:[source],maximumPoints:0).contains{$0.kind == .overview})
+}
+
 @Test func pendingDecisionCannotBorrowAnAgreementFromAnotherSentence() throws {
     let segment=TranscriptSegment(sessionID:UUID(),source:.system,start:0,end:11,text:"Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.")
     let source=SummarySource(segment)
