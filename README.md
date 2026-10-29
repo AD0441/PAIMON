@@ -72,7 +72,7 @@ La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight 
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
-El icono nuevo está en `Resources/Brand/PAIMON-icon.svg` y `.png`; `Resources/Paimon.icns` incluye los tamaños de macOS. Se regenera con `xcrun swift script/render_brand.swift` y `./script/rebuild_icon.sh`. [Referencia y decisiones de marca](docs/BRAND.md). Se conserva el original entregado inicialmente en `Resources/Brand/Sinora_icono.png`.
+El icono nuevo está en `Resources/Brand/PAIMON-icon.svg` y `.png`; `Resources/Paimon.icns` incluye los tamaños de macOS. Se regenera con `xcrun swift script/render_brand.swift` y `./script/rebuild_icon.sh`. [Referencia y decisiones de marca](docs/BRAND.md). Los iconos anteriores se conservan en el historial de Git; la carpeta de marca contiene únicamente los recursos vigentes.
 
 ## Compilar desde el código fuente
 
