@@ -21,3 +21,12 @@ xcrun swift script/render_brand.swift
 Las cuatro paletas de la app cambian los acentos; los fondos y colores funcionales siguen el sistema. Ko-fi se muestra como enlace local y no descarga recursos al iniciar.
 
 **Creado por Sebastián Pastén F.**
+
+
+## Portada y mensaje de familia · noviembre de 2026
+
+La cabecera pública actual del README es `docs/assets/brand/family-cover.png`. Adopta el sistema común de [NABERIUS, RAZIEL, METATRON, PAIMON y VAPULA](FAMILY.md): azul petróleo, marfil, acento azul apagado, mensaje a la izquierda y sello propio a la derecha.
+
+**Simplicidad con impacto. Concéntrate en lo que vale la pena.** El eslogan específico de PAIMON es **Del sonido al conocimiento.**
+
+Es una ilustración promocional generada con imagegen sobre los recursos de marca existentes. El [prompt y la procedencia](assets/brand/family-cover-prompt.md) documentan su elaboración. Los iconos de aplicación, la geometría vectorial original, las capturas reales y los recursos anteriores se conservan. Los generadores históricos siguen produciendo sus archivos originales; la nueva portada se mantiene como recurso independiente.

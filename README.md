@@ -1,27 +1,37 @@
 <div align="center">
-
-<img src="https://github.com/AD0441/PAIMON/releases/download/v0.6.0/PAIMON-icon.png" width="112" alt="PAIMON · sello geométrico" />
-
-<h1>PAIMON</h1>
-<strong>Local Audio Intelligence</strong><br />
-Transformando sonido en conocimiento.
-
-<p>
-<img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square" />
-<img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-365D72?style=flat-square" />
-<img alt="Apple Silicon" src="https://img.shields.io/badge/Apple-Silicon-476957?style=flat-square" />
-<img alt="Sin telemetría" src="https://img.shields.io/badge/Privacidad-sin_telemetr%C3%ADa-58616B?style=flat-square" />
-</p>
-
-[**Descargar 0.6.0**](https://github.com/AD0441/PAIMON/releases/download/v0.6.0/PAIMON-0.6.0.zip) · [Empezar](#descargar-instalar-y-ejecutar) · [Validación](docs/VALIDATION.md) · [Limitaciones](docs/LIMITATIONS.md) · [Apoyar](https://ko-fi.com/C0C51WQ1T0)
-
+  <img src="Resources/Brand/PAIMON-icon.png" width="112" alt="Icono de PAIMON">
+  <h1>PAIMON</h1>
+  <p><strong>Del sonido al conocimiento.</strong></p>
+  <p>Captura audio, revisa transcripciones y reúne conclusiones en tu Mac.</p>
+  <p>
+    <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
+    <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
+    <img alt="Versión 0.6.0" src="https://img.shields.io/badge/versi%C3%B3n-0.6.0-58616B?style=flat-square">
+  </p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.6.0">Descargar 0.6.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![PAIMON · Transformando sonido en conocimiento](https://github.com/AD0441/PAIMON/releases/download/v0.6.0/paimon-cover.png)
+![PAIMON · Simplicidad con impacto. Del sonido al conocimiento. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
 
 PAIMON captura el audio del Mac y lo convierte en transcripciones y resúmenes con referencias al original. Incluye captura del sistema o de una app, micrófono opcional, búsqueda y exportación; también se controla desde la barra de menús.
 
 **Procesamiento local por defecto, sin telemetría.** Google AI es una opción externa de resumen: requiere activación y una clave propia guardada en el Llavero. Al elegirla, se envían texto, contexto y resúmenes previos a Google, nunca audio. Todos los motores se aplazan durante presión de memoria; no se han medido ahorros de RAM.
+
+## Simplicidad con impacto
+
+**Concéntrate en lo que vale la pena.** Creamos herramientas nativas para Mac que reúnen lo necesario en un flujo claro: menos pasos repetidos, decisiones visibles y control sobre tu trabajo. En PAIMON, eso significa atender a la conversación y después revisar qué se dijo, qué se decidió y de dónde sale cada conclusión.
+
+Compartimos una filosofía y una [identidad visual](docs/FAMILY.md); cada aplicación conserva su propósito, su sello y sus límites.
+
+## Qué nos diferencia
+
+| Lo que necesitas | Nuestra ventaja práctica | Alcance que debes conocer |
+| --- | --- | --- |
+| Capturar lo que ya escuchas | Audio del sistema o de una app, micrófono opcional y control desde la barra de menús. | La captura y los recursos de voz requieren permisos y disponibilidad del sistema. |
+| Volver a la evidencia de una conclusión | Resúmenes con citas temporales a la transcripción; originales conservados, búsqueda y marcadores. | Las citas ayudan a revisar el resultado; no garantizan una transcripción o síntesis sin errores. |
+| Decidir dónde se procesa el contenido | Procesamiento local por defecto, sin telemetría; exportación TXT, Markdown, PDF y JSON. | Google AI es opcional: al activarlo se envían texto y contexto a Google; nunca audio. |
+
+Si necesitas una plataforma de notas compartidas, [Otter](https://help.otter.ai/hc/en-us/articles/360048269733-Record-a-conversation) ofrece grabación, transcripción y colaboración con cuenta; su transcripción en tiempo real requiere conexión. PAIMON prioriza la captura y la revisión personal en el Mac con procesamiento local por defecto. No sustituye todas las integraciones de una plataforma de equipo ni promete mayor precisión. [Motores y pruebas](docs/VALIDATION.md) · [Limitaciones](docs/LIMITATIONS.md).
 
 ## De escuchar a entender
 
@@ -155,3 +165,10 @@ En **Configuración → Apariencia** puedes elegir Petróleo, Salvia, Cobre o Gr
 [![Apoyar en Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C51WQ1T0)
 
 El apoyo es voluntario. La app abre Ko-fi únicamente al pulsar el enlace; no carga recursos de donación desde Internet al iniciar.
+
+<div align="center">
+  <p><strong>Simplicidad con impacto.</strong><br>Concéntrate en lo que vale la pena.</p>
+  <p><a href="https://github.com/AD0441/NABERIUS">NABERIUS</a> · <a href="https://github.com/AD0441/RAZIEL">RAZIEL</a> · <a href="https://github.com/AD0441/METATRON">METATRON</a> · <a href="https://github.com/AD0441/PAIMON">PAIMON</a> · <a href="https://github.com/AD0441/VAPULA">VAPULA</a></p>
+  <p><strong>Creado por Sebastián Pastén F.</strong></p>
+  <p><a href="https://www.sebastianpasten.com/desarrollos-aplicaciones-para-mac-software-sdr">Más aplicaciones para Mac</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar en Ko-fi</a></p>
+</div>
