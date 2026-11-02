@@ -25,8 +25,15 @@ Las cuatro paletas de la app cambian los acentos; los fondos y colores funcional
 
 ## Portada y mensaje de familia · noviembre de 2026
 
-La cabecera pública actual del README es `docs/assets/brand/family-cover.png`. Adopta el sistema común de [NABERIUS, RAZIEL, METATRON, PAIMON y VAPULA](FAMILY.md): azul petróleo, marfil, acento azul apagado, mensaje a la izquierda y sello propio a la derecha.
+La cabecera de familia del 1 de noviembre de 2026 se conserva en `docs/assets/brand/family-cover.png` como recurso gráfico anterior. Adopta el sistema común de [NABERIUS, RAZIEL, METATRON, PAIMON y VAPULA](FAMILY.md): azul petróleo, marfil, acento azul apagado, mensaje a la izquierda y sello propio a la derecha.
 
 **Simplicidad con impacto. Concéntrate en lo que vale la pena.** El eslogan específico de PAIMON es **Del sonido al conocimiento.**
 
 Es una ilustración promocional generada con imagegen sobre los recursos de marca existentes. El [prompt y la procedencia](assets/brand/family-cover-prompt.md) documentan su elaboración. Los iconos de aplicación, la geometría vectorial original, las capturas reales y los recursos anteriores se conservan. Los generadores históricos siguen produciendo sus archivos originales; la nueva portada se mantiene como recurso independiente.
+
+
+## Portada fotográfica · 2 de noviembre de 2026
+
+La cabecera actual es [photographic-cover.png](assets/promo/photographic-cover.png). El logo oficial aparece encima del nombre, seguido del eslogan y «Simplicidad con impacto.». La fotografía, el encuadre y los objetos se adaptan al propósito de cada app: Estudio de audio al atardecer, micrófono, audífonos y paneles acústicos.
+
+Es una composición promocional creada con la herramienta integrada de generación de imágenes, tomando la interfaz y el logo propios como referencias. La imagen final puede reinterpretar detalles de pantalla; no constituye una captura íntegra ni una validación de funciones. Las [fuentes, los prompts y el alcance](assets/promo/photographic-cover.md) quedan documentados. Los iconos oficiales, las capturas originales y las portadas anteriores se conservan.

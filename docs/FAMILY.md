@@ -21,7 +21,7 @@ Creamos herramientas nativas para Mac que reúnen lo necesario en un flujo claro
 
 La ejecución local, el código abierto y la simplicidad también existen en otras soluciones. La propuesta de cada proyecto está en la combinación de tareas que ofrece y en su forma de trabajo. No se deducen ventajas de velocidad, memoria, consumo o exactitud a partir del lenguaje, la arquitectura o las imágenes.
 
-## Sistema de las portadas
+## Sistema gráfico de las portadas · 1 de noviembre
 
 Revisión de familia: **1 de noviembre de 2026**. Referencias: la organización de METATRON, la profundidad contenida de NABERIUS/VAPULA y los sellos existentes de los cinco proyectos.
 
@@ -39,10 +39,25 @@ Revisión de familia: **1 de noviembre de 2026**. Referencias: la organización 
 
 Los colores son referencias de dirección artística; el acabado raster puede variar ligeramente. Los sellos de portada son interpretaciones promocionales de los originales. Los iconos, las fuentes vectoriales y la interfaz de las aplicaciones conservan sus recursos vigentes. La portada no representa una captura de pantalla, una medición ni una prueba del producto.
 
-La imagen pública actual se guarda en [assets/brand/family-cover.png](assets/brand/family-cover.png). Su [prompt y procedencia](assets/brand/family-cover-prompt.md) registran el uso de generación de imágenes. Los recursos anteriores permanecen como antecedentes y las capturas reales se conservan sin modificar.
+La portada gráfica anterior se conserva en [assets/brand/family-cover.png](assets/brand/family-cover.png). Su [prompt y procedencia](assets/brand/family-cover-prompt.md) registran el uso de generación de imágenes. Los recursos anteriores permanecen como antecedentes y las capturas reales se conservan sin modificar.
 
 ## Presentación de los README
 
-Cabecera con icono, nombre, eslogan, descripción y tres insignias sobrias; accesos a descarga, ventajas, uso, inicio y alcance; portada de familia; propósito y estado del proyecto; filosofía compartida; tabla de ventajas y límites. Las guías, atribuciones, licencias, versiones y evidencias técnicas permanecen accesibles. RAZIEL conserva su sección completa en inglés.
+Cabecera con icono, nombre, eslogan, descripción y tres insignias sobrias; accesos a descarga, ventajas, uso, inicio y alcance; portada fotográfica; propósito y estado del proyecto; filosofía compartida; tabla de ventajas y límites. Las guías, atribuciones, licencias, versiones y evidencias técnicas permanecen accesibles. RAZIEL conserva su sección completa en inglés.
 
 El pie conecta los cinco proyectos y mantiene literalmente **Creado por Sebastián Pastén F.**, junto al apoyo voluntario en [Ko-fi](https://ko-fi.com/C0C51WQ1T0).
+
+
+## Serie fotográfica · 2 de noviembre de 2026
+
+La cabecera actual de cada README es [assets/promo/photographic-cover.png](assets/promo/photographic-cover.png). Conservamos el formato horizontal 2:1, el texto de alto contraste, la filosofía compartida y el **logo oficial encima del nombre**. Cambian la escena, la luz y los objetos según el trabajo de cada proyecto.
+
+| Proyecto | Entorno |
+| --- | --- |
+| NABERIUS | Estudio de escritura, libros, manuscritos y luz cálida. |
+| RAZIEL | Estación de escucha con receptor y audífonos. |
+| METATRON | Escritorio diurno con un archivo y el cubo contextual de acciones. |
+| PAIMON | Estudio de audio con micrófono y paneles acústicos. |
+| VAPULA | Laboratorio de datos nocturno con reflejos azules. |
+
+Las fotografías son composiciones promocionales generadas con IA a partir de interfaces y marcas propias. Las capturas originales siguen siendo la evidencia de la interfaz real. La [procedencia local](assets/promo/photographic-cover.md) enlaza la fuente correspondiente y conserva los prompts. No se derivan mediciones, resultados recibidos o garantías de estas escenas.

@@ -11,7 +11,9 @@
   <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.6.0">Descargar 0.6.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![PAIMON · Simplicidad con impacto. Del sonido al conocimiento. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
+![PAIMON: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
+
+*Composición promocional generada con IA a partir de recursos reales de la app. [Procedencia y capturas originales](docs/assets/promo/photographic-cover.md).*
 
 PAIMON captura el audio del Mac y lo convierte en transcripciones y resúmenes con referencias al original. Incluye captura del sistema o de una app, micrófono opcional, búsqueda y exportación; también se controla desde la barra de menús.
 
