@@ -13,10 +13,23 @@ struct ExportSheet:View {
             Toggle("Marcadores y notas",isOn:$options.bookmarks)
             Toggle("Anexo de evidencias",isOn:$options.evidence).disabled(format == .json)
             Text(model.ui(format == .json ? "JSON conserva las citas y referencias estructuradas.":"Las citas van en un anexo. PDF y Markdown incluyen enlaces desde el resumen.")).font(.caption).foregroundStyle(.secondary)
-            ForEach(FindingKind.allCases,id:\.self) { kind in
-                Toggle(model.ui(kind.title),isOn:Binding(get:{options.kinds.contains(kind)},set:{if $0 { options.kinds.insert(kind) } else { options.kinds.remove(kind) }}))
+            if model.processingProgress.summaryNeedsRefresh {
+                Text("Actualiza el resumen para incluir las correcciones.").font(.caption).foregroundStyle(.secondary)
+            } else {
+                ForEach(FindingKind.allCases,id:\.self) { kind in
+                    Toggle(model.ui(kind.title),isOn:Binding(get:{options.kinds.contains(kind)},set:{if $0 { options.kinds.insert(kind) } else { options.kinds.remove(kind) }}))
+                }
             }
-            HStack { Spacer(); Button("Cancelar") { dismiss() }; Button("Exportar…") { dismiss(); Task { await model.export(format:format,options:options) } }.buttonStyle(.borderedProminent) }
+            HStack {
+                Spacer()
+                Button("Cancelar") { dismiss() }
+                Button("Exportar…") {
+                    var selection=options
+                    if model.processingProgress.summaryNeedsRefresh { selection.kinds=[] }
+                    dismiss()
+                    Task { await model.export(format:format,options:selection) }
+                }.buttonStyle(.borderedProminent)
+            }
         }.padding(28).frame(width:400)
     }
 }

@@ -1,8 +1,70 @@
 # PAIMON 0.6.0 — rendimiento, memoria y alcance
 
-Estado actualizado al 28 de octubre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
+Estado actualizado al 9 de noviembre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
 
-## Medición actual · 0.6.0
+## Grabación real · 9 de noviembre de 2026
+
+Ensayo local en Apple M1 de 8 GB con macOS 27.3 (26C5035r), usando LAICore del commit `8ae5c6c`. La muestra privada es un M4A AAC mono a 48 kHz de 35:36,895. El diagnóstico llamó a `AudioFileTranscriber.importSession` con Apple Speech en `es-ES`, por bloques y sin pausas artificiales. Usó una base SQLite temporal y el proveedor local de resúmenes.
+
+**Primera importación:** 27,73 s, primer definitivo a los 0,74 s, 166 segmentos persistidos y ningún rango inválido ni aviso del motor observado. El máximo muestreado fue 18,00 MiB de RSS y 10,06 MiB de footprint del cliente. El sistema ya registraba presión de nivel 2 y 5.205 MiB de intercambio a disco al iniciar. Esas cifras incluyen la carga de fondo del Mac y las del cliente excluyen los servicios de Apple.
+
+### Comparación con SpeechDetector
+
+Cuatro importaciones consecutivas, con un proceso y una base por pasada. El orden A/B/B/A reduce el sesgo del orden. A usa el motor actual. B agrega el módulo `SpeechDetector` con sensibilidad media a la misma configuración de `SpeechAnalyzer`. Las cuatro pasadas se limitaron a transcribir. La presión muestreada durante estas pasadas fue de nivel 1 y el swap global bajó de 5.392 a 4.992 MiB.
+
+| Pasada | Importación | CPU del cliente | Footprint pico muestreado | Segmentos | Palabras normalizadas | Hueco mayor entre segmentos |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| A1 | 23,19 s | 9,55 s | 9,44 MiB | 166 | 4.762 | 16,20 s |
+| B1 | 17,35 s | 7,80 s | 9,14 MiB | 238 | 2.955 | 29,76 s |
+| B2 | 20,19 s | 8,87 s | 9,00 MiB | 238 | 2.955 | 29,76 s |
+| A2 | 25,81 s | 10,79 s | 9,58 MiB | 166 | 4.762 | 16,20 s |
+
+Las pasadas de cada configuración coincidieron entre sí al comparar las secuencias de palabras con normalización Unicode y sin puntuación. Con el detector, el tiempo medio bajó 23,4 % y el número de palabras bajó 38,0 %. Cada pasada guardó rangos válidos hasta el final del archivo. Los huecos son intervalos sin texto entre segmentos y pueden contener silencios. Hace falta una referencia humana para distinguir voz omitida de posibles inserciones del motor actual. La decisión para esta muestra es conservar el motor actual. [SpeechDetector y su efecto sobre la cobertura](https://developer.apple.com/documentation/speech/speechdetector).
+
+### Síntesis y recuperación
+
+Foundation Models estaba disponible. El diagnóstico inició la síntesis con presión de nivel 1 y la canceló a los 2,43 s al detectar nivel 2. Después de las pasadas de voz se reabrió el mismo trabajo pendiente desde SQLite y se reintentó solo la síntesis. Volvió a subir a nivel 2 y el intento se canceló a los 1,97 s. SQLite pasó `PRAGMA quick_check` y conservó los 166 definitivos, un trabajo final pendiente y cero síntesis guardadas. El ensayo verifica conservación y reanudación del trabajo desde el almacén. La finalización con menor carga de fondo queda pendiente.
+
+El registro conserva únicamente métricas agregadas. Este caso aporta evidencia de importación de un archivo real en el escalón de 30 minutos. La captura en vivo, la calidad palabra por palabra, la energía y los ensayos de 60 y 120 minutos siguen pendientes.
+
+### Segunda muestra con documento de referencia
+
+Grabación privada de 20:42,473 y un Word con turnos de dos hablantes. Se retiraron 21 etiquetas de hablante y se normalizaron mayúsculas y puntuación. El documento aportó 2.954 palabras para el cotejo. Se utilizó el mismo M1 de 8 GB, macOS 27.3 y el motor del commit `8ae5c6c`. Cada pasada empezó con presión de memoria de nivel 2. Las cuatro usaron bases temporales separadas y procesaron únicamente voz.
+
+| Pasada | Importación | CPU del cliente | Footprint pico muestreado | Definitivos | Distancia de palabras frente al Word |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| A1 · actual | 18,21 s | 6,99 s | 8,80 MiB | 74 | 13,41 % |
+| B1 · SpeechDetector medio | 15,70 s | 7,49 s | 8,78 MiB | 74 | 13,41 % |
+| B2 · SpeechDetector medio | 15,08 s | 7,15 s | 8,55 MiB | 74 | 13,41 % |
+| A2 · actual | 19,10 s | 7,94 s | 8,80 MiB | 74 | 13,41 % |
+
+El tiempo medio bajó de 18,65 a 15,39 s, una reducción de 17,5 %. La CPU media del cliente fue similar, de 7,46 frente a 7,32 s. Las cifras de memoria corresponden al cliente y excluyen los servicios de Apple. Las cuatro pasadas guardaron marcas válidas y produjeron 3.115 palabras. El detector dejó el último rango de texto 2,15 s antes del final del archivo.
+
+La alineación de cada transcripción con el Word tuvo 165 sustituciones, 35 omisiones y 196 inserciones. Las dos variantes difirieron entre sí en cinco sustituciones. El porcentaje cuantifica ediciones frente al documento facilitado. Las correcciones editoriales del Word también pueden generar diferencias. Esta muestra respalda una ventaja de tiempo con cobertura textual comparable. La variación del primer audio justifica mantener el detector como experimental hasta cotejar más grabaciones con referencia, especialmente voces bajas y silencios largos.
+
+### Voces atenuadas y pausas largas
+
+En una copia temporal de la segunda muestra se bajó el volumen de dos tramos en 20 y 28 dB. Se insertaron pausas de 25 y 40 s en puntos de silencio del original. El archivo resultante duró 21:47,517 y mantuvo el mismo Word de referencia. Cuatro pasadas A/B/B/A, con SpeechDetector medio en B y bases independientes, dieron estos resultados:
+
+| Configuración | Tiempo medio | Definitivos | Palabras a −20 dB | Palabras a −28 dB | Distancia frente al Word |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Motor actual | 15,83 s | 79 | 789 | 784 | 14,05 % |
+| SpeechDetector medio | 15,27 s | 80 | 788 | 784 | 14,08 % |
+
+Las palabras por tramo se asignan por el punto medio del segmento. Ninguna pasada ubicó un punto medio en una pausa insertada ni produjo rangos inválidos o avisos. Cada variante reprodujo su resultado textual. El detector ahorró 0,55 s de media, un 3,5 %, y añadió una inserción frente al Word. Con esta muestra la cobertura fue comparable y la ventaja temporal fue menor que en el audio original. El uso por defecto se mantiene en el motor actual mientras haya diferencias de cobertura entre grabaciones.
+
+### Importación de cargas de una y dos horas
+
+Se concatenó temporalmente la misma grabación de 20:42 tres y seis veces y se importó con Apple Speech en español, con el mismo M1 de 8 GB y macOS 27.3. Cada pasada usó una base SQLite nueva. Los archivos repetidos conservan el audio de la muestra y permiten ensayar la duración sin reproducirla a ritmo real.
+
+| Carga | Tiempo de importación | CPU del cliente | Footprint pico muestreado | Segmentos definitivos |
+| --- | ---: | ---: | ---: | ---: |
+| 1:02:07,494 | 41,03 s | 19,68 s | 10,41 MiB | 222 |
+| 2:04:14,988 | 85,81 s | 41,39 s | 12,64 MiB | 447 |
+
+SQLite pasó la comprobación de integridad en las dos bases. Se guardó texto hasta el final de cada archivo con rangos válidos y cero avisos del diagnóstico. La carga larga conservó entre 3.114 y 3.125 palabras por repetición, asignadas según el punto medio de cada segmento. La presión de memoria observada fue nivel 1. El footprint corresponde al cliente y excluye los servicios de Apple. El ensayo cubre reconocimiento e importación por bloques de audio repetido. La captura continua, la síntesis larga y la energía requieren pruebas separadas.
+
+## Mediciones de octubre · 0.6.0
 
 - 84 pruebas aprobadas e importación española nativa real. Foundation Models v4: doce fragmentos sintéticos, seis hallazgos con citas, 38,19 s; footprint final del cliente 10,25 MB, excluyendo servicios de Apple.
 - Review Release en reposo: Time Profiler de 10 s. Observación `ps` separada de 10,12 s: CPU 0,40 % de un núcleo, RSS 19,61–20,33 MB; `sample`: footprint 64,4 MB, pico de proceso 95,1 MB. No equivale a consumo durante captura, memoria total del modelo, energía ni una comparación antes/después.

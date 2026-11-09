@@ -66,15 +66,31 @@ enum SummaryGrounding {
         let matches=claim.intersection(content).count
         return matches>=min(2,claim.count) && Double(matches)/Double(claim.count)>=0.2
     }
+    private static let decisionCues=["acordamos","se acordo","decidimos","se decidio","aprobamos","se aprobo","resolvimos","se resolvio","we agreed","we decided","it was decided","approved"]
     static func explicitDecision(_ text:String) -> Bool {
         let literal=text.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)
-        return ["acordamos","se acordo","decidimos","se decidio","aprobamos","se aprobo","resolvimos","se resolvio","we agreed","we decided","it was decided","approved"].contains(where:literal.contains)
+        return decisionCues.contains(where:literal.contains)
     }
     static func supportsDecision(_ claim:String,quote:String) -> Bool {
         // One segment may contain both an agreement and an unresolved matter.
         // An agreement cue in another sentence cannot authorize this claim.
         quote.components(separatedBy:CharacterSet(charactersIn:".!?;\n"))
             .contains { explicitDecision($0) && supports(claim,source:$0) }
+    }
+    static func hasUnsupportedCombinedAgreement(_ overview:String,quotes:String) -> Bool {
+        for sentence in overview.components(separatedBy:CharacterSet(charactersIn:".!?;\n")) {
+            let folded=sentence.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)
+            guard let cueEnd=decisionCues.compactMap({folded.range(of:$0)?.upperBound}).min() else { continue }
+            let parts=folded[cueEnd...].components(separatedBy:" y ")
+            // An infinitive after "y" can inherit "se acordó" from the first
+            // clause. Require separate support for that action in the source.
+            for continuation in parts.dropFirst() {
+                let action=continuation.trimmingCharacters(in:.whitespaces)
+                guard action.range(of:#"^[a-zñ]+(?:ar|er|ir)\b"#,options:.regularExpression) != nil else { continue }
+                if !supportsDecision(action,quote:quotes) { return true }
+            }
+        }
+        return false
     }
     static func references(_ sources:[SummarySource],claim:String?=nil) -> [FindingEvidence] {
         var seen=Set<FindingEvidence>()
@@ -106,6 +122,7 @@ enum SummaryGrounding {
         for phrase in ["no tienen aprobacion explicita","no cuentan con aprobacion explicita","sin aprobacion explicita","no explicit approval","not been explicitly approved"] {
             if overviewText.contains(phrase),!quoted.contains(phrase) { throw SummaryResponseError.insufficient }
         }
+        guard !hasUnsupportedCombinedAgreement(draft.overview,quotes:quoted) else { throw SummaryResponseError.insufficient }
         guard (35...650).contains(draft.overview.count),let overview=finding(kind:.overview,text:draft.overview,sources:sources) else { throw SummaryResponseError.insufficient }
         var result:[Finding]=[]
         if let topic=finding(kind:.topic,text:draft.title,sources:sources) { result.append(topic) }

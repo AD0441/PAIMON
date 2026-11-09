@@ -1,5 +1,19 @@
 import Foundation
 import AVFoundation
+public enum CapturePreparation:Sendable,Equatable {
+    case checkingVoice, preparingVoice, microphone, systemAudio
+
+    public var title:String {
+        switch self {
+        case .checkingVoice: "Comprobando recursos de voz"
+        case .preparingVoice: "Preparando reconocimiento"
+        case .microphone: "Preparando micrófono"
+        case .systemAudio: "Preparando audio del sistema"
+        }
+    }
+    public var mayNeedPermission:Bool { self == .microphone || self == .systemAudio }
+}
+
 public actor RecordingPipeline {
     public let store:SessionStore
     private let capture=AudioCaptureService()
@@ -14,7 +28,7 @@ public actor RecordingPipeline {
     private var outward:AsyncStream<PipelineEvent>.Continuation?
     private var archive:AudioArchive?
     public init(store:SessionStore) { self.store=store }
-    public func start(title:String,settings:AppSettings,context:SessionContext?=nil) async throws -> (Session,AsyncStream<PipelineEvent>) {
+    public func start(title:String,settings:AppSettings,context:SessionContext?=nil,preparation:(@Sendable (CapturePreparation) async -> Void)?=nil) async throws -> (Session,AsyncStream<PipelineEvent>) {
         guard session==nil else { throw LAIError.message("Ya hay una sesión activa") }
         guard settings.systemAudio || settings.microphone else { throw LAIError.message("Selecciona al menos una fuente de audio") }
         let selected:any TranscriptionEngine
@@ -49,9 +63,10 @@ public actor RecordingPipeline {
         var sources:[AudioSource]=[]
         if settings.systemAudio { sources.append(.system) }; if settings.microphone { sources.append(.microphone) }
         do {
+            await preparation?(.preparingVoice)
             try await selected.start(sessionID:value.id,sources:sources,settings:settings,events:events.continuation)
             epoch=ProcessInfo.processInfo.systemUptime
-            try await capture.start(settings:settings,epoch:epoch)
+            try await capture.start(settings:settings,epoch:epoch,preparation:preparation)
             epoch=await capture.beginTimeline()
             value.created=Date()
             try await store.save(value)

@@ -87,6 +87,7 @@ public struct TranscriptSegment: Identifiable, Codable, Sendable, Hashable {
     public var start: Double
     public var end: Double
     public var text: String
+    public var originalText: String?
     public var isFinal: Bool
     public var duplicateOf: String?
     public init(sessionID: UUID, source: AudioSource, start: Double, end: Double, text: String, isFinal: Bool = true) {
@@ -134,6 +135,7 @@ public struct SummarySnapshot: Identifiable, Codable, Sendable {
     public var summaryTemplate:SummaryTemplate?
     public var processingVersion:Int?
     public var engineIdentifier:String?
+    public var transcriptRevision:Int64?
     public init(sessionID: UUID, throughRow: Int64, isFinal: Bool, findings: [Finding],template:SummaryTemplate?=nil,processingVersion:Int=1) { self.sessionID=sessionID; self.throughRow=throughRow; self.isFinal=isFinal; self.findings=findings; summaryTemplate=template; self.processingVersion=processingVersion }
 }
 public enum LAIError: LocalizedError, Sendable {

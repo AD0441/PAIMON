@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.6.0" src="https://img.shields.io/badge/versi%C3%B3n-0.6.0-58616B?style=flat-square">
+    <img alt="Candidata 0.7.0" src="https://img.shields.io/badge/candidata-0.7.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.6.0">Descargar 0.6.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1">Descargar candidata 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![PAIMON: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
@@ -53,15 +53,14 @@ Las imágenes de revisión usan datos sintéticos y una instancia separada de la
 
 </details>
 
-## Novedades de 0.6.0 · compilación 13
+## Novedades de la candidata 0.7.0 · compilación 15
 
-- Icono geométrico de Paimon en azul profundo y marfil, dentro de la familia visual de METATRON; SVG, iconos nativos y portada reproducibles.
-- Cuatro paletas (**Petróleo, Salvia, Cobre y Grafito**) y selección de idioma de interfaz (español o inglés), independiente del idioma de transcripción y sin traducir sesiones.
-- Pie lateral con símbolo monolineal, PAIMON, «Audio en tu Mac», Ajustes y autor.
-- Mejoras de estabilidad: una respuesta tardía ya no reemplaza el resumen de otra sesión; la búsqueda agrupada y cancelable no recarga resúmenes ni marcadores.
-- Fuentes de apps actualizadas mediante notificaciones; vistas separadas para indicador de voz y duración.
+- **Escucha desde la evidencia.** Al importar audio, PAIMON conserva un vínculo local al archivo. Puedes escuchar el intervalo citado desde la transcripción o el informe.
+- **Revisa la transcripción.** Corrige un fragmento o restaura el texto reconocido. Se conservan sus tiempos y el resumen queda marcado para actualizarse. La búsqueda y la exportación usan el texto revisado.
+- **Recupera el resumen.** La transcripción queda disponible mientras se prepara la síntesis final. Los trabajos pendientes se guardan en SQLite. Tras un aviso de memoria, los reintentos esperan de 15 a 120 segundos de presión normal.
+- **Sigue la preparación de captura.** PAIMON indica cuándo comprueba los recursos de voz, el micrófono y el audio del sistema. La etapa de permisos permite abrir Ajustes del Sistema.
 
-**84 pruebas aprobadas**, con importación española y síntesis de Apple reales sobre muestras sintéticas. [Pruebas, comprobaciones visuales y alcance](docs/VALIDATION.md). La distribución sigue usando firma ad hoc; faltan notarización, validación específica en macOS 26 y reuniones reales de varias horas.
+La batería incluye 90 pruebas. La captura por aplicación y global, la revisión de transcripciones y la síntesis de Apple se ensayaron con muestras sintéticas en instancias aisladas. Quedan pendientes el micrófono, la combinación de fuentes y el recorrido con el paquete distribuido en macOS 26. [Resultados y alcance](docs/VALIDATION.md).
 
 ## Clave de Google AI cuando la RAM limita el resumen local
 
@@ -75,12 +74,12 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga [PAIMON-0.6.0.zip y su SHA-256](https://github.com/AD0441/PAIMON/releases/tag/v0.6.0). Apple Silicon y macOS 26.0 o posterior; ejecución comprobada aquí en M1 de 8 GB con macOS 27.2.
-2. Verifica opcionalmente: `shasum -a 256 -c PAIMON-0.6.0.zip.sha256`.
+1. Descarga la [candidata 0.7.0 y su SHA-256](https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1). Requiere Apple Silicon y macOS 26.0 o posterior. Las pruebas de esta candidata se realizaron en un M1 de 8 GB con macOS 27.3. La [versión anterior 0.6.0](https://github.com/AD0441/PAIMON/releases/tag/v0.6.0) sigue disponible.
+2. Verifica opcionalmente: `shasum -a 256 -c PAIMON-0.7.0-rc.1.zip.sha256`.
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
-La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan únicamente 0.6.0 (13) y 0.5.1 (12).
+La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.0 (15) y 0.6.0 (13).
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
@@ -147,6 +146,8 @@ FluidAudio/Parakeet Redux y MLX se ejecutan mediante procesos locales y un proto
 Apple SpeechTranscriber en macOS 26 requiere seleccionar español o inglés. Parakeet multilingüe detecta automáticamente el idioma. La opción «Automático» elige Apple si está preparado y, de lo contrario, FluidAudio si se ha configurado.
 
 ## Pruebas y estado
+
+La [lista de requisitos y estado](docs/REQUIREMENTS.md) consolida las decisiones del producto, las mejoras realizadas y los casos de aceptación pendientes.
 
 Consulta [resultados verificables](docs/VALIDATION.md), [arquitectura y privacidad](docs/ARCHITECTURE.md), [optimización y mediciones](docs/PERFORMANCE.md) y [limitaciones](docs/LIMITATIONS.md). La aplicación nunca sustituye la captura, la transcripción ni el resumen por datos de demostración. Los dobles de motor existen en las pruebas y en el diagnóstico explícito de cargas sintéticas; la aplicación usa siempre los motores reales.
 

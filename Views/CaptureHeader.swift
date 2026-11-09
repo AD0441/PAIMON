@@ -21,9 +21,9 @@ struct CaptureHeader:View {
                     Button { Task { await model.pauseOrResume() } } label: { Label(model.ui(model.state == .paused ? "Reanudar":"Pausar"),systemImage:model.state == .paused ? "play.fill":"pause.fill") }.controlSize(.large)
                     Button(role:.destructive) { Task { await model.stop() } } label: { Label("Detener",systemImage:"stop.fill") }.controlSize(.large)
                 } else {
-                    Button { model.chooseAudioFile() } label: { Label("Importar audio",systemImage:"square.and.arrow.down") }.controlSize(.large).disabled(model.active || model.store==nil)
+                    Button { model.chooseAudioFile() } label: { Label("Importar audio",systemImage:"square.and.arrow.down") }.controlSize(.large).disabled(!model.canStartAudio || model.store==nil)
                     Button { Task { await model.start() } } label: { Label(model.ui(model.state == .preparing ? "Preparando…":"Iniciar"),systemImage:"record.circle") }
-                        .buttonStyle(.borderedProminent).controlSize(.large).disabled(model.active || model.store==nil)
+                        .buttonStyle(.borderedProminent).controlSize(.large).disabled(!model.canStartAudio || model.store==nil)
                         .keyboardShortcut("r",modifiers:[.command,.shift])
                 }
                 if model.state == .preparing || model.state == .stopping { ProgressView().controlSize(.small) }
@@ -35,6 +35,14 @@ struct CaptureHeader:View {
                     templateControl
                 }
             }.font(.callout)
+            if model.state == .preparing && model.capturePreparation.mayNeedPermission {
+                HStack(spacing:8) {
+                    Text("Si macOS solicita permiso, autorízalo en Privacidad y seguridad.")
+                        .foregroundStyle(.secondary)
+                    Button("Abrir Ajustes del Sistema") { model.openPrivacySettings() }
+                        .buttonStyle(.borderless)
+                }.font(.caption)
+            }
             if let file=model.selectedSession?.importedFileName {
                 Label("Fuente de esta sesión: \(file)",systemImage:"doc.text").font(.caption).foregroundStyle(.secondary)
             }

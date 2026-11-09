@@ -12,6 +12,10 @@ public actor SessionExporter {
     private let store:SessionStore
     public init(store:SessionStore) { self.store=store }
     public func export(session:Session,to url:URL,format:ExportFormat,options:ExportOptions) async throws {
+        let revision=try await store.transcriptRevision(session:session.id)
+        if !options.kinds.isEmpty,try await store.summaryNeedsRefresh(session:session.id) {
+            throw LAIError.message("Actualiza el resumen para incluir las correcciones.")
+        }
         let temp=url.deletingLastPathComponent().appendingPathComponent(".lai-export-\(UUID().uuidString).\(format.rawValue)")
         defer { try? FileManager.default.removeItem(at:temp) }
         let evidenceURL=FileManager.default.temporaryDirectory.appendingPathComponent("paimon-evidence-\(UUID()).jsonl")
@@ -146,6 +150,9 @@ public actor SessionExporter {
             }
             if format == .json { try write("]}") }
             try handle.synchronize()
+        }
+        guard revision == (try await store.transcriptRevision(session:session.id)) else {
+            throw LAIError.message("La transcripción cambió durante la exportación. Intenta de nuevo.")
         }
         if FileManager.default.fileExists(atPath:url.path) { _=try FileManager.default.replaceItemAt(url,withItemAt:temp) }
         else { try FileManager.default.moveItem(at:temp,to:url) }

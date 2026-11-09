@@ -43,6 +43,7 @@ extension AppModel {
         do {
             try await ValidationPlayback.play(file)
             await stop()
+            await waitForSummaryRecovery()
             guard let session=current,let store else { throw LAIError.message("No hay una sesión de validación") }
             let rows=try await store.segments(session:session.id,limit:1000)
             let summary=try await store.latestSummary(session:session.id)
@@ -58,7 +59,7 @@ extension AppModel {
                 "timelineValid":timelineValid,"durationSeconds":session.duration,"preparationSeconds":preparationSeconds,
                 "capturedBuffers":stats.buffers,"capturedFrames":stats.frames,"nonzeroBuffers":stats.nonzeroBuffers,
                 "sample":"synthetic local speech, captured from app output by Core Audio process tap",
-                "source":"local.audio.intelligence only","audioSaved":false,
+                "source":session.settings.applicationBundleID,"audioSaved":false,
                 "rssMB":ResourceMetrics.current().residentMB,"footprintMB":ResourceMetrics.current().footprintMB,
                 "os":ProcessInfo.processInfo.operatingSystemVersionString,
                 "captureState":state.rawValue,"notice":message ?? "","summaryStatus":summaryStatus]

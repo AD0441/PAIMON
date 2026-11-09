@@ -2,13 +2,29 @@ import SwiftUI
 import LAICore
 struct TranscriptView:View {
     @Bindable var model:AppModel
+    @State private var editing:TranscriptSegment?
     var body:some View {
         VStack(spacing:0) {
             HStack {
                 Label("Transcripción",systemImage:"text.bubble").font(.headline); Spacer()
+                Button { Task { await model.copyTranscript() } } label: {
+                    Image(systemName:"doc.on.doc")
+                }
+                .help("Copiar transcripción completa")
+                .accessibilityLabel("Copiar transcripción completa")
+                .disabled(model.selectedSession==nil || model.processingProgress.transcribedThrough<=0)
                 Button { Task { await model.addBookmark() } } label: { Label("Marcar",systemImage:"bookmark") }.controlSize(.small).disabled(!model.canAddBookmark).help("Marcar este momento · ⌘⇧M").accessibilityIdentifier("addBookmark")
                 Toggle("Seguir",isOn:$model.autoScroll).toggleStyle(.checkbox).font(.caption)
             }.padding(16)
+            if model.selectedSession?.importedFileName != nil,!model.active {
+                HStack {
+                    Button("Vincular audio original") { Task { await model.linkOriginalAudio() } }
+                    if model.importedPlayback.isPlaying {
+                        Button("Detener reproducción") { model.importedPlayback.stop() }
+                    }
+                    Spacer()
+                }.font(.caption).padding(.horizontal,16).padding(.bottom,8)
+            }
             TextField("Buscar palabras en la sesión",text:$model.transcriptSearch)
                 .textFieldStyle(.roundedBorder).padding(.horizontal,16).padding(.bottom,12)
             if !model.terms.isEmpty {
@@ -62,7 +78,9 @@ struct TranscriptView:View {
                 Spacer()
             }.font(.caption).padding(.horizontal,16).padding(.top,8)
             Text("Vista paginada de 300 fragmentos. Exporta para obtener el documento completo.").font(.caption2).foregroundStyle(.secondary).padding(10)
-        }.task(id:model.transcriptSearch) { await model.filterTranscript() }
+        }
+        .task(id:model.transcriptSearch) { await model.filterTranscript() }
+        .sheet(item:$editing) { segment in TranscriptCorrectionSheet(model:model,segment:segment) }
     }
     private func segmentView(_ segment:TranscriptSegment) -> some View {
         VStack(alignment:.leading,spacing:7) {
@@ -70,8 +88,18 @@ struct TranscriptView:View {
                 Text(timestamp(segment.start)).monospacedDigit()
                 Text(model.ui(segment.source.title))
                 if !segment.isFinal { Text("Parcial") }
+                if segment.originalText != nil { Text("Corregido") }
                 if segment.duplicateOf != nil { Text("Posible eco") }
                 Spacer()
+                if segment.source == .file,segment.isFinal,!model.active {
+                    Button { Task { await model.playOriginalAudio(start:segment.start,end:segment.end) } } label: {
+                        Image(systemName:"play.circle")
+                    }.buttonStyle(.plain).help("Escuchar fragmento").accessibilityLabel("Escuchar fragmento")
+                }
+                if segment.isFinal,model.canEditTranscript {
+                    Button { editing=segment } label: { Image(systemName:"pencil") }
+                        .buttonStyle(.plain).help("Corregir fragmento").accessibilityLabel("Corregir fragmento")
+                }
                 Button { model.copy(segment.text) } label: { Image(systemName:"doc.on.doc") }.buttonStyle(.plain).help("Copiar fragmento")
             }.font(.caption).foregroundStyle(.secondary)
             Text(segment.text).font(.body).lineSpacing(5).textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading)
@@ -80,6 +108,52 @@ struct TranscriptView:View {
             Button("Copiar fragmento") { model.copy("[\(timestamp(segment.start))] \(segment.text)") }
             Button("Marcar este fragmento") { Task { await model.addBookmark(time:segment.start,segmentID:segment.id) } }.disabled(!segment.isFinal)
         }
+    }
+}
+private struct TranscriptCorrectionSheet:View {
+    var model:AppModel
+    let segment:TranscriptSegment
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft:String
+    @State private var saving=false
+
+    init(model:AppModel,segment:TranscriptSegment) {
+        self.model=model
+        self.segment=segment
+        _draft=State(initialValue:segment.text)
+    }
+
+    var body:some View {
+        VStack(alignment:.leading,spacing:12) {
+            Text("Corregir fragmento").font(.title2.weight(.semibold))
+            Text(timestamp(segment.start)).monospacedDigit().foregroundStyle(.secondary)
+            Text("Texto reconocido").font(.caption.weight(.semibold))
+            ScrollView {
+                Text(segment.originalText ?? segment.text)
+                    .frame(maxWidth:.infinity,alignment:.leading)
+                    .textSelection(.enabled)
+            }.frame(maxHeight:100)
+            Text("Texto revisado").font(.caption.weight(.semibold))
+            TextEditor(text:$draft)
+                .font(.body).frame(minHeight:130)
+                .accessibilityLabel("Texto revisado")
+            HStack {
+                if let original=segment.originalText {
+                    Button("Restaurar texto reconocido") { draft=original }
+                }
+                Spacer()
+                Button("Cancelar",role:.cancel) { dismiss() }
+                Button("Guardar corrección") {
+                    saving=true
+                    Task {
+                        if await model.correctTranscript(segment,text:draft) { dismiss() }
+                        saving=false
+                    }
+                }
+                .keyboardShortcut(.defaultAction)
+                .disabled(saving || !model.canEditTranscript || draft.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty || draft==segment.text)
+            }
+        }.padding(24).frame(width:520)
     }
 }
 private struct BookmarkRow:View {

@@ -47,7 +47,7 @@ struct PaimonApp: App {
         .commands {
             CommandGroup(replacing:.newItem) {
                 Button(model.ui("Nueva sesión")) { model.newSession() }.keyboardShortcut("n").disabled(model.active)
-                Button(model.ui("Importar audio…")) { model.chooseAudioFile() }.keyboardShortcut("o").disabled(model.active)
+                Button(model.ui("Importar audio…")) { model.chooseAudioFile() }.keyboardShortcut("o").disabled(!model.canStartAudio)
                 Button(model.ui("Añadir marcador")) { Task { await model.addBookmark() } }.keyboardShortcut("m",modifiers:[.command,.shift]).disabled(!model.canAddBookmark)
                 Button(model.ui("Buscar en todas las transcripciones")) { model.beginGlobalSearch() }.keyboardShortcut("f",modifiers:[.command,.shift])
                 Button(model.ui(model.state == .paused ? "Reanudar":"Pausar")) { Task { await model.pauseOrResume() } }.keyboardShortcut("p",modifiers:[.command,.shift]).disabled(![.recording,.paused].contains(model.state))

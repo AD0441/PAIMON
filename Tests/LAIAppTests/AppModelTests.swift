@@ -6,11 +6,15 @@ import LAICore
 actor ControlledSummary:SummarizationEngine {
     enum Outcome:String,CaseIterable,Sendable { case unavailable,success,failure }
     let outcome:Outcome
+    let pauseOnFirstCall:Bool
     private var entered=false
     private var observer:CheckedContinuation<Void,Never>?
     private var suspended:CheckedContinuation<Void,Never>?
     private(set) var unloads=0
-    init(_ outcome:Outcome) { self.outcome=outcome }
+    init(_ outcome:Outcome,pauseOnFirstCall:Bool=true) {
+        self.outcome=outcome
+        self.pauseOnFirstCall=pauseOnFirstCall
+    }
     private func suspend() async {
         await withCheckedContinuation { continuation in
             suspended=continuation; entered=true; observer?.resume(); observer=nil
@@ -26,7 +30,7 @@ actor ControlledSummary:SummarizationEngine {
         return nil
     }
     func summarize(segments:[TranscriptSegment],previous:[Finding],final:Bool,locale:String) async throws -> [Finding] {
-        if !entered { await suspend() }
+        if pauseOnFirstCall && !entered { await suspend() }
         if outcome == .failure { throw LAIError.message("Error controlado de la sesión anterior") }
         guard let first=segments.first else { return previous }
         return [Finding(kind:.overview,text:first.text,segmentID:first.id,quote:first.text,start:first.start,end:first.end)]
@@ -42,10 +46,10 @@ private struct ModelFixture {
     let store:SessionStore
     init() throws { defaults=try #require(UserDefaults(suiteName:suite)); store=try SessionStore(directory:directory) }
     func clean() { defaults.removePersistentDomain(forName:suite); try? FileManager.default.removeItem(at:directory) }
-    func model(engine:ControlledSummary?=nil) -> AppModel {
+    func model(engine:ControlledSummary?=nil,pressureRetryInterval:Duration = .milliseconds(40)) -> AppModel {
         let factory:(@MainActor (Session?) -> any SummarizationEngine)?
         if let engine { factory={ _ in engine } } else { factory=nil }
-        return AppModel(store:store,preferences:defaults,summaryEngine:factory)
+        return AppModel(store:store,preferences:defaults,summaryEngine:factory,pressureRetryInterval:pressureRetryInterval)
     }
     func session(_ title:String) async throws -> Session {
         var session=Session(title:title,settings:AppSettings()); session.status="stopped"
@@ -73,6 +77,100 @@ struct AppModelTests {
         #expect(model.findings.isEmpty)
         #expect(await engine.unloads==1)
         #expect(model.summaryWorking==false)
+    }
+
+    @Test(arguments:[CaptureState.importing,.stopping])
+    func pendingSummaryResumesWhenPressureNormalizesBeforeIdle(_ busyState:CaptureState) async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let session=try await fixture.session("Laboratorio")
+        try await fixture.store.requestFinalSummary(session:session.id)
+        let engine=ControlledSummary(.success,pauseOnFirstCall:false)
+        let model=fixture.model(engine:engine)
+        await model.select(session.id)
+        model.state=busyState
+        model.memoryPressureChanged(true)
+        model.memoryPressureChanged(false)
+        #expect(try await fixture.store.pendingFinalSession()?.id==session.id)
+        #expect(model.summaryWorking==false)
+
+        model.state = .idle
+        await model.waitForSummaryRecovery()
+        #expect(try await fixture.store.pendingFinalSession()==nil)
+        #expect(try await fixture.store.latestSummary(session:session.id)?.isFinal==true)
+        #expect(try await fixture.store.segments(session:session.id).count==1)
+    }
+
+    @Test func newPressureWarningCancelsScheduledRecovery() async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let session=try await fixture.session("Laboratorio")
+        try await fixture.store.requestFinalSummary(session:session.id)
+        let engine=ControlledSummary(.success,pauseOnFirstCall:false)
+        let model=fixture.model(engine:engine)
+        await model.select(session.id)
+
+        model.memoryPressureChanged(true)
+        model.memoryPressureChanged(false)
+        #expect(model.waitingForMemoryRecovery)
+        #expect(model.canStartAudio)
+        model.memoryPressureChanged(true)
+        #expect(!model.waitingForMemoryRecovery)
+        try await Task.sleep(for:.milliseconds(80))
+        #expect(try await fixture.store.latestSummary(session:session.id)==nil)
+        #expect(try await fixture.store.processingProgress(session:session.id).finalQueued)
+
+        model.memoryPressureChanged(false)
+        await model.waitForSummaryRecovery()
+        #expect(try await fixture.store.latestSummary(session:session.id)?.isFinal==true)
+        #expect(try await fixture.store.pendingFinalSession()==nil)
+    }
+
+    @Test func manualFinalSummaryPersistsBeforeInferenceAndSurvivesFailure() async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let session=try await fixture.session("Laboratorio")
+        let engine=ControlledSummary(.failure)
+        let model=fixture.model(engine:engine)
+        await model.select(session.id)
+
+        let attempt=Task { await model.updateSummary(final:true) }
+        await engine.waitForEntry()
+        #expect(try await fixture.store.processingProgress(session:session.id).finalQueued)
+        await engine.release()
+        await attempt.value
+        #expect(try await fixture.store.pendingFinalSession()?.id==session.id)
+        #expect(try await fixture.store.latestSummary(session:session.id)==nil)
+
+        let retry=fixture.model(engine:ControlledSummary(.success,pauseOnFirstCall:false))
+        await retry.select(session.id)
+        await retry.updateSummary(final:true)
+        #expect(try await fixture.store.latestSummary(session:session.id)?.isFinal==true)
+        #expect(try await fixture.store.pendingFinalSession()==nil)
+    }
+
+    @Test func transcriptFinishesBeforeItsBackgroundSummary() async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let session=try await fixture.session("Laboratorio")
+        let engine=ControlledSummary(.success)
+        let model=fixture.model(engine:engine)
+        await model.select(session.id)
+        model.state = .stopping
+
+        await model.finishTranscript(session,requestSummary:true)
+        #expect(model.state == .idle)
+        #expect(model.statusTitle=="Transcripción lista")
+        #expect(try await fixture.store.processingProgress(session:session.id).finalQueued)
+        #expect(try await fixture.store.latestSummary(session:session.id)==nil)
+
+        await engine.waitForEntry()
+        #expect(model.summaryWorking)
+        #expect(!model.canStartAudio)
+        await engine.release()
+        await model.waitForSummaryRecovery()
+        #expect(try await fixture.store.latestSummary(session:session.id)?.isFinal==true)
+        #expect(try await fixture.store.pendingFinalSession()==nil)
     }
 
     @Test func checkingAvailabilityPreservesStoredSummaryStatus() async throws {

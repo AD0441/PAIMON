@@ -32,6 +32,7 @@ public actor SessionStore {
         CREATE TABLE IF NOT EXISTS finding_import(snapshot INTEGER PRIMARY KEY REFERENCES summaries(seq) ON DELETE CASCADE);
         CREATE TABLE IF NOT EXISTS summary_metrics(id TEXT PRIMARY KEY,session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,created REAL NOT NULL,data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS summary_metrics_session ON summary_metrics(session,created);
+        CREATE TABLE IF NOT EXISTS session_review(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE, transcript_revision INTEGER NOT NULL DEFAULT 0, audio_bookmark TEXT);
         CREATE TABLE IF NOT EXISTS summary_final_jobs(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE,created REAL NOT NULL);
         CREATE TABLE IF NOT EXISTS bookmarks(id TEXT PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, time REAL NOT NULL, data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS bookmarks_session_time ON bookmarks(session,time,id);
@@ -78,6 +79,51 @@ public actor SessionStore {
         guard segment.isFinal else { return }
         try write("INSERT INTO segments(session,id,start,data) VALUES(?,?,?,?) ON CONFLICT(session,id) DO UPDATE SET data=excluded.data,start=excluded.start",[segment.sessionID.uuidString,segment.id,String(segment.start),try encode(segment)])
     }
+    public func transcriptRevision(session:UUID) throws -> Int64 {
+        let row=try statement("SELECT transcript_revision FROM session_review WHERE session=?",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        return sqlite3_step(row)==SQLITE_ROW ? sqlite3_column_int64(row,0):0
+    }
+    public func audioBookmark(session:UUID) throws -> Data? {
+        let row=try statement("SELECT audio_bookmark FROM session_review WHERE session=?",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row)==SQLITE_ROW,let value=sqlite3_column_text(row,0) else { return nil }
+        return Data(base64Encoded:String(cString:value))
+    }
+    public func saveAudioBookmark(_ bookmark:Data,session:UUID) throws {
+        try write("INSERT INTO session_review(session,audio_bookmark) VALUES(?,?) ON CONFLICT(session) DO UPDATE SET audio_bookmark=excluded.audio_bookmark",[session.uuidString,bookmark.base64EncodedString()])
+    }
+    @discardableResult
+    public func correctSegment(session:UUID,id:String,text:String) throws -> TranscriptSegment {
+        let corrected=text.trimmingCharacters(in:.whitespacesAndNewlines)
+        guard !corrected.isEmpty else { throw LAIError.message("Escribe el texto del fragmento antes de guardar.") }
+        guard sqlite3_exec(db,"BEGIN IMMEDIATE",nil,nil,nil)==SQLITE_OK else { throw failure() }
+        do {
+            guard let record=try self.session(id:session),!["recording","paused","importing"].contains(record.status) else {
+                throw LAIError.message("Termina la sesión antes de corregir la transcripción.")
+            }
+            let row=try statement("SELECT data FROM segments WHERE session=? AND id=?",values:[session.uuidString,id])
+            defer { sqlite3_finalize(row) }
+            guard sqlite3_step(row)==SQLITE_ROW else { throw LAIError.message("El fragmento ya no está disponible.") }
+            var segment=try decode(TranscriptSegment.self,row)
+            if segment.text != corrected {
+                let original=segment.originalText ?? segment.text
+                segment.originalText=corrected==original ? nil:original
+                segment.text=corrected
+                try write("UPDATE segments SET data=? WHERE session=? AND id=?",[try encode(segment),session.uuidString,id])
+                try write("INSERT INTO session_review(session,transcript_revision) VALUES(?,1) ON CONFLICT(session) DO UPDATE SET transcript_revision=transcript_revision+1",[session.uuidString])
+            }
+            guard sqlite3_exec(db,"COMMIT",nil,nil,nil)==SQLITE_OK else { throw failure() }
+            return segment
+        } catch {
+            sqlite3_exec(db,"ROLLBACK",nil,nil,nil)
+            throw error
+        }
+    }
+    public func summaryNeedsRefresh(session:UUID) throws -> Bool {
+        guard let snapshot=try latestSummary(session:session) else { return false }
+        return (snapshot.transcriptRevision ?? 0) != (try transcriptRevision(session:session))
+    }
     public func session(id:UUID) throws -> Session? {
         let s=try statement("SELECT data FROM sessions WHERE id=?",values:[id.uuidString]); defer { sqlite3_finalize(s) }
         return sqlite3_step(s)==SQLITE_ROW ? try decode(Session.self,s):nil
@@ -100,20 +146,27 @@ public actor SessionStore {
     public func processingProgress(session:UUID) throws -> SessionProcessingProgress {
         let snapshot=try latestSummary(session:session)
         var result=SessionProcessingProgress()
-        let s=try statement("SELECT MAX(CAST(json_extract(data,'$.end') AS REAL)),MAX(CASE WHEN seq<=? THEN CAST(json_extract(data,'$.end') AS REAL) ELSE 0 END),SUM(CASE WHEN seq>? AND json_extract(data,'$.duplicateOf') IS NULL THEN 1 ELSE 0 END) FROM segments WHERE session=?",values:[String(snapshot?.throughRow ?? 0),String(snapshot?.throughRow ?? 0),session.uuidString])
+        let revision=try transcriptRevision(session:session)
+        result.summaryNeedsRefresh=snapshot.map { ($0.transcriptRevision ?? 0) != revision } ?? false
+        let cursor=result.summaryNeedsRefresh ? 0:(snapshot?.throughRow ?? 0)
+        let s=try statement("SELECT MAX(CAST(json_extract(data,'$.end') AS REAL)),MAX(CASE WHEN seq<=? THEN CAST(json_extract(data,'$.end') AS REAL) ELSE 0 END),SUM(CASE WHEN seq>? AND json_extract(data,'$.duplicateOf') IS NULL THEN 1 ELSE 0 END),EXISTS(SELECT 1 FROM summary_final_jobs WHERE session=?) FROM segments WHERE session=?",values:[String(cursor),String(cursor),session.uuidString,session.uuidString])
         defer { sqlite3_finalize(s) }
         if sqlite3_step(s)==SQLITE_ROW {
             result.transcribedThrough=sqlite3_column_double(s,0)
             result.summarizedThrough=sqlite3_column_double(s,1)
             result.pendingSegments=Int(sqlite3_column_int64(s,2))
+            result.finalQueued=sqlite3_column_int(s,3) != 0
         }
-        result.isFinal=snapshot?.isFinal==true && result.pendingSegments==0
+        result.isFinal=snapshot?.isFinal==true && result.pendingSegments==0 && !result.summaryNeedsRefresh
         return result
     }
     /// Facts and the cursor commit together. A failed generation never advances either.
     public func save(_ snapshot: SummarySnapshot,additionalFindings:[Finding]=[],replaceRegister:Bool=false) throws {
         guard sqlite3_exec(db,"BEGIN IMMEDIATE",nil,nil,nil)==SQLITE_OK else { throw failure() }
         do {
+            guard (snapshot.transcriptRevision ?? 0)==(try transcriptRevision(session:snapshot.sessionID)) else {
+                throw LAIError.message("La transcripción cambió. Actualiza el resumen.")
+            }
             if replaceRegister {
                 let template=(snapshot.summaryTemplate ?? .meeting).rawValue
                 try write("DELETE FROM findings WHERE session=? AND template=?",[snapshot.sessionID.uuidString,template])
@@ -200,9 +253,13 @@ public actor SessionStore {
         try write("INSERT OR IGNORE INTO summary_final_jobs(session,created) VALUES(?,?)",[session.uuidString,String(Date().timeIntervalSince1970)])
     }
     public func completeFinalSummary(session:UUID) throws { try write("DELETE FROM summary_final_jobs WHERE session=?",[session.uuidString]) }
-    public func pendingFinalSession() throws -> Session? {
-        let s=try statement("SELECT s.data FROM summary_final_jobs j JOIN sessions s ON s.id=j.session ORDER BY j.created LIMIT 1"); defer { sqlite3_finalize(s) }
-        return sqlite3_step(s)==SQLITE_ROW ? try decode(Session.self,s):nil
+    public func pendingFinalSession() throws -> Session? { try pendingFinalSessions(limit:1).first }
+    public func pendingFinalSessions(limit:Int=50) throws -> [Session] {
+        let s=try statement("SELECT s.data FROM summary_final_jobs j JOIN sessions s ON s.id=j.session ORDER BY j.created LIMIT ?",values:[String(max(1,min(limit,50)))])
+        defer { sqlite3_finalize(s) }
+        var sessions:[Session]=[]
+        while sqlite3_step(s)==SQLITE_ROW { sessions.append(try decode(Session.self,s)) }
+        return sessions
     }
     public func save(_ metrics:SummaryRunMetrics) throws {
         try write("INSERT INTO summary_metrics(id,session,created,data) VALUES(?,?,?,?)",[metrics.id.uuidString,metrics.sessionID.uuidString,String(metrics.created.timeIntervalSince1970),try encode(metrics)])

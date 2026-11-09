@@ -1,6 +1,270 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Vincular audio original": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link original audio"
+          }
+        }
+      }
+    },
+    "Vincular": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link"
+          }
+        }
+      }
+    },
+    "Selecciona el archivo original de esta sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the original audio file for this session."
+          }
+        }
+      }
+    },
+    "Detener reproducción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop playback"
+          }
+        }
+      }
+    },
+    "Escuchar fragmento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play excerpt"
+          }
+        }
+      }
+    },
+    "Corregir fragmento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correct excerpt"
+          }
+        }
+      }
+    },
+    "Corregido": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corrected"
+          }
+        }
+      }
+    },
+    "Texto reconocido": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognized text"
+          }
+        }
+      }
+    },
+    "Texto revisado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revised text"
+          }
+        }
+      }
+    },
+    "Restaurar texto reconocido": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore recognized text"
+          }
+        }
+      }
+    },
+    "Guardar corrección": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save correction"
+          }
+        }
+      }
+    },
+    "Actualiza el resumen para incluir las correcciones.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update the summary to include your corrections."
+          }
+        }
+      }
+    },
+    "Transcripción parcial guardada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partial transcript saved"
+          }
+        }
+      }
+    },
+    "Transcripción lista" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transcript ready"
+          }
+        }
+      }
+    },
+    "Guardando transcripción" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving transcript"
+          }
+        }
+      }
+    },
+    "Resumen pendiente de generación." : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary pending."
+          }
+        }
+      }
+    },
+    "Comprobando recursos de voz" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking speech resources"
+          }
+        }
+      }
+    },
+    "Preparando reconocimiento" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing speech recognition"
+          }
+        }
+      }
+    },
+    "Preparando micrófono" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing microphone"
+          }
+        }
+      }
+    },
+    "Preparando audio del sistema" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing system audio"
+          }
+        }
+      }
+    },
+    "Abrir Ajustes del Sistema" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open System Settings"
+          }
+        }
+      }
+    },
+    "Si macOS solicita permiso, autorízalo en Privacidad y seguridad." : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If macOS requests access, allow it in Privacy & Security."
+          }
+        }
+      }
+    },
+    "Resumen en cola" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary queued"
+          }
+        }
+      }
+    },
+    "Copiar transcripción completa" : {
+      "extractionState": "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy full transcript"
+          }
+        }
+      }
+    },
     "Sesiones": {
       "extractionState": "manual",
       "localizations": {
@@ -2395,6 +2659,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Summary queued; the transcript remains saved."
+          }
+        }
+      }
+    },
+    "Esperando que se estabilice la memoria.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for memory pressure to stabilize."
           }
         }
       }

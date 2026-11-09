@@ -11,12 +11,13 @@ struct SummaryView:View {
                 Spacer()
                 Button { Task { copied=await model.copySessionReport() } } label: { Label(model.ui(copied ? "Copiado":"Copiar texto"),systemImage:copied ? "checkmark":"doc.on.doc") }
                     .accessibilityIdentifier("copySessionReport")
-                    .disabled(model.findings.isEmpty || model.selectedSession==nil)
+                    .disabled(model.findings.isEmpty || model.selectedSession==nil || model.processingProgress.summaryNeedsRefresh)
                     .help("Copiar el informe con formato para Word o Pages")
                 if model.summaryWorking { ProgressView().controlSize(.small) }
-                Button { Task { await model.updateSummary(final:!model.active) } } label: { Image(systemName:"arrow.clockwise") }.buttonStyle(.plain).help("Actualizar resumen").disabled(model.summaryWorking || model.selectedSession==nil || model.pressure)
+                Button { Task { await model.updateSummary(final:!model.active) } } label: { Image(systemName:"arrow.clockwise") }.buttonStyle(.plain).help("Actualizar resumen").disabled(!model.canUpdateSummary)
                     .contextMenu {
                         Button("Rehacer desde la transcripción") { Task { await model.updateSummary(final:!model.active,rebuild:true) } }
+                            .disabled(!model.canUpdateSummary)
                     }
             }.padding(16)
             Divider()
@@ -32,6 +33,15 @@ struct SummaryView:View {
                 }
                 Text("Transcrito hasta \(timestamp(model.processingProgress.transcribedThrough)) · resumido hasta \(timestamp(model.processingProgress.summarizedThrough))")
                     .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                if model.processingProgress.summaryNeedsRefresh {
+                    Label("Actualiza el resumen para incluir las correcciones.",systemImage:"exclamationmark.circle")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                if model.processingProgress.finalQueued && !model.summaryWorking && !model.processingProgress.isFinal {
+                    Label(model.ui(model.pressure ? "Síntesis en espera hasta que baje la presión de memoria." :
+                        model.waitingForMemoryRecovery ? "Esperando que se estabilice la memoria." : "Resumen en cola"),
+                        systemImage:"clock").font(.caption).foregroundStyle(.secondary)
+                }
                 if model.processingProgress.pendingSegments>0 { Text("\(model.processingProgress.pendingSegments) fragmentos pendientes").font(.caption).foregroundStyle(.secondary) }
                 Text("Copiar y exportar incluyen el informe completo.").font(.caption2).foregroundStyle(.secondary)
             }.padding(.horizontal,16).padding(.vertical,10)
@@ -93,7 +103,7 @@ struct SummaryView:View {
         return result
     }
     private func evidence(_ item:ReportItem) -> some View {
-        EvidenceButton(item:item) { id in Task { await model.revealTranscriptSegment(id) } }
+        EvidenceButton(item:item,model:model)
     }
     private func taskTable(_ items:[ReportItem]) -> some View {
         Grid(alignment:.leading,horizontalSpacing:10,verticalSpacing:12) {
@@ -118,7 +128,7 @@ struct SummaryView:View {
 }
 private struct EvidenceButton:View {
     var item:ReportItem
-    var reveal:(String)->Void
+    var model:AppModel
     @State private var shown=false
     var body:some View {
         Button { shown=true } label: { Image(systemName:"quote.bubble").font(.caption).foregroundStyle(.secondary) }
@@ -134,7 +144,18 @@ private struct EvidenceButton:View {
                                 VStack(alignment:.leading,spacing:8) {
                                     Text("\(source.sourceTitle) · \(timestamp(source.start)) - \(timestamp(source.end))").font(.caption).foregroundStyle(.secondary).monospacedDigit()
                                     Text("«\(source.quote)»").textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading).lineSpacing(4)
-                                    Button("Ir al fragmento") { shown=false; reveal(source.segmentID) }
+                                    HStack {
+                                        Button("Ir al fragmento") {
+                                            shown=false
+                                            Task { await model.revealTranscriptSegment(source.segmentID) }
+                                        }
+                                        if source.segmentID.hasPrefix("file-"),model.selectedSession?.importedFileName != nil,!model.active {
+                                            Button("Escuchar fragmento") {
+                                                shown=false
+                                                Task { await model.playOriginalAudio(start:source.start,end:source.end) }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

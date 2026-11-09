@@ -1,8 +1,8 @@
-# Limitaciones pendientes · PAIMON 0.6.0
+# Limitaciones pendientes · PAIMON 0.7.0 candidata
 
-- Se compila para macOS 26.0+, pero este equipo ejecuta macOS 27.2. Hace falta repetir las pruebas en macOS 26 y una sesión de varias horas antes de considerar una distribución estable.
+- Se compila para macOS 26.0+, pero este equipo ejecuta macOS 27.3. Hace falta repetir las pruebas en macOS 26 y una sesión de varias horas antes de considerar una distribución estable.
 - El idioma de interfaz español/inglés no traduce transcripciones ni informes guardados. Mensajes de frameworks y cuadros de macOS pueden seguir el idioma del sistema.
-- La captura y el micrófono de build 13 requieren comprobación manual con sus permisos; la validación real de esta versión cubre importación y resumen local.
+- La captura por aplicación y global se comprobó en Release aislada. Quedan por probar el micrófono, ambas fuentes, los controles de pausa y reanudación desde la barra y el binario distribuido con sus permisos.
 - SpeechTranscriber 26 no ofrece el cambio automático de español/inglés mediante su inicializador de un locale. Se selecciona el idioma; la detección multilingüe corresponde al backend opcional Parakeet.
 - VAD energético con histéresis, no clasificación neuronal de voz. Música o ruido pueden activarlo. Las pausas y sus huecos temporales se conservan; no hay diarización ni identificación de personas.
 - No hay cancelador acústico con referencia de altavoz. Se evita el bucle de monitorización, pero la captación física de altavoces requiere audífonos. Las fuentes no se mezclan ni se atribuyen a personas. Se marca como posible eco un texto idéntico de al menos cinco palabras que se solape entre fuentes; se conserva el original y se omite su duplicado del resumen. Esto no elimina ecos acústicos con transcripciones diferentes.

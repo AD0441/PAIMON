@@ -51,16 +51,20 @@ public actor AudioCaptureService {
     private var epoch: Double=0
     private var diagnostics=CaptureDiagnostics()
     public init() {}
-    public func start(settings: AppSettings, epoch: Double) async throws {
+    public func start(settings: AppSettings, epoch: Double, preparation:(@Sendable (CapturePreparation) async -> Void)?=nil) async throws {
         if self.epoch != epoch { diagnostics=CaptureDiagnostics() }
         self.epoch=epoch
         do {
             if settings.microphone {
+                await preparation?(.microphone)
                 let granted=await AVCaptureDevice.requestAccess(for:.audio)
                 guard granted else { throw LAIError.message("Permiso de micrófono denegado. Actívalo en Ajustes del Sistema.") }
                 try startMicrophone(device:settings.microphoneDevice)
             }
-            if settings.systemAudio { try startSystem(settings:settings) }
+            if settings.systemAudio {
+                await preparation?(.systemAudio)
+                try startSystem(settings:settings)
+            }
         } catch { _=stop(); throw error }
     }
     private func startSystem(settings: AppSettings) throws {

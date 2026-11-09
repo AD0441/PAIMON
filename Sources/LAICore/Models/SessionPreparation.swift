@@ -41,6 +41,8 @@ public struct SessionProcessingProgress:Sendable {
     public var summarizedThrough:Double=0
     public var pendingSegments:Int=0
     public var isFinal=false
+    public var finalQueued=false
+    public var summaryNeedsRefresh=false
     public init() {}
 }
 

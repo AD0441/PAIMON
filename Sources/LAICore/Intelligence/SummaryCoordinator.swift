@@ -82,11 +82,13 @@ public actor SummaryCoordinator {
         var batches=0,reductions=0,pendingCount=0,cursor:Int64=0
         do {
             try Task.checkCancellation()
+            let transcriptRevision=try await store.transcriptRevision(session:session.id)
             var previous=try await store.latestSummary(session:session.id)
             let version=await engine.processingVersion()
             let identity=await engine.identifier()
             var replaceRegister=request.rebuild || (previous?.summaryTemplate ?? .meeting) != session.template || (previous != nil && (previous?.processingVersion ?? 0)<version)
             if let identity,let previous,previous.engineIdentifier != identity { replaceRegister=true }
+            if let previous,(previous.transcriptRevision ?? 0) != transcriptRevision { replaceRegister=true }
             if replaceRegister { previous=nil }
             cursor=previous?.throughRow ?? 0
             pendingCount=try await store.pendingContent(session:session.id,after:cursor).segments
@@ -114,6 +116,7 @@ public actor SummaryCoordinator {
                 try Task.checkCancellation()
                 var snapshot=SummarySnapshot(sessionID:session.id,throughRow:end,isFinal:false,findings:findings,template:session.template,processingVersion:version)
                 snapshot.engineIdentifier=identity
+                snapshot.transcriptRevision=transcriptRevision
                 try await store.save(snapshot,additionalFindings:result.facts,replaceRegister:replaceRegister)
                 replaceRegister=false
                 previous=snapshot; cursor=end; didWork=true
@@ -129,6 +132,7 @@ public actor SummaryCoordinator {
                 let retained=EvidenceValidator.merge(previous:prior.findings.filter{$0.kind != .overview && $0.kind != .topic},new:integrated)
                 var snapshot=SummarySnapshot(sessionID:session.id,throughRow:cursor,isFinal:true,findings:retained,template:session.template,processingVersion:version)
                 snapshot.engineIdentifier=identity
+                snapshot.transcriptRevision=transcriptRevision
                 try await store.save(snapshot); previous=snapshot; didWork=true
             }
             await record(session:session.id,start:start,before:before,pending:pendingCount,batches:batches,reductions:reductions,cursor:cursor,final:final,outcome:"completed")

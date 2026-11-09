@@ -1,8 +1,66 @@
-# Validación — 28 de octubre de 2026
+# Validación de PAIMON
+
+## Candidata publicada 0.7.0 (15) · 9 de noviembre de 2026
+
+Pasaron 90 pruebas, con 79 del núcleo y 11 de AppModel. La batería incluyó importación real en español con el motor nativo. Xcode compiló Release arm64 en el M1 de 8 GB con macOS 27.3. El destino mínimo es macOS 26.0.
+
+El instalador actualizó Aplicaciones y verificó la firma estricta del bundle y de los dos ZIP extraídos. El ejecutable y el Info.plist del ZIP actual coinciden con los de la copia instalada. El proyecto conserva el enlace a Aplicaciones, el ZIP actual 0.7.0 (15) y el anterior 0.6.0 (13). El ZIP de la candidata tiene SHA-256 `54df730893c6db224535a38ddaaf38a66a6eb9b37afd85c57163985f748595fb`. [Descarga y checksum](https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1).
+
+El recorrido de captura descrito abajo corresponde a la compilación 14 aislada. La repetición con el paquete distribuido y la prueba en macOS 26 quedan pendientes.
+
+## Captura en Release aislada · 9 de noviembre de 2026
+
+Xcode compiló Release arm64 con destino macOS 26.0. Se ejecutó en el M1 de 8 GB con macOS 27.3. La instancia PAIMON_REVIEW 0.7.0 (14) usó almacenamiento temporal y firma ad hoc verificada. Su identificador es local.audio.intelligence.review.releasecapture y su CDHash es 6b6e8dd4250037e54d07ea98c59320e21281cca1. El modo de revisión mantiene separado el historial y deja Google AI desactivado. La firma y el identificador pertenecen a la instancia aislada.
+
+- **Aplicación específica.** Se seleccionó PAIMON Audio Fixture y se comprobó iniciar, pausar, reanudar y detener. Los dos pases de la muestra guardaron dos fragmentos definitivos completos de la fuente Sistema. Los tiempos quedaron dentro de la sesión de 35,20 s. Foundation Models guardó una síntesis final.
+- **Audio global.** Se seleccionó Todo el sistema. La sesión de 13,31 s guardó un fragmento definitivo de Sistema y una síntesis final. La captura se detuvo cerca del final de la reproducción y el texto quedó una palabra más corto que la muestra. El ensayo verifica el tap global y la síntesis. Falta repetir con margen tras el final del audio para verificar la cobertura.
+- **Barra de menús.** En la prueba manual asistida se observó la sesión activa en SQLite y luego terminada y visible al volver a la ventana. La sesión de 69,65 s guardó un fragmento completo de Sistema, una síntesis final y cinco citas cotejadas con el texto y sus intervalos. El control remoto no observó individualmente Pausar y Reanudar en el menú.
+
+Las tres sesiones mantuvieron el micrófono apagado y el audio sin guardar. SQLite pasó la comprobación de integridad. Se cotejaron las 14 citas de los resúmenes finales y quedaron cero sesiones activas y cero síntesis en cola. Quedan por verificar el micrófono, ambas fuentes, cada control de pausa/reanudación en la barra y el paquete de distribución.
+
+## Recuperación de resúmenes bajo presión de memoria · 9 de noviembre de 2026
+
+Pasaron 90 pruebas en M1 de 8 GB con macOS 27.3. Son 79 pruebas del núcleo, incluida la importación española con el motor nativo, y 11 de AppModel. Las nuevas regresiones verifican que una advertencia cancela una espera programada, que el control de captura permanece habilitado durante la espera y que la acción Actualizar conserva la solicitud final después de un fallo del motor. Xcode compiló Release en arm64 con destino mínimo macOS 26.0 y la firma pasó la verificación estricta.
+
+El diagnóstico de la grabación de 35:37 muestreó presión normal durante 15 s antes de llamar al motor local. macOS notificó nivel 2 después de 2,09 s de intento y se canceló la generación antes del primer bloque. SQLite pasó `PRAGMA quick_check`, con 166 segmentos, cero síntesis y un trabajo final pendiente. Este ensayo mide la reacción del motor en esas condiciones de memoria. La política nueva de reintentos se verificó por separado en las pruebas de AppModel.
+
+## Revisión de transcripciones · 9 de noviembre de 2026
+
+En M1 de 8 GB con macOS 27.3 pasaron las 88 pruebas (79 del núcleo y 9 de AppModel) y compiló el proyecto Xcode en Debug. La regresión comprueba que el texto revisado aparezca en búsqueda y exportación, que la restauración conserve el intervalo y que una exportación con resumen desactualizado se detenga.
+
+La instancia aislada importó la muestra sintética española con SpeechTranscriber. Se comprobó el inicio de reproducción desde una cita y que el control de detener desapareciera al concluir. Se corrigió un fragmento desde la ventana, se vio el aviso de actualización y Foundation Models regeneró el acuerdo con el texto revisado. SQLite conservó el texto reconocido, el vínculo al archivo y la misma revisión en la transcripción y el resumen. Quedaron cero trabajos pendientes de la muestra sintética. Estos cambios se validaron en desarrollo.
+
+En un reintento de la grabación de 35:37, la síntesis comenzó con presión normal. A los 2,03 s la presión subió a nivel 2 y el diagnóstico canceló la inferencia. La base pasó la comprobación de integridad, conservó los 166 segmentos y mantiene un trabajo final pendiente.
+
+## Candidata local 0.7.0 (14) · 9 de noviembre de 2026
+
+**Xcode Release:** compilación arm64 exitosa en macOS 27.3, con destino mínimo macOS 26.0. Se comprobó el identificador del bundle, la versión, las descripciones de permisos y la firma ad hoc. Tras extraer el ZIP, el ejecutable y el Info.plist coincidieron con el original y la firma estricta volvió a pasar. El paquete local es `PAIMON-0.7.0-candidata.zip`. SHA-256: `a44786ba4373bf88bf89cb86990ad08c09dcb6d23a98abf8e4c48afece265f59`. Durante esa comprobación, Aplicaciones conservaba la versión 0.6.0 (13).
+
+**Grabación de 35:37:** el diagnóstico con el núcleo de la candidata importó el audio local en 22,02 s, guardó 166 segmentos definitivos y registró cero avisos. Al comenzar la fase de resumen, macOS estaba en presión de memoria de nivel 2. El diagnóstico aplazó la inferencia y verificó una base SQLite íntegra con un trabajo final pendiente. La síntesis larga queda por probar cuando el sistema vuelva a presión normal.
+
+Pendientes del paquete Release: captura de una app, audio global, micrófono, ambas fuentes y barra de menús con la firma de la candidata. También quedan por validar captura continua prolongada y ejecución en macOS 26. Los resultados previos de la instancia Debug aislada conservan su alcance.
+
+## Lote de transcripción y síntesis · 9 de noviembre de 2026
+
+**87 pruebas aprobadas** en M1 de 8 GB y macOS 27.3, con 78 del núcleo y 9 de AppModel. La nueva regresión suspende el motor de resumen para comprobar que el texto ya está guardado y que la sesión queda libre para consulta. El trabajo final persiste mientras se genera el informe y se retira al completarse. El motor de voz nativo se ejecutó con la muestra española.
+
+**Xcode Debug aislado:** se importó la muestra sintética y se observó «Transcripción lista», la acción de copiar la transcripción completa y Exportar habilitados. Foundation Models guardó una síntesis final. El resumen general separó la compra acordada del envío de la cotización. El informe clasificó ambos como decisión y tarea, respectivamente, y conservó a Ana y el viernes como datos de la fuente. Las citas de los hallazgos se cotejaron con SQLite. Quedaron cero trabajos pendientes.
+
+La preparación de captura comunica la fase de voz, micrófono o audio del sistema y ofrece abrir Ajustes del Sistema durante la preparación de una fuente. El lote está en código de desarrollo. La comprobación de permisos con este binario y el recorrido de la versión instalada siguen pendientes.
+
+## Desarrollo · 9 de noviembre de 2026
+
+**85 pruebas aprobadas** en Apple M1 de 8 GB, macOS 27.3. Incluyen 77 del núcleo, con importación española real, y 8 de AppModel. La regresión de recuperación se ejecutó en dos estados, importando y finalizando. En ambos, el aviso de presión normal llegó mientras la app estaba ocupada. Al quedar libre, la síntesis se ejecutó, se guardó el resultado final, se retiró el trabajo de la cola y se conservó el fragmento original. La prueba usa un motor controlado para reproducir el orden de eventos sin forzar presión del sistema. El cambio pertenece al código de desarrollo.
+
+**Captura sintética aislada:** en macOS 27.3, el build Debug de desarrollo `local.audio.intelligence.review.stage` obtuvo permiso de audio. El diagnóstico capturó su propia reproducción mediante Core Audio y guardó un definitivo en 11,46 s de sesión. Recibió 1.053 búferes, 769 con señal y 539.136 frames. Foundation Models guardó una síntesis final con cinco referencias cotejadas contra SQLite.
+
+**Controles con fuente específica:** se seleccionó PAIMON Audio Fixture y se verificaron Iniciar, Pausar, Reanudar y Detener en la ventana. Se guardaron dos segmentos de sistema, de 30,05 a 34,54 s y de 47,23 a 57,79 s, dentro de la sesión de 76,78 s. La síntesis final tuvo ocho referencias cotejadas contra SQLite. En ambos recorridos se desactivó el micrófono, no se guardó audio y quedaron cero trabajos finales pendientes. La captura global, el micrófono, la barra de menús y la firma del binario instalado quedan por verificar en esta versión.
+
+[Ensayos locales de rendimiento y duración](PERFORMANCE.md#grabación-real--9-de-noviembre-de-2026).
 
 ## Versión 0.6.0 (13)
 
-**Release: BUILD SUCCEEDED.** Instalada en `/Applications/PAIMON.app`; el enlace del proyecto apunta a esa copia. Firma estricta comprobada en la app y en los dos ZIP extraídos: actual 0.6.0 (13), anterior 0.5.1 (12). Solo se conservan esos dos archivos. [Resultado y SHA-256](evidence/performance-install-verification.json).
+**Release: BUILD SUCCEEDED.** Se instaló en `/Applications/PAIMON.app` y el proyecto quedó enlazado a esa copia. Firma estricta comprobada en la app y en los dos ZIP extraídos: actual 0.6.0 (13), anterior 0.5.1 (12). Solo se conservan esos dos archivos. [Resultado y SHA-256](evidence/performance-install-verification.json).
 
 **84 pruebas aprobadas:** 77 del núcleo y 7 de AppModel, estas últimas con 13 casos. Incluyen regresiones de respuestas tardías entre sesiones, disponibilidad separada del documento, búsqueda cancelable, conservación de marcadores/evidencias, compatibilidad de preferencias, cuatro paletas, idioma de interfaz y argumentos del catálogo. También se comprueba cerrar el flujo de importación si falla el guardado inicial y rechazar una advertencia de aprobación ausente que el modelo añadía sin respaldo. [Registro](evidence/performance-tests.log).
 

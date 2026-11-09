@@ -15,6 +15,22 @@ import PDFKit
     #expect(try SummaryGrounding.validate(good,sources:[source],maximumPoints:0).contains{$0.kind == .overview})
 }
 
+@Test func overviewCannotJoinAnAssignedTaskToAnAgreement() throws {
+    let text="Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes."
+    let source=SummarySource(TranscriptSegment(sessionID:UUID(),source:.file,start:0,end:8,text:text))
+    let bad=try JSONDecoder().decode(GroundedSummary.self,from:Data("""
+    {"title":"Micrófonos","overview":"Se acordó comprar dos micrófonos y enviar la cotización."}
+    """.utf8))
+    #expect(throws:SummaryResponseError.self) { try SummaryGrounding.validate(bad,sources:[source],maximumPoints:0) }
+    let good=try JSONDecoder().decode(GroundedSummary.self,from:Data("""
+    {"title":"Micrófonos","overview":"Se acordó comprar dos micrófonos. Ana enviará la cotización el viernes."}
+    """.utf8))
+    #expect(try SummaryGrounding.validate(good,sources:[source],maximumPoints:0).contains{$0.kind == .overview})
+    #expect(!SummaryGrounding.hasUnsupportedCombinedAgreement(bad.overview,quotes:"Acordamos comprar dos micrófonos y enviar la cotización."))
+    let beforeCue="Tras revisar el presupuesto y preparar un informe, se acordó comprar dos micrófonos."
+    #expect(!SummaryGrounding.hasUnsupportedCombinedAgreement(beforeCue,quotes:text))
+}
+
 @Test func pendingDecisionCannotBorrowAnAgreementFromAnotherSentence() throws {
     let segment=TranscriptSegment(sessionID:UUID(),source:.system,start:0,end:11,text:"Hoy revisamos el presupuesto del laboratorio. Acordamos comprar dos micrófonos. Ana enviará la cotización el viernes. Falta decidir dónde instalar los equipos.")
     let source=SummarySource(segment)
@@ -168,4 +184,42 @@ actor QualityFixtureEngine:SummarizationEngine {
     let finding=SummaryGrounding.finding(kind:.overview,text:"La biblioteca propone un catálogo digital para facilitar la consulta de libros.",sources:sources)
     #expect(finding?.evidence.count==1)
     #expect(finding?.evidence.first?.start==0)
+}
+
+@Test func correctedTranscriptRebuildsSummaryAndKeepsRecognizedText() async throws {
+    let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:directory) }
+    let store=try SessionStore(directory:directory)
+    var session=Session(title:"Biblioteca",settings:AppSettings())
+    session.status="completed"
+    try await store.save(session)
+    let recognized=TranscriptSegment(sessionID:session.id,source:.file,start:0,end:6,text:"La biblioteca prepara un catálogo para consultar libros.")
+    try await store.append(recognized)
+    let coordinator=SummaryCoordinator(store:store)
+    _=try await coordinator.update(session:session,engine:QualityFixtureEngine(),final:true)
+
+    let revised="La biblioteca prepara un catálogo digital para consultar libros."
+    let correction=try await store.correctSegment(session:session.id,id:recognized.id,text:revised)
+    #expect(correction.originalText==recognized.text)
+    #expect(correction.id==recognized.id && correction.start==recognized.start && correction.end==recognized.end)
+    #expect(try await store.processingProgress(session:session.id).summaryNeedsRefresh)
+    #expect(try await store.searchTranscripts("digital").first?.segmentID==recognized.id)
+
+    let output=directory.appendingPathComponent("sesion.txt")
+    let exporter=SessionExporter(store:store)
+    await #expect(throws:LAIError.self) {
+        try await exporter.export(session:session,to:output,format:.txt,options:ExportOptions())
+    }
+    var transcriptOnly=ExportOptions()
+    transcriptOnly.kinds=[]
+    try await exporter.export(session:session,to:output,format:.txt,options:transcriptOnly)
+    #expect(try String(contentsOf:output,encoding:.utf8).contains(revised))
+
+    let fresh=try #require(try await coordinator.update(session:session,engine:QualityFixtureEngine(),final:true))
+    #expect(fresh.isFinal)
+    #expect(fresh.findings.first(where:{$0.kind == .overview})?.quote==revised)
+    #expect(!(try await store.processingProgress(session:session.id).summaryNeedsRefresh))
+    let restored=try await store.correctSegment(session:session.id,id:recognized.id,text:recognized.text)
+    #expect(restored.originalText==nil)
+    #expect(try await store.processingProgress(session:session.id).summaryNeedsRefresh)
 }
