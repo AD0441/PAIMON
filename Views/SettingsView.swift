@@ -78,29 +78,25 @@ struct SettingsView:View {
                     Button("Autorizar descarga del idioma seleccionado") { Task { await model.installSpeech() } }
                     Text("Las descargas requieren autorización. Apple Intelligence se configura desde Ajustes del Sistema. Google AI solo usa red cuando se activa explícitamente.").font(.caption).foregroundStyle(.secondary)
                 }
-                Section("FluidAudio · instalación opcional") {
-                    pathRow("FluidWorker",key:\.fluidWorker,folder:false)
-                    pathRow("Carpeta Parakeet Redux",key:\.fluidModels,folder:true)
-                    Text("Ejecuta script/prepare_fluid.sh para compilar el motor. Los modelos se preparan por separado y no se descargan al iniciar una sesión.").font(.caption).foregroundStyle(.secondary)
+                Section("FluidAudio · Parakeet Redux") {
+                    Text("Transcribe audio en varios idiomas en este Mac. Puedes elegirlo como alternativa a Apple Speech.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Toggle("Usar Parakeet para transcribir",isOn:Binding(
+                        get:{model.settings.transcription == .fluid},
+                        set:{model.settings.transcription=$0 ? .fluid:.apple}
+                    )).toggleStyle(.checkbox)
+                    modelActions(.parakeet,size:"Aproximadamente 220 MB.")
+                    DisclosureGroup("Usar modelos propios") {
+                        pathRow("FluidWorker",key:\.fluidWorker,folder:false)
+                        pathRow("Carpeta Parakeet Redux",key:\.fluidModels,folder:true)
+                    }.disabled(model.installingModel != nil)
                 }
                 Section("Diarización · instalación opcional") {
+                    Text("Separa las voces de una sesión para que puedas asignarles nombres.")
+                        .font(.caption).foregroundStyle(.secondary)
                     Toggle("Separar voces",isOn:$model.diarizationEnabled).toggleStyle(.checkbox)
                         .accessibilityIdentifier("settingsEnableDiarization")
-                    if let fraction=model.diarizationProgress {
-                        ProgressView("Descargando modelos…",value:fraction)
-                        Button("Cancelar descarga") { model.cancelDiarizationDownload() }
-                    } else if model.hasDownloadedDiarizationModels {
-                        Label("Modelos instalados · disponibles sin Internet",systemImage:"checkmark.circle")
-                        Button("Borrar modelos",role:.destructive) { model.removeDiarizationModels() }
-                            .accessibilityIdentifier("removeDiarizationModels")
-                    } else {
-                        Button("Descargar modelos") { model.downloadDiarizationModels() }
-                            .accessibilityIdentifier("downloadDiarizationModels")
-                        Text("Aproximadamente 14 MB desde Hugging Face. Después puedes separar voces sin Internet.").font(.caption).foregroundStyle(.secondary)
-                    }
-                    if let error=model.diarizationModelError {
-                        Text(error).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
-                    }
+                    modelActions(.diarization,size:"Aproximadamente 14 MB.")
                     DisclosureGroup("Usar modelos propios") {
                         HStack {
                             TextField("Carpeta de modelos de diarización",text:Binding(
@@ -110,14 +106,22 @@ struct SettingsView:View {
                             Button("Elegir…") {
                                 if let path=model.choosePath(folder:true) { model.settings.diarizationModels=path }
                             }
-                        }.disabled(model.diarizationProgress != nil)
-                    }
+                        }
+                    }.disabled(model.installingModel != nil)
                 }
-                Section("MLX · instalación opcional") {
-                    pathRow("Python de MLX",key:\.mlxPython,folder:false)
-                    pathRow("mlx_summary.py",key:\.mlxScript,folder:false)
-                    pathRow("Modelo cuantizado local",key:\.mlxModel,folder:true)
-                    Text("Instalación explícita con script/prepare_mlx.sh. Recomendado: Qwen2.5 1.5B Instruct 4 bit. MLX usa GPU Metal; no ANE.").font(.caption).foregroundStyle(.secondary)
+                Section("MLX · Qwen 1.5B") {
+                    Text("Genera resúmenes de la transcripción en este Mac. Es una alternativa a Apple Intelligence y usa la GPU.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Toggle("Usar MLX para resumir nuevas sesiones",isOn:Binding(
+                        get:{model.settings.summary == .mlx},
+                        set:{model.settings.summary=$0 ? .mlx:.apple}
+                    )).toggleStyle(.checkbox)
+                    modelActions(.mlx,size:"Aproximadamente 1,4 GB instalados con su entorno local.")
+                    DisclosureGroup("Usar modelos propios") {
+                        pathRow("Python de MLX",key:\.mlxPython,folder:false)
+                        pathRow("mlx_summary.py",key:\.mlxScript,folder:false)
+                        pathRow("Modelo cuantizado local",key:\.mlxModel,folder:true)
+                    }.disabled(model.installingModel != nil)
                 }
             }.formStyle(.grouped).disabled(model.active).tabItem { Label("Modelos",systemImage:"shippingbox") }
             Form {
@@ -150,6 +154,29 @@ struct SettingsView:View {
             }.formStyle(.grouped).tabItem { Label("Apariencia",systemImage:"paintpalette") }
         }.padding(12).frame(width:720,height:640)
             .modifier(AppTheme(palette:model.settings.colorPalette ?? .petroleum,language:model.settings.interfaceLanguage ?? .spanish)).onDisappear { googleKey="" }
+    }
+    @ViewBuilder private func modelActions(_ package:OptionalModelPackage,size:LocalizedStringKey) -> some View {
+        if model.installingModel==package {
+            ProgressView(value:model.modelDownloadProgress) {
+                if package == .mlx && model.modelDownloadProgress>=0.94 {
+                    Text("Preparando MLX…")
+                } else { Text("Descargando modelos…") }
+            }
+            Button("Cancelar descarga") { model.cancelModelDownload() }
+        } else if model.installedModels.contains(package) {
+            Label("Modelos instalados · disponibles sin Internet",systemImage:"checkmark.circle")
+            Button("Borrar modelos",role:.destructive) { model.removeModel(package) }
+                .disabled(model.installingModel != nil || model.summaryWorking)
+                .accessibilityIdentifier("removeModel-\(package.rawValue)")
+        } else {
+            Button("Descargar modelos") { model.downloadModel(package) }
+                .disabled(model.installingModel != nil)
+                .accessibilityIdentifier("downloadModel-\(package.rawValue)")
+            Text(size).font(.caption).foregroundStyle(.secondary)
+        }
+        if let error=model.modelErrors[package] {
+            Text(error).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+        }
     }
     private func pathRow(_ title:String,key:WritableKeyPath<AppSettings,String>,folder:Bool) -> some View {
         HStack { TextField(LocalizedStringKey(title),text:Binding(get:{model.settings[keyPath:key]},set:{model.settings[keyPath:key]=$0})); Button("Elegir…") { model.choosePath(key,folder:folder) } }

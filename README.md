@@ -6,7 +6,7 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Código fuente 0.7.2" src="https://img.shields.io/badge/código%20fuente-0.7.2-58616B?style=flat-square">
+    <img alt="Código fuente 0.7.3" src="https://img.shields.io/badge/código%20fuente-0.7.3-58616B?style=flat-square">
   </p>
   <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1">Descargar candidata 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
@@ -53,14 +53,14 @@ Las imágenes de revisión usan datos sintéticos y una instancia separada de la
 
 </details>
 
-## Novedades en main · 0.7.2 (18)
+## Novedades en main · 0.7.3 (19)
 
 - **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Descarga los modelos desde Ajustes con un botón. La aplicación empaquetada incluye FluidWorker.
 - **Mejora el nivel al importar.** La normalización opcional nivela voz baja y suaviza picos. Conserva el archivo original.
 - **Revisa acuerdos y pendientes.** La vista dedicada reúne decisiones, compromisos y preguntas abiertas con sus evidencias. Las exportaciones conservan el informe completo.
 - **Elimina sesiones y sus datos asociados.** Al borrar una sesión, PAIMON retira su audio archivado, transcripción, resumen, nombres, marcadores e índices locales.
 
-Se verificaron la compilación arm64 y 97 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#diarización-local--10-de-noviembre-de-2026).
+Se verificaron la compilación arm64 y 98 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#diarización-local--10-de-noviembre-de-2026).
 
 ## Candidata publicada 0.7.0 · compilación 15
 
@@ -88,7 +88,7 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
-La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.2 (18) y 0.7.1 (17) en esta instalación. Para obtener 0.7.2 desde GitHub, compila el código de `main`.
+La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.3 (19) y 0.7.2 (18) en esta instalación. Para obtener 0.7.3 desde GitHub, compila el código de `main`.
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
@@ -105,6 +105,15 @@ El icono nuevo está en `Resources/Brand/PAIMON-icon.svg` y `.png`; `Resources/P
 La exportación PDF mantiene la jerarquía tipográfica y las tablas; Markdown conserva encabezados y negritas. **Anexo de evidencias** añade las citas al final, con enlaces internos desde PDF y Markdown. TXT usa texto plano con la misma estructura. JSON conserva los hallazgos y sus referencias estructuradas. Cuando una tarea carece de responsable o fecha, se muestra **No especificado**.
 
 La síntesis de Apple exige un **Resumen general** antes de marcarse como final. Los resúmenes anteriores a la versión 0.3.2 se reconstruyen desde la transcripción al pulsar **Actualizar resumen**; no basta con volver a condensar un resultado antiguo incompleto. El menú contextual de ese botón ofrece **Rehacer desde la transcripción**. Un mismo icono de evidencia puede abrir varios fragmentos cuando el resumen integra distintos momentos. Si el modelo devuelve un resultado insuficiente, se informa del fallo y se conserva la transcripción.
+
+## Motores locales opcionales
+
+En **Ajustes → Modelos**, cada motor opcional tiene una explicación, una casilla y los botones **Descargar modelos** y **Borrar modelos**. PAIMON verifica los archivos, prepara los recursos y selecciona su carpeta automáticamente.
+
+- **FluidAudio con Parakeet Redux** transcribe audio multilingüe en el Mac. Requiere aproximadamente 220 MB.
+- **MLX con Qwen 1.5B** resume la transcripción usando la GPU del Mac. Usa cerca de 1,4 GB de disco con su entorno local incluido.
+
+Tras la descarga, los motores trabajan sin Internet. Los recursos de Apple siguen bajo gestión de macOS. [Detalles de los modelos y del entorno](docs/DEPENDENCIES.md).
 
 ## Separar voces · opcional
 

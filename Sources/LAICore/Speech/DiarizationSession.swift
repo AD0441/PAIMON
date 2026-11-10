@@ -49,8 +49,8 @@ actor DiarizationSession {
 
     init?(settings: AppSettings, sessionID: UUID, store: SessionStore, events: AsyncStream<PipelineEvent>.Continuation) {
         guard settings.diarizationEnabled == true else { return nil }
-        executable = DiarizationModels.workerPath(configured:settings.fluidWorker) ?? ""
-        models = settings.diarizationModels ?? (DiarizationModels.installed ? DiarizationModels.directory.path : "")
+        executable = OptionalModelPackage.fluidWorker(configured:settings.fluidWorker) ?? ""
+        models = settings.diarizationModels ?? (OptionalModelPackage.diarization.installed ? OptionalModelPackage.diarization.directory.path : "")
         self.sessionID = sessionID
         self.store = store
         self.events = events

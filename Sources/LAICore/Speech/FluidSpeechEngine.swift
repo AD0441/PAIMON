@@ -7,14 +7,28 @@ public actor FluidSpeechEngine: TranscriptionEngine {
     private let worker=LocalWorker()
     private var converters:[AudioSource:PCMStreamConverter]=[:]
     private var utterances:[AudioSource:Utterance]=[:]
-    private var settings=AppSettings()
+    private var executable=""
+    private var modelPath=""
     private var sessionID=UUID()
     private var events:AsyncStream<PipelineEvent>.Continuation?
     public init() {}
     public func start(sessionID:UUID,sources:[AudioSource],settings:AppSettings,events:AsyncStream<PipelineEvent>.Continuation) async throws {
-        guard FileManager.default.fileExists(atPath:settings.fluidModels+"/parakeet_vocab.json") else { throw LAIError.message("Instala FluidWorker y selecciona la carpeta Parakeet Redux en Configuración") }
-        self.sessionID=sessionID; self.events=events; self.settings=settings
+        guard let paths=Self.paths(settings) else {
+            throw LAIError.message("Descarga Parakeet Redux en Ajustes → Modelos.")
+        }
+        executable=paths.worker; modelPath=paths.model
+        self.sessionID=sessionID; self.events=events
         for source in sources { utterances[source]=Utterance() }
+    }
+    public static func isAvailable(settings:AppSettings) -> Bool { paths(settings) != nil }
+
+    private static func paths(_ settings:AppSettings) -> (worker:String,model:String)? {
+        guard let worker=OptionalModelPackage.fluidWorker(configured:settings.fluidWorker) else { return nil }
+        let model=settings.fluidModels.isEmpty ? OptionalModelPackage.parakeet.directory.path:settings.fluidModels
+        let directory=URL(fileURLWithPath:model,isDirectory:true)
+        let files=["parakeet_vocab.json","Encoder.mlmodelc","Decoder.mlmodelc","JointDecisionv3.mlmodelc","Preprocessor.mlmodelc"]
+        guard files.allSatisfy({ FileManager.default.fileExists(atPath:directory.appendingPathComponent($0).path) }) else { return nil }
+        return (worker,model)
     }
     public func append(_ chunk:AudioChunk) async throws {
         guard var u=utterances[chunk.source] else { return }
@@ -37,7 +51,7 @@ public actor FluidSpeechEngine: TranscriptionEngine {
         utterances[source]=Utterance()
         let pcm=u.samples.withUnsafeBytes { Data($0) }.base64EncodedString()
         let data=try JSONSerialization.data(withJSONObject:["pcm":pcm])
-        let worker=worker; let executable=settings.fluidWorker; let models=settings.fluidModels
+        let worker=worker; let executable=executable; let models=modelPath
         let reply=try await InferenceGate.shared.perform {
             try await worker.start(executable:executable,arguments:[models])
             do { let result=try await worker.request(data); await worker.stop(); return result }

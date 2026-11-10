@@ -274,3 +274,14 @@ Xcode compiló Release arm64 y se verificó el inicio desde Aplicaciones. El eje
 | --- | --- | --- |
 | `PAIMON-actual.zip` | 0.7.2 (18) | `040d10fcd2ddd9263d0d0f196f3eec4d0c23a66bf35a1d30e834f522b188523c` |
 | `PAIMON-anterior.zip` | 0.7.1 (17) | `47ad0ffc3ded763b14a019dd5343f2177031dfb1c312b4abc612612b66913423` |
+
+## Modelos opcionales desde Ajustes · PAIMON 0.7.3 (19)
+
+Xcode compiló Release arm64 y PAIMON inició desde Aplicaciones. FluidWorker y el puente de MLX están en el bundle firmado y en el ZIP actual. Se verificó la firma de los dos respaldos.
+
+Pasaron 98 pruebas con `PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh`. Los tres paquetes aceptaron archivos de prueba íntegros y descartaron los alterados. Si falla la preparación de MLX, la instalación no publica pesos ni deja archivos temporales. Se verificó mediante URLSession un archivo de configuración real de Qwen y su digest. El Python portátil verificado instaló MLX en una carpeta temporal y ejecutó una operación en la GPU del M1 después de mover esa carpeta. Queda la prueba de inferencia con los pesos completos, que se descargan al pulsar el botón en Ajustes.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.7.3 (19) | `6358a80f4817b0c9a8fb6b34b09ebc3a6af651597e501ab7ffcbd7c6582260d3` |
+| `PAIMON-anterior.zip` | 0.7.2 (18) | `499ac860c1aaeb2dac83cabfb918645935aeee54dc59e2d0574fb8030f00daf2` |

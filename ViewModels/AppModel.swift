@@ -40,10 +40,11 @@ final class AppModel {
     var segments:[TranscriptSegment]=[] { didSet { refreshSpeakers() } }
     private(set) var speakerLabels:[String:SessionSpeaker]=[:]
     @ObservationIgnored private var speakerTask:Task<Void,Never>?
-    @ObservationIgnored private var diarizationDownload:Task<Void,Never>?
-    private(set) var diarizationProgress:Double?
-    private(set) var diarizationModelError:String?
-    private(set) var hasDownloadedDiarizationModels=DiarizationModels.installed
+    @ObservationIgnored private var modelDownload:Task<Void,Never>?
+    private(set) var installingModel:OptionalModelPackage?
+    private(set) var modelDownloadProgress:Double=0
+    private(set) var modelErrors:[OptionalModelPackage:String]=[:]
+    private(set) var installedModels=Set(OptionalModelPackage.allCases.filter(\.installed))
     var diarizationEnabled:Bool {
         get { settings.diarizationEnabled==true }
         set { settings.diarizationEnabled=newValue }
@@ -692,6 +693,9 @@ final class AppModel {
     }
     func cancelImport() { importTask?.cancel() }
     func stopActiveWork() async {
+        let download=modelDownload
+        download?.cancel()
+        await download?.value
         if state == .importing { importTask?.cancel(); await importTask?.value }
         else { await stop() }
     }
@@ -830,37 +834,56 @@ final class AppModel {
             await refreshSessions()
         } catch { message=error.localizedDescription }
     }
-    func downloadDiarizationModels() {
-        guard !active,diarizationDownload==nil else { return }
-        diarizationModelError=nil
-        diarizationProgress=0
-        diarizationDownload=Task { [weak self] in
+    func downloadModel(_ package:OptionalModelPackage) {
+        guard !active,modelDownload==nil else { return }
+        modelErrors[package]=nil
+        modelDownloadProgress=0
+        installingModel=package
+        modelDownload=Task { [weak self] in
             do {
-                let directory=try await DiarizationModels.download { [weak self] fraction in
-                    await self?.showDiarizationDownload(fraction)
+                let directory=try await package.download { [weak self] fraction in
+                    await self?.showModelDownload(package,fraction:fraction)
                 }
-                self?.settings.diarizationModels=directory.path
-                self?.hasDownloadedDiarizationModels=true
+                if let self {
+                    switch package {
+                    case .diarization: self.settings.diarizationModels=directory.path
+                    case .parakeet: self.settings.fluidModels=directory.path
+                    case .mlx: self.settings.mlxModel=directory.path
+                    }
+                    self.installedModels.insert(package)
+                }
             } catch is CancellationError {
             } catch let error as URLError where error.code == .cancelled {
             } catch {
-                self?.diarizationModelError=error.localizedDescription
+                self?.modelErrors[package]=error.localizedDescription
             }
-            self?.diarizationProgress=nil
-            self?.diarizationDownload=nil
+            self?.installingModel=nil
+            self?.modelDownload=nil
         }
     }
-    private func showDiarizationDownload(_ fraction:Double) { diarizationProgress=fraction }
-    func cancelDiarizationDownload() { diarizationDownload?.cancel() }
-    func removeDiarizationModels() {
-        guard !active,diarizationDownload==nil else { return }
+    private func showModelDownload(_ package:OptionalModelPackage,fraction:Double) {
+        if installingModel==package { modelDownloadProgress=max(modelDownloadProgress,fraction) }
+    }
+    func cancelModelDownload() { modelDownload?.cancel() }
+    func removeModel(_ package:OptionalModelPackage) {
+        guard !active,!summaryWorking,modelDownload==nil else { return }
         do {
-            try DiarizationModels.remove()
-            hasDownloadedDiarizationModels=false
-            if settings.diarizationModels==DiarizationModels.directory.path { settings.diarizationModels=nil }
-            diarizationEnabled=false
-            diarizationModelError=nil
-        } catch { diarizationModelError=error.localizedDescription }
+            try package.remove()
+            installedModels.remove(package)
+            let path=package.directory.path
+            switch package {
+            case .diarization:
+                if settings.diarizationModels==path { settings.diarizationModels=nil }
+                diarizationEnabled=false
+            case .parakeet:
+                if settings.fluidModels==path { settings.fluidModels="" }
+                settings.transcription = .apple
+            case .mlx:
+                if settings.mlxModel==path { settings.mlxModel="" }
+                settings.summary = .apple
+            }
+            modelErrors[package]=nil
+        } catch { modelErrors[package]=error.localizedDescription }
     }
     func installSpeech() async {
         speechStatus="Descargando recursos de voz autorizados…"

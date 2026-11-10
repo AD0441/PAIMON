@@ -253,13 +253,13 @@ func optionalDiarizationKeepsImportAndPersistsLabels(_ enabled:Bool) async throw
     #expect(try await store.speakers(for:segments,session:session.id).isEmpty)
 }
 
-@Test(arguments:[false,true])
-func diarizationModelInstallationVerifiesFilesBeforeSelectingThem(_ corrupt:Bool) async throws {
+@Test(arguments:OptionalModelPackage.allCases,[false,true])
+func optionalModelInstallationVerifiesFilesBeforeSelectingThem(_ package:OptionalModelPackage,_ corrupt:Bool) async throws {
     let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     defer { try? FileManager.default.removeItem(at:root) }
     let destination=root.appendingPathComponent("installed")
-    let asset=DiarizationModels.Asset("speaker.mlmodelc/weights.bin",3,"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
-    let fetch:@Sendable (URL) async throws -> URL = { url in
+    let asset=OptionalModelPackage.Asset("speaker.mlmodelc/weights.bin",3,"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    let fetch:@Sendable (URL,OptionalModelPackage.Asset,Int) async throws -> URL = { url,_,_ in
         #expect(url.host=="huggingface.co")
         #expect(url.path.hasSuffix("/speaker.mlmodelc/weights.bin"))
         let temporary=root.appendingPathComponent("download")
@@ -268,17 +268,35 @@ func diarizationModelInstallationVerifiesFilesBeforeSelectingThem(_ corrupt:Bool
     }
     if corrupt {
         await #expect(throws:LAIError.self) {
-            _=try await DiarizationModels.install(at:destination,assets:[asset],fetch:fetch,progress:{ _ in })
+            _=try await package.install(at:destination,assets:[asset],fetch:fetch,progress:{ _ in })
         }
         #expect(try FileManager.default.contentsOfDirectory(atPath:root.path).isEmpty)
     } else {
-        let result=try await DiarizationModels.install(at:destination,assets:[asset],fetch:fetch,progress:{ _ in })
+        let result=try await package.install(at:destination,assets:[asset],fetch:fetch,progress:{ _ in })
         #expect(result==destination)
         #expect(try Data(contentsOf:result.appendingPathComponent(asset.path))==Data("abc".utf8))
-        _=try await DiarizationModels.install(at:destination,assets:[asset],fetch:{ _ in
+        _=try await package.install(at:destination,assets:[asset],fetch:{ _,_,_ in
             Issue.record("An intact model was downloaded again")
             throw LAIError.message("Unexpected network request")
         },progress:{ _ in })
         #expect(try FileManager.default.contentsOfDirectory(atPath:root.path)==["installed"])
     }
+}
+
+@Test func failedMLXRuntimePreparationDoesNotPublishModelWeights() async throws {
+    let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:root) }
+    let destination=root.appendingPathComponent("installed")
+    let asset=OptionalModelPackage.Asset("model.safetensors",3,"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    await #expect(throws:LAIError.self) {
+        _=try await OptionalModelPackage.mlx.install(at:destination,assets:[asset],fetch:{ _,_,_ in
+            let file=root.appendingPathComponent("download")
+            try Data("abc".utf8).write(to:file)
+            return file
+        },prepare:{ staging in
+            #expect(FileManager.default.fileExists(atPath:staging.appendingPathComponent(asset.path).path))
+            throw LAIError.message("Fixture runtime preparation failure")
+        },progress:{ _ in })
+    }
+    #expect(try FileManager.default.contentsOfDirectory(atPath:root.path).isEmpty)
 }

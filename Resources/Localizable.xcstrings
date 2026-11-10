@@ -1,6 +1,116 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Transcribe audio en varios idiomas en este Mac. Puedes elegirlo como alternativa a Apple Speech.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcribes audio in several languages on this Mac. You can use it as an alternative to Apple Speech."
+          }
+        }
+      }
+    },
+    "Usar Parakeet para transcribir": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use Parakeet for transcription"
+          }
+        }
+      }
+    },
+    "Aproximadamente 220 MB.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About 220 MB."
+          }
+        }
+      }
+    },
+    "Separa las voces de una sesión para que puedas asignarles nombres.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Separates speakers in a session so you can name them."
+          }
+        }
+      }
+    },
+    "Aproximadamente 14 MB.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About 14 MB."
+          }
+        }
+      }
+    },
+    "MLX · Qwen 1.5B": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MLX · Qwen 1.5B"
+          }
+        }
+      }
+    },
+    "Genera resúmenes de la transcripción en este Mac. Es una alternativa a Apple Intelligence y usa la GPU.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summarizes the transcript on this Mac. It uses the GPU and provides an alternative to Apple Intelligence."
+          }
+        }
+      }
+    },
+    "Usar MLX para resumir nuevas sesiones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use MLX to summarize new sessions"
+          }
+        }
+      }
+    },
+    "Aproximadamente 1,4 GB instalados con su entorno local.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About 1.4 GB installed, including the local runtime."
+          }
+        }
+      }
+    },
+    "Preparando MLX…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing MLX…"
+          }
+        }
+      }
+    },
     "Descargar modelos": {
       "extractionState": "manual",
       "localizations": {

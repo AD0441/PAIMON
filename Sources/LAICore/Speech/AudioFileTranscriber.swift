@@ -12,7 +12,7 @@ public enum AudioFileTranscriber {
         if let engineOverride { engine=engineOverride }
         else if settings.transcription == .fluid { engine=FluidSpeechEngine() }
         else if await AppleSpeechEngine.availability(locale:settings.locale)==nil { engine=AppleSpeechEngine() }
-        else if settings.transcription == .automatic && !settings.fluidWorker.isEmpty { engine=FluidSpeechEngine() }
+        else if settings.transcription == .automatic && FluidSpeechEngine.isAvailable(settings:settings) { engine=FluidSpeechEngine() }
         else { throw LAIError.message(await AppleSpeechEngine.availability(locale:settings.locale) ?? "Motor no disponible") }
         try await engine.start(sessionID:sessionID,sources:[.file],settings:settings,events:events)
         do {

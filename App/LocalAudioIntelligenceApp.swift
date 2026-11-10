@@ -73,7 +73,7 @@ struct PaimonApp: App {
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender:NSApplication) -> Bool { false }
     func applicationShouldTerminate(_ sender:NSApplication) -> NSApplication.TerminateReply {
-        guard let model,model.active else { return .terminateNow }
+        guard let model,model.active || model.installingModel != nil else { return .terminateNow }
         if model.state == .preparing || model.state == .stopping { return .terminateCancel }
         Task { await model.stopActiveWork(); NSApp.reply(toApplicationShouldTerminate:true) }; return .terminateLater
     }

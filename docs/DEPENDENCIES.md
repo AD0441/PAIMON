@@ -25,7 +25,7 @@ También se comprobaron los headers CATapDescription/AudioHardwareTapping y las 
 ./script/prepare_fluid.sh
 ```
 
-Selecciona el `FluidWorker` generado en Configuración → Modelos. Prepara por separado el modelo [Parakeet Redux Core ML](https://huggingface.co/FluidInference/parakeet-redux-coreml), revisa su licencia y sigue la [guía de archivos locales](https://github.com/FluidInference/FluidAudio/blob/v0.17.3/Documentation/ASR/ManualModelLoading.md). La carpeta debe contener Preprocessor.mlmodelc, Encoder.mlmodelc, Decoder.mlmodelc, JointDecision.mlmodelc y parakeet_vocab.json. Si el repositorio entrega tarballs, extráelos conservando los nombres. Copiar un modelo ya preparado desde otro equipo no requiere red.
+En la app empaquetada, **Ajustes → Modelos → FluidAudio · Parakeet Redux** permite descargar, activar y borrar el modelo. La descarga de [Parakeet Redux Core ML](https://huggingface.co/FluidInference/parakeet-redux-coreml/tree/8c5ef97a29cd120dc76b354b3f22b7fec3b486f9) verifica los archivos y utiliza el ejecutable FluidWorker incluido. Para usar una carpeta propia, selecciona la ruta desde **Usar modelos propios**. Debe contener Preprocessor.mlmodelc, Encoder.mlmodelc, Decoder.mlmodelc, JointDecisionv3.mlmodelc y parakeet_vocab.json.
 
 `AsrModels.loadLocal(from:version:.redux)` es la ruta de ejecución y no descarga archivos. El preprocesador usa CPU; la configuración de encoder/decoder/joint permite CPU+ANE. Core ML determina qué operaciones ejecuta realmente cada unidad. Redux es un modelo multilingüe de pesos ternarios, descrito por el proveedor con una descarga aproximada de 220 MB; no equivale a memoria residente total.
 
@@ -43,15 +43,11 @@ La app carga los archivos locales mediante `DiarizerModels.load(localSegmentatio
 
 ## MLX opcional
 
-[mlx-lm](https://github.com/ml-explore/mlx-lm), versión fijada **0.31.3**, MIT; versión publicada en [PyPI](https://pypi.org/project/mlx-lm/0.31.3/). Usa Python 3.11+ preferiblemente en un entorno dedicado. No se instala automáticamente:
+En **Ajustes → Modelos → MLX · Qwen 1.5B**, el botón **Descargar modelos** prepara [Qwen2.5-1.5B-Instruct-4bit](https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit/tree/8b403126fc14f14cfc99bb4cfa72ecbc129ea677) junto a [Python portátil para Apple Silicon](https://github.com/astral-sh/python-build-standalone/releases/tag/20260127). Verifica los archivos antes de usar PyPI para instalar `mlx-lm` 0.31.3, MLX 0.32.4 y Transformers 5.22.2. El entorno queda aislado dentro de la carpeta del modelo. **Borrar modelos** retira esa carpeta y vuelve a seleccionar Apple para nuevas sesiones. Las carpetas y entornos externos elegidos manualmente se conservan.
 
-```bash
-LAI_PYTHON=/ruta/a/python3.11 ./script/prepare_mlx.sh
-```
+El puente `mlx_summary.py` viene en el bundle Xcode. Ejecuta MLX mediante GPU Metal y CPU con contexto acotado, generación determinista y JSON validado. La inferencia usa archivos locales y el proceso se termina al cerrar cada resumen. La casilla de MLX se aplica a nuevas sesiones; las sesiones anteriores conservan su selección de motor.
 
-Prepara, con autorización explícita, una carpeta del modelo [Qwen2.5-1.5B-Instruct-4bit](https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit). Revisa su licencia. Por ejemplo, con el CLI de Hugging Face instalado, `hf download mlx-community/Qwen2.5-1.5B-Instruct-4bit --local-dir Models/Qwen2.5-1.5B-Instruct-4bit` es una descarga manual; no la ejecuta la aplicación.
-
-Configura Python de `Integrations/.venv/bin/python`, `Integrations/mlx_summary.py` y la carpeta del modelo. El proceso usa Metal/CPU a través de MLX, **no** ANE, contexto acotado, generación greedy y JSON validado. Se termina tras cada resumen para liberar pesos y caché. La compatibilidad de la versión y los pesos debe probarse antes de usar este backend en una reunión importante.
+Para desarrollo o para un modelo compatible propio, `LAI_PYTHON=/ruta/a/python3.11 ./script/prepare_mlx.sh` prepara el entorno manual y **Usar modelos propios** permite elegir las tres rutas. La aplicación requiere Internet al pulsar **Descargar modelos**, que consulta Hugging Face, GitHub y PyPI. Ninguna de esas solicitudes contiene audio ni texto de las sesiones.
 
 ## Google AI opcional · sin SDK externo
 

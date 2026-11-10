@@ -36,7 +36,7 @@ public actor RecordingPipeline {
         let selected:any TranscriptionEngine
         if settings.transcription == .fluid { selected=FluidSpeechEngine() }
         else if await AppleSpeechEngine.availability(locale:settings.locale)==nil { selected=AppleSpeechEngine() }
-        else if settings.transcription == .automatic && !settings.fluidWorker.isEmpty { selected=FluidSpeechEngine() }
+        else if settings.transcription == .automatic && FluidSpeechEngine.isAvailable(settings:settings) { selected=FluidSpeechEngine() }
         else { throw LAIError.message(await AppleSpeechEngine.availability(locale:settings.locale) ?? "Motor no disponible") }
         var value=Session(title:title.isEmpty ? "Nueva sesión":title,settings:settings)
         value.context=context?.bounded
