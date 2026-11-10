@@ -149,7 +149,11 @@ public actor FoundationSummaryEngine: SummarizationEngine {
             try Task.checkCancellation()
             var reduced:[Finding]=[]
             for offset in stride(from:0,to:layer.count,by:8) {
-                let group=Array(layer[offset..<min(offset+8,layer.count)])
+                let group=layer[offset..<min(offset+8,layer.count)]
+                if group.count==1,let remaining=group.first {
+                    reduced.append(remaining)
+                    continue
+                }
                 let output=try await request(sources:group.map(SummarySource.init),maximumPoints:0,locale:locale)
                 reduced += output.filter{$0.kind == .overview}
             }
@@ -188,13 +192,13 @@ public actor FoundationSummaryEngine: SummarizationEngine {
         let model=SystemLanguageModel.default
         let instructions=Self.instructions(for:template)+context.instructions
         let schema=try GroundedSummary.schema(sourceCount:sources.count,maximumPoints:maximumPoints)
-        let rows=sources.enumerated().map{["id":"S\($0.offset)","text":$0.element.text]}
-        let source=String(decoding:try JSONSerialization.data(withJSONObject:rows,options:[.sortedKeys,.withoutEscapingSlashes]),as:UTF8.self)
+        let rows=sources.enumerated().map { ["S\($0.offset)",$0.element.text] }
+        let source=String(decoding:try JSONSerialization.data(withJSONObject:rows,options:.withoutEscapingSlashes),as:UTF8.self)
         let prompt="""
         Redacta title (tema breve) y overview (síntesis general de 2 a 4 frases, máximo 650 caracteres).
         Cubre el contenido completo de estas fuentes, desde el principio hasta el final. Menciona propuestas y conceptos concretos; no te limites al último fragmento. Conserva solo las dudas expresadas en las fuentes. No añadas advertencias genéricas sobre ausencia de aprobación. Un acuerdo explícito debe conservarse como acuerdo. Escribe acuerdos y tareas asignadas en frases separadas. Por ejemplo: «Se acordó comprar micrófonos. Ana enviará la cotización». No repitas puntos.
         \(maximumPoints>0 ? "Añade hasta \(maximumPoints) puntos relevantes y sus identificadores S. owner y due vacíos salvo si aparecen literalmente en la fuente elegida.":"Integra los resúmenes y los hechos documentados en una síntesis coherente. Incluye las decisiones y los compromisos explícitos relevantes, aunque sean del inicio. No añadas información externa.")
-        FUENTES:\n\(source)
+        FUENTES (cada fila: identificador y texto):\n\(source)
         """
         if #available(macOS 26.4, *) {
             let tokens=try await model.tokenCount(for:Prompt(prompt))

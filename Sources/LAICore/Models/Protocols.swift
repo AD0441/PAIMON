@@ -8,6 +8,7 @@ public struct AudioChunk: Sendable {
 }
 public enum PipelineEvent: Sendable {
     case segment(TranscriptSegment), activity(AudioSource, Float, Bool), warning(String), failure(String)
+    case speakersUpdated(UUID)
 }
 public protocol TranscriptionEngine: Actor {
     func start(sessionID: UUID, sources: [AudioSource], settings: AppSettings, events: AsyncStream<PipelineEvent>.Continuation) async throws

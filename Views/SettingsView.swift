@@ -55,6 +55,13 @@ struct SettingsView:View {
                     Picker("Micrófono",selection:$model.settings.microphoneDevice) { Text("Predeterminado").tag(UInt32(0)); ForEach(AudioHardware.devices(input:true)) { Text($0.name).tag($0.id) } }
                     Picker("Salida capturada",selection:$model.settings.outputDeviceUID) { Text("Todas las salidas").tag(""); ForEach(AudioHardware.devices(input:false)) { Text($0.name).tag($0.uid) } }
                 }
+                Section("Audio importado") {
+                    Toggle("Normalizar volumen y comprimir picos",isOn:Binding(
+                        get:{ model.settings.enhanceImportedAudio==true },
+                        set:{ model.settings.enhanceImportedAudio=$0 }
+                    )).accessibilityIdentifier("enhanceImportedAudio")
+                    Text("Ajusta el nivel antes de transcribir archivos. El audio original se conserva.").font(.caption).foregroundStyle(.secondary)
+                }
                 Section("Privacidad y almacenamiento") {
                     Toggle("Guardar audio de próximas sesiones",isOn:$model.settings.saveAudio)
                     Text("Desactivado por defecto. El audio opcional se escribe en disco por fuente, con un archivo de sincronización.").font(.caption).foregroundStyle(.secondary)
@@ -75,6 +82,18 @@ struct SettingsView:View {
                     pathRow("FluidWorker",key:\.fluidWorker,folder:false)
                     pathRow("Carpeta Parakeet Redux",key:\.fluidModels,folder:true)
                     Text("Ejecuta script/prepare_fluid.sh para compilar el motor. Los modelos se preparan por separado y no se descargan al iniciar una sesión.").font(.caption).foregroundStyle(.secondary)
+                }
+                Section("Diarización · instalación opcional") {
+                    HStack {
+                        TextField("Carpeta de modelos de diarización",text:Binding(
+                            get:{model.settings.diarizationModels ?? ""},
+                            set:{model.settings.diarizationModels=$0}
+                        ))
+                        Button("Elegir…") {
+                            if let path=model.choosePath(folder:true) { model.settings.diarizationModels=path }
+                        }
+                    }
+                    Text("Usa el mismo FluidWorker. Selecciona la carpeta con pyannote_segmentation.mlmodelc y wespeaker_v2.mlmodelc. Los modelos solo se leen del disco.").font(.caption).foregroundStyle(.secondary)
                 }
                 Section("MLX · instalación opcional") {
                     pathRow("Python de MLX",key:\.mlxPython,folder:false)

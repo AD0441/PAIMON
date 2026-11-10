@@ -72,7 +72,7 @@ struct SidebarView:View {
         .alert("¿Eliminar la sesión?",isPresented:Binding(get:{deleting != nil},set:{if !$0 { deleting=nil }})) {
             Button("Cancelar",role:.cancel) { deleting=nil }
             Button("Eliminar",role:.destructive) { if let session=deleting { Task { await model.delete(session) } }; deleting=nil }
-        } message: { Text("Se eliminarán la transcripción, los resúmenes y cualquier audio guardado de esta sesión.") }
+        } message: { Text("Se eliminarán la transcripción, los resúmenes, las notas y las grabaciones que PAIMON guardó para esta sesión.") }
     }
     private static let symbol:NSImage = {
         guard let url=Bundle.main.url(forResource:"PAIMON-symbol",withExtension:"png"),let image=NSImage(contentsOf:url) else { return NSImage() }

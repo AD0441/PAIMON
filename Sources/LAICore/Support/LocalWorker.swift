@@ -15,13 +15,18 @@ public actor LocalWorker {
         p.environment=environment
         let stdin=Pipe(); let stdout=Pipe(); p.standardInput=stdin; p.standardOutput=stdout
         // Inherit stderr; child logs cannot corrupt the line-delimited JSON channel.
+        // A child can fail to load its model before reading the first request.
+        // Convert a broken pipe into a Swift error instead of terminating PAIMON.
+        guard fcntl(stdin.fileHandleForWriting.fileDescriptor,F_SETNOSIGPIPE,1) != -1 else {
+            throw LAIError.message("No se pudo configurar el canal del motor local")
+        }
         try p.run(); process=p; input=stdin.fileHandleForWriting; output=stdout.fileHandleForReading
     }
-    public func request(_ data: Data) throws -> Data {
+    public func request(_ data: Data, timeout: TimeInterval = 180) throws -> Data {
         guard let process,process.isRunning,let input,let output else { throw LAIError.message("El motor local no está iniciado") }
         let pid=process.processIdentifier
         let watchdog=DispatchWorkItem { kill(pid,SIGKILL) }
-        DispatchQueue.global(qos:.utility).asyncAfter(deadline:.now()+180,execute:watchdog)
+        DispatchQueue.global(qos:.utility).asyncAfter(deadline:.now()+timeout,execute:watchdog)
         defer { watchdog.cancel() }
         try input.write(contentsOf:data+Data([10]))
         var line=Data()

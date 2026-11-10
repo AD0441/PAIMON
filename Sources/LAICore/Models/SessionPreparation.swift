@@ -25,14 +25,32 @@ public struct SessionContext:Codable,Sendable,Hashable {
 }
 
 public enum ReportPresentation:String,CaseIterable,Sendable {
-    case executive, complete
-    public var title:String { self == .executive ? "Ejecutiva":"Completa" }
+    case executive, complete, followUp
+
+    public var title:String {
+        switch self {
+        case .executive: "Ejecutiva"
+        case .complete: "Completa"
+        case .followUp: "Acuerdos y pendientes"
+        }
+    }
+
+    public var registerKinds:[FindingKind] {
+        self == .followUp ? [.decision,.task,.question]:[]
+    }
+
     public func select(_ findings:[Finding]) -> [Finding] {
-        guard self == .executive else { return findings }
-        return findings.filter{[.topic,.overview].contains($0.kind)}
-            + findings.filter{$0.kind == .decision}.prefix(5)
-            + findings.filter{$0.kind == .task}.prefix(5)
-            + findings.filter{$0.kind == .conclusion}.prefix(3)
+        switch self {
+        case .complete:
+            return findings
+        case .followUp:
+            return findings.filter { $0.kind == .topic || registerKinds.contains($0.kind) }
+        case .executive:
+            return findings.filter{[.topic,.overview].contains($0.kind)}
+                + findings.filter{$0.kind == .decision}.prefix(5)
+                + findings.filter{$0.kind == .task}.prefix(5)
+                + findings.filter{$0.kind == .conclusion}.prefix(3)
+        }
     }
 }
 

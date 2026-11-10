@@ -1,6 +1,18 @@
-# PAIMON 0.6.0 — rendimiento, memoria y alcance
+# PAIMON — rendimiento, memoria y alcance
 
-Estado actualizado al 9 de noviembre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
+Estado actualizado al 10 de noviembre de 2026. Se mantienen Core Audio Process Taps, SpeechTranscriber, Foundation Models, SwiftUI, barra de menús y procesamiento local por defecto. Google AI es una opción externa de resumen elegida por el usuario; no cambia la captura ni la transcripción local.
+
+## Normalización con audio difícil · 10 de noviembre de 2026
+
+Se comparó SpeechTranscriber en español con el ajuste de PAIMON apagado y encendido en el M1 de 8 GB. Se usó la misma muestra sintética de 9 s y 22 palabras para las tres variantes. El cotejo quitó acentos y puntuación. Los dos casos con diferencias se repitieron en orden inverso y dieron las mismas cifras.
+
+| Variante | Ajuste apagado | Ajuste encendido |
+| --- | ---: | ---: |
+| Voz atenuada 28 dB | 1 sustitución (4,5 %) | 0 errores (0 %) |
+| Voz con ruido simulado y zumbido, SNR de 7 dB | 1 sustitución (4,5 %) | 1 sustitución (4,5 %) |
+| Volumen desigual, ruido a 11 dB de SNR y tres picos | 11 omisiones (50 %) | 7 omisiones y 1 sustitución (36,4 %) |
+
+La última variante aplicó factores de 0,45, 0,055 y 0,24 al audio en los tramos separados por 2,5 y 5,5 s. Los picos se añadieron a los 1,3, 4,4 y 6,6 s. El diagnóstico `LAICheck --transcribe archivo.wav es-ES` reproduce el procesamiento del importador. Añade `--normalize` para activar el ajuste. Esta muestra permite comparar errores en condiciones controladas. La calidad con voces reales y la latencia de importación quedan por medir por separado.
 
 ## Grabación real · 9 de noviembre de 2026
 

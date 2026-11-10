@@ -3,7 +3,6 @@ import LAICore
 struct SummaryView:View {
     @Bindable var model:AppModel
     @State private var copied=false
-    @State private var presentation:ReportPresentation = .complete
     var body:some View {
         VStack(spacing:0) {
             HStack {
@@ -11,7 +10,7 @@ struct SummaryView:View {
                 Spacer()
                 Button { Task { copied=await model.copySessionReport() } } label: { Label(model.ui(copied ? "Copiado":"Copiar texto"),systemImage:copied ? "checkmark":"doc.on.doc") }
                     .accessibilityIdentifier("copySessionReport")
-                    .disabled(model.findings.isEmpty || model.selectedSession==nil || model.processingProgress.summaryNeedsRefresh)
+                    .disabled(!model.hasSummaryToCopy || model.selectedSession==nil || model.processingProgress.summaryNeedsRefresh)
                     .help("Copiar el informe con formato para Word o Pages")
                 if model.summaryWorking { ProgressView().controlSize(.small) }
                 Button { Task { await model.updateSummary(final:!model.active) } } label: { Image(systemName:"arrow.clockwise") }.buttonStyle(.plain).help("Actualizar resumen").disabled(!model.canUpdateSummary)
@@ -22,9 +21,16 @@ struct SummaryView:View {
             }.padding(16)
             Divider()
             VStack(alignment:.leading,spacing:8) {
-                HStack {
-                    Picker("Vista",selection:$presentation) { ForEach(ReportPresentation.allCases,id:\.self) { Text(LocalizedStringKey($0.title)).tag($0) } }.pickerStyle(.segmented).labelsHidden()
-                    Text(model.ui(model.summaryProviderTitle)).font(.caption).foregroundStyle(.secondary)
+                ViewThatFits(in:.horizontal) {
+                    HStack {
+                        presentationPicker.pickerStyle(.segmented).labelsHidden()
+                        providerLabel
+                    }.fixedSize(horizontal:true,vertical:false)
+                    HStack {
+                        presentationPicker.pickerStyle(.menu).labelsHidden()
+                        Spacer(minLength:4)
+                        providerLabel
+                    }
                 }
                 if model.settings.googleEnabled==true,model.selectedSession != nil {
                     Toggle("Usar Google AI para esta sesión",isOn:Binding(get:{model.selectedUsesGoogle},set:{ value in Task { await model.setSessionGoogle(value) } }))
@@ -49,10 +55,12 @@ struct SummaryView:View {
             ScrollView {
                 VStack(alignment:.leading,spacing:24) {
                     Text(model.ui(model.summaryWorking ? model.googleRetryStatus ?? model.summaryStatus:model.summaryStatus)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
-                    if model.findings.isEmpty,!model.summaryWorking {
+                    if !model.hasSummaryToCopy,!model.summaryWorking {
                         Label(model.ui(model.summaryAvailability),systemImage:"info.circle").font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
                     }
-                    if let report=model.presentedReport(presentation),!report.sections.isEmpty {
+                    if model.reportLoading,model.selectedSession != nil {
+                        ProgressView().controlSize(.small).frame(maxWidth:.infinity,minHeight:120)
+                    } else if let report=model.report,!report.sections.isEmpty {
                         VStack(alignment:.leading,spacing:6) {
                             Text(report.title).font(.title2.weight(.semibold)).textSelection(.enabled)
                             Text(report.metadata).font(.caption).foregroundStyle(.secondary)
@@ -76,23 +84,37 @@ struct SummaryView:View {
                             }
                         }
                         Text("Cada icono de cita permite revisar el fragmento original.").font(.caption2).foregroundStyle(.secondary)
-                        if model.findingPage>0 || model.moreFindings {
-                            HStack {
-                                Button("Anteriores") { Task { await model.loadFindings(page:model.findingPage-1) } }.disabled(model.findingPage==0)
-                                Text("Hallazgos · página \(model.findingPage+1)").font(.caption).foregroundStyle(.secondary)
-                                Button("Siguientes") { Task { await model.loadFindings(page:model.findingPage+1) } }.disabled(!model.moreFindings)
-                            }
-                            Text("Copiar y exportar incluyen el registro completo de esta sesión.").font(.caption2).foregroundStyle(.secondary)
-                        }
+                    } else if model.reportPresentation == .followUp,model.hasSummaryToCopy {
+                        ContentUnavailableView("Sin acuerdos ni pendientes",systemImage:"checklist",
+                                               description:Text("Esta vista muestra los acuerdos, compromisos y preguntas abiertas del resumen."))
+                            .frame(maxWidth:.infinity,minHeight:220)
                     } else {
                         ContentUnavailableView("Las ideas toman forma",systemImage:"text.badge.star",description:Text("El resumen se actualiza cada \(Int(model.settings.summaryInterval/60)) minutos con citas de la transcripción.")).frame(maxWidth:.infinity,minHeight:220)
+                    }
+                    if !model.reportLoading,model.findingPage>0 || model.moreFindings {
+                        HStack {
+                            Button("Anteriores") { Task { await model.loadFindings(page:model.findingPage-1) } }.disabled(model.findingPage==0)
+                            Text("Hallazgos · página \(model.findingPage+1)").font(.caption).foregroundStyle(.secondary)
+                            Button("Siguientes") { Task { await model.loadFindings(page:model.findingPage+1) } }.disabled(!model.moreFindings)
+                        }
                     }
                 }.padding(20).frame(maxWidth:.infinity,alignment:.leading)
             }
         }
+        .onChange(of:model.reportPresentation.registerKinds) { _,_ in
+            Task { await model.loadFindings() }
+        }
         .onChange(of:model.findings) { _,_ in copied=false }
         .onChange(of:model.title) { _,_ in copied=false }
         .onChange(of:model.selected) { _,_ in copied=false }
+    }
+    private var presentationPicker:some View {
+        Picker("Vista",selection:$model.reportPresentation) {
+            ForEach(ReportPresentation.allCases,id:\.self) { Text(LocalizedStringKey($0.title)).tag($0) }
+        }.accessibilityIdentifier("reportPresentation")
+    }
+    private var providerLabel:some View {
+        Text(model.ui(model.summaryProviderTitle)).font(.caption).foregroundStyle(.secondary)
     }
     private func styled(_ text:String,emphasis:Bool) -> AttributedString {
         var result=AttributedString(text)

@@ -22,16 +22,35 @@ final class AppModel {
     let importedPlayback = ImportedAudioPlayback()
     var selected:UUID? {
         didSet {
-            if selected != oldValue { importedPlayback.stop() }
+            if selected != oldValue {
+                importedPlayback.stop()
+                speakerTask?.cancel()
+                speakerLabels=[:]
+                findings=[]
+                findingPage=0
+                moreFindings=false
+                hasSummaryToCopy=false
+            }
             if let selected { preferences.set(selected.uuidString,forKey:"lastSelectedSession") }
             else { preferences.removeObject(forKey:"lastSelectedSession") }
         }
     }
     var current:Session?
     var title="Nueva sesión"
-    var segments:[TranscriptSegment]=[]
+    var segments:[TranscriptSegment]=[] { didSet { refreshSpeakers() } }
+    private(set) var speakerLabels:[String:SessionSpeaker]=[:]
+    @ObservationIgnored private var speakerTask:Task<Void,Never>?
+    var diarizationEnabled:Bool {
+        get { settings.diarizationEnabled==true }
+        set { settings.diarizationEnabled=newValue }
+    }
     var partials:[AudioSource:TranscriptSegment]=[:]
     var findings:[Finding]=[]
+    var reportPresentation:ReportPresentation = .complete
+    private var loadedFindingKinds:[FindingKind]=[]
+    @ObservationIgnored private var findingsRequest=UUID()
+    private(set) var hasSummaryToCopy=false
+    var reportLoading:Bool { loadedFindingKinds != reportPresentation.registerKinds }
     var findingPage=0
     var moreFindings=false
     var pendingSummarySegments=0
@@ -278,7 +297,7 @@ final class AppModel {
         if !value { session.settings.summary=settings.summary == .mlx ? .mlx:.apple }
         session.settings.googleModel=settings.googleModel
         do {
-            try await store?.save(session)
+            guard try await store?.updateExistingSession(session)==true else { return }
             selectedRecord=session; if current?.id==session.id { current=session }
             await refreshSessions()
             summaryStatus="Motor cambiado a \(session.settings.summaryBackend(googleAllowed:settings.googleEnabled==true).title). Pulsa Actualizar resumen para aplicarlo a esta sesión."
@@ -290,7 +309,8 @@ final class AppModel {
         guard var session=selectedSession else { return }
         session.context=sessionContext
         do {
-            try await store?.save(session); selectedRecord=session
+            guard try await store?.updateExistingSession(session)==true else { return }
+            selectedRecord=session
             if current?.id==session.id { current=session }
             await refreshSessions(); summaryStatus="Contexto guardado. Pulsa Actualizar resumen para aplicarlo."
         } catch { message=error.localizedDescription }
@@ -301,6 +321,37 @@ final class AppModel {
         let request=selectionRequest
         do { let value=try await store?.processingProgress(session:id) ?? .init(); if selected==id,selectionRequest==request { processingProgress=value } }
         catch { message=error.localizedDescription }
+    }
+    func refreshSpeakers() {
+        speakerTask?.cancel()
+        guard let session=selectedSession,session.settings.diarizationEnabled==true,
+              !segments.isEmpty,let store else {
+            if !speakerLabels.isEmpty { speakerLabels=[:] }
+            return
+        }
+        let values=segments
+        speakerTask=Task { [weak self] in
+            do {
+                try await Task.sleep(for:.milliseconds(250))
+                let labels=try await store.speakers(for:values,session:session.id)
+                try Task.checkCancellation()
+                if self?.selected==session.id { self?.speakerLabels=labels }
+            } catch is CancellationError {
+            } catch {
+                if self?.selected==session.id { self?.message=error.localizedDescription }
+            }
+        }
+    }
+    func renameSpeaker(_ speaker:SessionSpeaker,session:UUID,name:String) async -> Bool {
+        guard let store,selected==session else { return false }
+        do {
+            try await store.renameSpeaker(session:session,id:speaker.id,name:name)
+            if selected==session { refreshSpeakers() }
+            return true
+        } catch {
+            message=error.localizedDescription
+            return false
+        }
     }
     func refreshTerms() {
         termsTask?.cancel()
@@ -319,7 +370,7 @@ final class AppModel {
         guard var session=selectedSession,session.template != template else { return }
         session.summaryTemplate=template
         do {
-            try await store?.save(session)
+            guard try await store?.updateExistingSession(session)==true else { return }
             if current?.id==session.id { current=session }
             await refreshSessions()
             if selected==session.id { summaryStatus="Plantilla cambiada a \(template.title). Pulsa Actualizar resumen para aplicarla al contenido anterior." }
@@ -401,15 +452,36 @@ final class AppModel {
     }
     func loadFindings(page:Int=0) async {
         guard let session=selectedSession,let store else { return }
-        let request=selectionRequest
+        let selection=selectionRequest
+        let request=UUID()
+        let kinds=reportPresentation.registerKinds
+        let page=max(0,page)
+        let pageSize=120
+        findingsRequest=request
         do {
             // Historical import yields between small transactions; audio writes
             // use this same actor and can interleave with migration work.
             while try await !store.indexNextFindingBatch(session:session.id) { try Task.checkCancellation(); await Task.yield() }
-            let values=try await store.reportFindings(session:session.id,template:session.template,offset:max(0,page)*120)
-            guard selected==session.id,selectionRequest==request else { return }
-            findings=values; findingPage=max(0,page); moreFindings=values.filter{$0.kind != .overview && $0.kind != .topic}.count==120
-        } catch { message=error.localizedDescription }
+            let values=try await store.reportFindings(session:session.id,template:session.template,
+                                                      kinds:kinds,limit:pageSize+1,offset:page*pageSize)
+            var hasSummary = !values.isEmpty
+            if !hasSummary,(!kinds.isEmpty || page>0) {
+                hasSummary = try await !store.findings(session:session.id,template:session.template,limit:1).isEmpty
+            }
+            guard selected==session.id,selectionRequest==selection,findingsRequest==request,reportPresentation.registerKinds==kinds else { return }
+            moreFindings=values.filter{$0.kind != .overview && $0.kind != .topic}.count>pageSize
+            findings=moreFindings ? Array(values.dropLast()):values
+            findingPage=page
+            hasSummaryToCopy=hasSummary
+            loadedFindingKinds=kinds
+        } catch is CancellationError {
+            return
+        } catch {
+            guard selected==session.id,selectionRequest==selection,findingsRequest==request,reportPresentation.registerKinds==kinds else { return }
+            findings=[]; findingPage=0; moreFindings=false
+            loadedFindingKinds=kinds
+            message=error.localizedDescription
+        }
     }
     func revealEvidence(_ finding:Finding) async {
         await revealTranscriptSegment(finding.segmentID)
@@ -504,6 +576,8 @@ final class AppModel {
                         } else if self.selected==segment.sessionID { self.displayBuffer.partial(segment); self.scheduleDisplayFlush() }
                     case .activity(let source,let level,let active):
                         if self.state == .recording { self.displayBuffer.activity(source,level:level,active:active); self.scheduleDisplayFlush() }
+                    case .speakersUpdated(let id):
+                        if self.selected==id { self.refreshSpeakers() }
                     case .warning(let text): self.message=text
                     case .failure(let text): self.message=text; Task { await self.stop() }
                     }
@@ -558,6 +632,10 @@ final class AppModel {
                             if self.segments.count>300 { self.segments.removeFirst(self.segments.count-300) }
                             self.refreshTerms()
                         } else { self.partials[.file]=segment }
+                    } else if case .speakersUpdated(let id)=event,self.selected==id {
+                        self.refreshSpeakers()
+                    } else if case .warning(let warning)=event {
+                        self.message=warning
                     }
                 }
             }
@@ -713,8 +791,8 @@ final class AppModel {
                 await engine.unload(); return
             }
             _=try await coordinator.update(session:session,engine:engine,final:final,rebuild:rebuild)
-            if selected==session.id { await loadFindings(page:findingPage) }
-            if selected==session.id { summaryStatus=findings.isEmpty ? "No hay hallazgos con evidencia todavía":final ? "Síntesis final actualizada":"Resumen actualizado · \(Date().formatted(date:.omitted,time:.shortened))" }
+            if selected==session.id { await loadFindings(page:reportLoading ? 0:findingPage) }
+            if selected==session.id { summaryStatus = !hasSummaryToCopy ? "No hay hallazgos con evidencia todavía":final ? "Síntesis final actualizada":"Resumen actualizado · \(Date().formatted(date:.omitted,time:.shortened))" }
             if final { try await store?.completeFinalSummary(session:session.id) }
             await refreshProcessingProgress()
         } catch is CancellationError { if selected==session.id { summaryStatus="Resumen en espera; la transcripción permanece guardada." } }
@@ -723,24 +801,40 @@ final class AppModel {
     }
     func newSession() { guard !active else { return }; selectionRequest=UUID(); selected=nil; selectedRecord=nil; title="Nueva sesión"; segments=[]; findings=[]; findingPage=0; moreFindings=false; partials=[:]; bookmarks=[]; bookmarkPage=0; transcriptTarget=nil; moreBookmarks=false; showBookmarks=false; transcriptSearch=""; oldestRow=0; canLoadEarlier=false; sessionContext = .init(); processingProgress = .init(); termsTask?.cancel(); terms=[]; message=nil; googleRetryStatus=nil; summaryStatus="El resumen aparecerá cuando haya texto definitivo." }
     func delete(_ session:Session) async {
-        guard current?.id != session.id || !active else { return }
-        do { await coordinator?.cancel(session:session.id); try await store?.delete(session:session.id); if selected==session.id { newSession() }; await refreshSessions() } catch { message=error.localizedDescription }
+        guard (current?.id != session.id || !active),let store else { return }
+        do {
+            await coordinator?.cancel(session:session.id)
+            try await store.delete(session:session.id)
+            if current?.id==session.id { current=nil }
+            searchRequest=UUID()
+            searching=false
+            searchHits.removeAll { $0.sessionID==session.id }
+            if selected==session.id {
+                if active { await select(current?.id) }
+                else { newSession() }
+            }
+            await refreshSessions()
+            if globalSearchMode { await searchAllTranscripts() }
+        } catch { message=error.localizedDescription }
     }
     func rename() async {
-        guard var session=selectedSession else { return }; session.title=title
-        do { try await store?.save(session); if current?.id==session.id { current=session }; await refreshSessions() } catch { message=error.localizedDescription }
+        guard var session=selectedSession else { return }
+        session.title=title
+        do {
+            guard try await store?.updateExistingSession(session)==true else { return }
+            if current?.id==session.id { current=session }
+            await refreshSessions()
+        } catch { message=error.localizedDescription }
     }
     func installSpeech() async {
         speechStatus="Descargando recursos de voz autorizados…"
         do { try await AppleSpeechEngine.install(locale:settings.locale); await checkAvailability() } catch { speechStatus=error.localizedDescription }
     }
     var report:SessionReport? {
-        presentedReport(.complete)
-    }
-    func presentedReport(_ presentation:ReportPresentation) -> SessionReport? {
-        guard var session=selectedSession else { return nil }
+        guard !reportLoading,var session=selectedSession else { return nil }
         if recordingSession { session.duration=reportDuration }
-        return SessionReportFormatter.document(session:session,findings:presentation.select(findings))
+        return SessionReportFormatter.document(session:session,findings:reportPresentation.select(findings),
+                                               deduplicate:reportPresentation != .followUp)
     }
     @discardableResult func copySessionReport() async -> Bool {
         guard let session=selectedSession,let store else { return false }
@@ -841,8 +935,11 @@ final class AppModel {
         } catch { message=error.localizedDescription }
     }
     func choosePath(_ key:WritableKeyPath<AppSettings,String>,folder:Bool) {
+        if let path=choosePath(folder:folder) { settings[keyPath:key]=path }
+    }
+    func choosePath(folder:Bool) -> String? {
         let panel=NSOpenPanel(); panel.canChooseDirectories=folder; panel.canChooseFiles = !folder; panel.allowsMultipleSelection=false
-        if panel.runModal() == .OK,let url=panel.url { settings[keyPath:key]=url.path }
+        return panel.runModal() == .OK ? panel.url?.path:nil
     }
     func revealStorage() { if let store { Task { let directory=await store.directory; NSWorkspace.shared.open(directory) } } }
     func export(format:ExportFormat,options:ExportOptions) async {

@@ -29,7 +29,20 @@ Selecciona el `FluidWorker` generado en Configuración → Modelos. Prepara por 
 
 `AsrModels.loadLocal(from:version:.redux)` es la ruta de ejecución y no descarga archivos. El preprocesador usa CPU; la configuración de encoder/decoder/joint permite CPU+ANE. Core ML determina qué operaciones ejecuta realmente cada unidad. Redux es un modelo multilingüe de pesos ternarios, descrito por el proveedor con una descarga aproximada de 220 MB; no equivale a memoria residente total.
 
-El manifiesto de preparación excluye el artefacto NeMo de normalización de texto, que no aporta al ASR. Se comprobó que desactivar solamente su trait no evita que SwiftPM intente descargar ese binario de 87 MB; la descarga agotó su tiempo. Por ello se elimina ese target del manifiesto reducido. El código de FluidAudio conserva sus rutas condicionales sin NeMo. No se usa TTS ni diarización en producción.
+El manifiesto de preparación excluye el artefacto NeMo de normalización de texto, que no aporta al ASR. Se comprobó que desactivar solamente su trait no evita que SwiftPM intente descargar ese binario de 87 MB; la descarga agotó su tiempo. Por ello se elimina ese target del manifiesto reducido. El código de FluidAudio conserva sus rutas condicionales sin NeMo. PAIMON no utiliza TTS de FluidAudio.
+
+### Diarización local opcional
+
+1. Compila de nuevo `FluidWorker` con `./script/prepare_fluid.sh` y selecciónalo en **Ajustes → Modelos**. El mismo ejecutable admite transcripción y diarización. Puedes usar Apple Speech y dejar vacía la carpeta Parakeet si solo necesitas separar voces.
+2. Revisa [la procedencia y licencias de los modelos](https://huggingface.co/FluidInference/speaker-diarization-coreml/blob/main/NOTICE.md). Obtén explícitamente del [repositorio oficial de pesos](https://huggingface.co/FluidInference/speaker-diarization-coreml/tree/7eab74f) las carpetas completas `pyannote_segmentation.mlmodelc` y `wespeaker_v2.mlmodelc`. Por ejemplo, con el CLI de Hugging Face instalado:
+
+   ```bash
+   hf download FluidInference/speaker-diarization-coreml --revision 7eab74f --include 'pyannote_segmentation.mlmodelc/**' 'wespeaker_v2.mlmodelc/**' --local-dir "$HOME/Library/Application Support/PAIMON Models/Diarization"
+   ```
+
+3. Selecciona la carpeta que contiene ambos modelos en **Ajustes → Modelos → Diarización**. Marca **Separar voces** antes de iniciar una captura o importar. Pulsa un hablante en la transcripción para cambiar su nombre en esa sesión.
+
+La app carga los archivos locales mediante `DiarizerModels.load(localSegmentationModel:localEmbeddingModel:)` y no ejecuta la descarga. La configuración permite CPU y Neural Engine. Core ML decide dónde se ejecuta cada operación. La cola de captura admite 32 búferes y se conservan ventanas PCM de hasta diez segundos por fuente, más el bloque entrante. En vivo, los turnos pueden aparecer después del texto. Una pausa o un bloque perdido separan ventanas sin desplazar la transcripción. Los turnos ambiguos quedan sin etiqueta. Micrófono y sistema mantienen identificadores independientes.
 
 ## MLX opcional
 

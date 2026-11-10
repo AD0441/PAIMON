@@ -1,5 +1,23 @@
 # Validación de PAIMON
 
+## Desarrollo · Acuerdos y pendientes
+
+Pasaron 94 pruebas y la compilación Release arm64 con firma verificada. La nueva vista consulta acuerdos, compromisos y preguntas abiertas directamente en el registro de hallazgos. La prueba de AppModel guardó 120 ideas antes del primer acuerdo y verificó que aparecieran dos páginas de resultados filtrados. También comprobó que dos tareas con el mismo texto y distintos responsables se mostraran por separado y conservaran sus citas.
+
+## Desarrollo · síntesis compacta y audio difícil · 10 de noviembre de 2026
+
+Foundation Models recibe pares de identificador y texto. Una medición previa con el tokenizador local dio 328 frente a 287 tokens para el bloque de 12 fuentes sintéticas. Se conserva el esquema de respuesta y la validación de citas. Si al agrupar los hallazgos para la síntesis queda un grupo de un solo elemento, este pasa a la siguiente etapa directamente. Se ahorra una solicitud por cada grupo de ese tipo.
+
+Pasaron 93 pruebas, incluida la importación con Apple Speech en ambos modos. Los dos ensayos nativos de resumen se cancelaron cuando macOS notificó presión de memoria. El efecto sobre la latencia y la calidad de la generación local requiere completar esas pruebas. La [comparación de audio difícil](PERFORMANCE.md#normalización-con-audio-difícil--10-de-noviembre-de-2026) se completó con tres variantes sintéticas.
+
+## Instalación local 0.7.0 (16) · nivel del audio importado y limpieza de sesiones
+
+La compilación 16 quedó instalada en Aplicaciones. Se verificaron la firma, la copia portátil y el respaldo de la compilación 15.
+
+Pasaron 93 pruebas en el M1 de 8 GB y compiló Release arm64 con firma verificada. En la instancia aislada se comprobó que el interruptor de nivel parte apagado y que se puede activar y desactivar en Configuración. SpeechTranscriber reconoció la muestra española en ambos modos. La prueba de señal verificó ganancia para audio bajo, compresión de picos, silencios, tiempos y conservación exacta del archivo original. Queda por medir la precisión con grabaciones ruidosas.
+
+Se probó el borrado con dos sesiones sintéticas. Desaparecieron el texto original y revisado, la búsqueda, el resumen, las notas, el vínculo al audio, las métricas, el trabajo pendiente y las grabaciones con sus tiempos. Se conservó la otra sesión y los archivos externos. Al vaciar el historial, se recuperó espacio de SQLite y quedó vacío el archivo WAL antes de reabrir la base. También pasó la exportación de los cuatro formatos y el reemplazo de un JSON existente.
+
 ## Candidata publicada 0.7.0 (15) · 9 de noviembre de 2026
 
 Pasaron 90 pruebas, con 79 del núcleo y 11 de AppModel. La batería incluyó importación real en español con el motor nativo. Xcode compiló Release arm64 en el M1 de 8 GB con macOS 27.3. El destino mínimo es macOS 26.0.
@@ -231,3 +249,17 @@ Estas cifras **no incluyen la memoria ni el CPU de los procesos de modelos de Ap
 ## Comprobación manual que falta
 
 Repetir en macOS 26; reuniones de varias horas; español e inglés con cambios de idioma; selección de distintos reproductores y aplicaciones de reunión; permisos denegados/revocados; conectar/desconectar dispositivos; eco acústico; presión de memoria sostenida; backend Parakeet con pesos instalados; backend MLX con su entorno y modelo opcionales. La captura global y la mezcla acústica sistema/micrófono requieren repetir esos escenarios con material autorizado.
+
+## Diarización local · 10 de noviembre de 2026
+
+PAIMON 0.7.1 (17) se compiló en Release arm64, se instaló en Aplicaciones y se comprobó el inicio del proceso. Se validó la firma estricta de los dos respaldos extraídos y la coincidencia del ejecutable del ZIP actual con el de Aplicaciones.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.7.1 (17) | `198bf49f499cf956c861eba958b54e05c8c1daa4aab6636033d2f8944330203f` |
+| `PAIMON-anterior.zip` | 0.7.0 (16) | `8f4ec3949a460aeb253aca8dbef334ea94109c640be208166bffe95c3da7f7ad` |
+
+- MacBook Pro M1 con 8 GB. Xcode compiló PAIMON Release arm64 y se verificó su firma local. Compiló también FluidWorker con FluidAudio v0.17.3 en modo Release.
+- `PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh` pasó 96 pruebas, incluidas importación con Apple Speech y audio sintético, activación y desactivación de la integración mediante un ejecutable de prueba, alineación temporal, separación de fuentes, nombres persistentes y borrado en cascada. Se comprobó la respuesta de FluidWorker real cuando faltan los modelos.
+- Para reproducir la prueba pendiente con inferencia real, [prepara los modelos](DEPENDENCIES.md#diarización-local-opcional), activa **Separar voces** e importa un audio de prueba con al menos dos voces alternadas y turnos de varios segundos. Comprueba que una voz que reaparece conserva su etiqueta. Pulsa la etiqueta, guarda el nombre y vuelve a abrir la sesión. Después reproduce el mismo audio en otra aplicación y repite con captura del sistema, incluyendo una pausa y reanudación.
+- Pendientes la precisión con dos o más voces, el retraso en captura real y la memoria adicional de Core ML. Las pruebas automáticas de etiquetas verifican la integración y usan respuestas deterministas.

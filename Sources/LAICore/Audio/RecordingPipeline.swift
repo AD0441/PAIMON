@@ -27,6 +27,8 @@ public actor RecordingPipeline {
     private var speechEvents:AsyncStream<PipelineEvent>.Continuation?
     private var outward:AsyncStream<PipelineEvent>.Continuation?
     private var archive:AudioArchive?
+    private var diarizationTask:Task<Void,Never>?
+    private var diarizationInput:AsyncStream<AudioChunk>.Continuation?
     public init(store:SessionStore) { self.store=store }
     public func start(title:String,settings:AppSettings,context:SessionContext?=nil,preparation:(@Sendable (CapturePreparation) async -> Void)?=nil) async throws -> (Session,AsyncStream<PipelineEvent>) {
         guard session==nil else { throw LAIError.message("Ya hay una sesión activa") }
@@ -77,14 +79,28 @@ public actor RecordingPipeline {
         session=value; engine=selected
         if settings.saveAudio { archive=AudioArchive(directory:store.directory.appendingPathComponent(value.id.uuidString)) }
         let audioArchive=archive
+        if let diarizer=DiarizationSession(settings:settings,sessionID:value.id,store:store,events:ui.continuation) {
+            let queue=AsyncStream<AudioChunk>.makeStream(bufferingPolicy:.bufferingNewest(32))
+            diarizationInput=queue.continuation
+            diarizationTask=Task { @concurrent in
+                for await chunk in queue.stream { await diarizer.append(chunk) }
+                await diarizer.finish()
+            }
+        }
+        let speakerInput=diarizationInput
         consumer=Task { @concurrent in
             var detectors:[AudioSource:VAD]=[:]; var lastMeter:[AudioSource:Double]=[:]
+            var warnedSpeakerDrops=false
             do {
                 for await chunk in audio.stream {
                     var detector=detectors[chunk.source] ?? VAD(); let (level,active)=detector.process(chunk.samples,sampleRate:chunk.sampleRate); detectors[chunk.source]=detector
                     if chunk.start-(lastMeter[chunk.source] ?? -1)>=0.1 { ui.continuation.yield(.activity(chunk.source,level,active)); lastMeter[chunk.source]=chunk.start }
                     try await audioArchive?.append(chunk)
                     try await selected.append(chunk)
+                    if case .dropped? = speakerInput?.yield(chunk), !warnedSpeakerDrops {
+                        warnedSpeakerDrops=true
+                        ui.continuation.yield(.warning("La diarización se retrasó. Algunos fragmentos pueden quedar sin hablante."))
+                    }
                 }
             } catch { ui.continuation.yield(.failure("Procesamiento interrumpido: \(error.localizedDescription). Detén la sesión para conservar lo reconocido.")) }
         }
@@ -130,9 +146,11 @@ public actor RecordingPipeline {
         producer?.cancel(); await producer?.value; producer=nil
         for chunk in await capture.stop() { audioInput?.yield(chunk) }
         audioInput?.finish(); await consumer?.value; consumer=nil
+        diarizationInput?.finish(); diarizationInput=nil
         var failure:(any Error)?
         do { try await engine?.finish() } catch { failure=error; await engine?.cancel() }
         speechEvents?.finish(); await eventTask?.value; eventTask=nil
+        await diarizationTask?.value; diarizationTask=nil
         await archive?.close(); archive=nil; engine=nil
         value.status=failure==nil ? "completed":"interrupted"
         try await store.save(value); session=nil

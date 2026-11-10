@@ -35,6 +35,9 @@ public struct AppSettings: Codable, Sendable {
     public var applicationBundleID = ""
     public var outputDeviceUID = ""
     public var saveAudio = false
+    public var enhanceImportedAudio:Bool?
+    public var diarizationEnabled:Bool?
+    public var diarizationModels:String?
     public var energySaving = true
     public var fluidWorker = ""
     public var fluidModels = ""

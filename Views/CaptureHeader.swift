@@ -53,9 +53,21 @@ struct CaptureHeader:View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
-            Button { showingContext=true } label: {
-                Label(model.ui(model.sessionContext.isEmpty ? "Añadir contexto de la sesión":"Editar contexto de la sesión"),systemImage:"list.bullet.clipboard")
-            }.buttonStyle(.borderless).font(.caption).disabled(model.active || model.summaryWorking).accessibilityIdentifier("editSessionContext")
+            HStack(spacing:16) {
+                Button { showingContext=true } label: {
+                    Label(model.ui(model.sessionContext.isEmpty ? "Añadir contexto de la sesión":"Editar contexto de la sesión"),systemImage:"list.bullet.clipboard")
+                }.buttonStyle(.borderless).disabled(model.active || model.summaryWorking).accessibilityIdentifier("editSessionContext")
+                if model.active {
+                    if model.current?.settings.diarizationEnabled==true {
+                        Label("Diarización activada",systemImage:"person.2").foregroundStyle(.secondary)
+                    }
+                } else {
+                    Toggle("Separar voces",isOn:$model.diarizationEnabled)
+                        .toggleStyle(.checkbox)
+                        .help("Para la próxima grabación o importación. Requiere FluidWorker y los modelos locales en Ajustes → Modelos.")
+                        .accessibilityIdentifier("enableDiarization")
+                }
+            }.font(.caption)
             if model.settings.microphone && model.settings.systemAudio && !model.active {
                 Text("Usa audífonos para evitar que el micrófono vuelva a captar los altavoces. Las dos fuentes se guardan identificadas.").font(.caption).foregroundStyle(.secondary)
             }

@@ -49,7 +49,9 @@ El modo predeterminado no envía datos ni incluye telemetría. La descarga expl�
 
 Audio no guardado por defecto. Si se activa, cada fuente se escribe a CAF en disco, con un índice JSONL de posición, fuente y reloj. SQLite, audio y resúmenes se guardan bajo `~/Library/Application Support/LocalAudioIntelligence`. Los exports solo se escriben donde indique NSSavePanel.
 
-La eliminación borra la fila de sesión y en cascada fragmentos, resúmenes, registro de hallazgos, marcadores, trabajos pendientes y métricas; los triggers retiran el texto del índice FTS5. Elimina la carpeta de audio, usa `secure_delete` en SQLite y FTS5 y trunca WAL. Esto elimina datos accesibles a la app; no constituye borrado forense de SSD, snapshots APFS o copias de seguridad. No hay cifrado propio: usa FileVault para proteger los archivos del usuario.
+La eliminación borra la fila de sesión y en cascada los fragmentos, los resúmenes, los hallazgos, los marcadores, los trabajos pendientes, las métricas y el vínculo al audio importado. Retira el texto del índice FTS5 y elimina la carpeta de grabaciones de PAIMON. SQLite usa `secure_delete` en las tablas y el índice, y trunca WAL. Las páginas libres se reutilizan mientras haya historial. Al borrar la última sesión se compacta la base. El alcance es el almacenamiento de PAIMON. Los originales, las exportaciones, los respaldos y las instantáneas se administran por separado.
+
+La exportación prepara el documento en un directorio temporal del volumen de destino. El archivo auxiliar de citas pierde su nombre de inmediato y se libera al cerrar su descriptor, incluso si termina el proceso. El documento terminado se mueve o reemplaza en la ruta que elige el usuario.
 
 ## Concurrencia y compilación
 

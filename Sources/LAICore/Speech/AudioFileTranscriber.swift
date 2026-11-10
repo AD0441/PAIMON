@@ -2,6 +2,10 @@ import Foundation
 import AVFoundation
 public enum AudioFileTranscriber {
     @discardableResult public static func transcribe(url:URL,settings:AppSettings,sessionID:UUID,events:AsyncStream<PipelineEvent>.Continuation,paceRealtime:Bool=true,engineOverride:(any TranscriptionEngine)?=nil,progress:(@Sendable (Double,Double) async -> Void)?=nil) async throws -> Double {
+        try await transcribe(url:url,settings:settings,sessionID:sessionID,events:events,paceRealtime:paceRealtime,engineOverride:engineOverride,progress:progress,diarizer:nil)
+    }
+
+    private static func transcribe(url:URL,settings:AppSettings,sessionID:UUID,events:AsyncStream<PipelineEvent>.Continuation,paceRealtime:Bool,engineOverride:(any TranscriptionEngine)?,progress:(@Sendable (Double,Double) async -> Void)?,diarizer:DiarizationSession?) async throws -> Double {
         try Task.checkCancellation()
         let file=try AVAudioFile(forReading:url,commonFormat:.pcmFormatFloat32,interleaved:false)
         let engine:any TranscriptionEngine
@@ -16,6 +20,8 @@ public enum AudioFileTranscriber {
             let duration=Double(file.length)/format.sampleRate
             guard duration.isFinite,duration>0 else { throw LAIError.message("El archivo de audio está vacío o no es compatible") }
             guard let buffer=AVAudioPCMBuffer(pcmFormat:format,frameCapacity:4096) else { throw LAIError.message("No se pudo abrir el audio") }
+            let enhanceLevel=settings.enhanceImportedAudio==true
+            var leveler=ImportLevelProcessor()
             var lastProgress = -1.0
             var lastProgressTime=ContinuousClock.now
             while file.framePosition<file.length {
@@ -25,7 +31,10 @@ public enum AudioFileTranscriber {
                 guard count>0,let channels=buffer.floatChannelData else { break }
                 var samples=[Float](repeating:0,count:count)
                 for channel in 0..<Int(format.channelCount) { for i in 0..<count { samples[i] += channels[channel][i]/Float(format.channelCount) } }
-                try await engine.append(.init(samples:samples,sampleRate:format.sampleRate,start:Double(position)/format.sampleRate,source:.file))
+                let start=Double(position)/format.sampleRate
+                await diarizer?.append(.init(samples:samples,sampleRate:format.sampleRate,start:start,source:.file))
+                if enhanceLevel { leveler.process(&samples,sampleRate:format.sampleRate) }
+                try await engine.append(.init(samples:samples,sampleRate:format.sampleRate,start:start,source:.file))
                 let seconds=Double(file.framePosition)/format.sampleRate
                 if (seconds-lastProgress>=0.5 && lastProgressTime.duration(to:.now) >= .milliseconds(300)) || file.framePosition>=file.length {
                     await progress?(seconds,duration); lastProgress=seconds; lastProgressTime = .now
@@ -50,8 +59,15 @@ public enum AudioFileTranscriber {
             let duration=try await withThrowingTaskGroup(of:(Double,(any Error)?).self) { group in
                 group.addTask {
                     defer { pair.continuation.finish() }
-                    do { return (try await transcribe(url:url,settings:session.settings,sessionID:session.id,events:pair.continuation,paceRealtime:false,engineOverride:engineOverride,progress:progress),nil) }
-                    catch { return (0,error) }
+                    let diarizer=DiarizationSession(settings:session.settings,sessionID:session.id,store:store,events:events)
+                    do {
+                        let duration=try await transcribe(url:url,settings:session.settings,sessionID:session.id,events:pair.continuation,paceRealtime:false,engineOverride:engineOverride,progress:progress,diarizer:diarizer)
+                        await diarizer?.finish()
+                        return (duration,nil)
+                    } catch {
+                        await diarizer?.cancel()
+                        return (0,error)
+                    }
                 }
                 group.addTask {
                     defer { pair.continuation.finish() }
@@ -77,5 +93,46 @@ public enum AudioFileTranscriber {
             try? await store.save(value)
             throw error
         }
+    }
+}
+
+/// Applies a smoothed RMS gain and a soft ceiling to the mono recognition input.
+private struct ImportLevelProcessor {
+    private var gain:Float?
+
+    mutating func process(_ samples:inout [Float],sampleRate:Double) {
+        guard !samples.isEmpty else { return }
+        var energy=0.0
+        for sample in samples where sample.isFinite {
+            let value=Double(sample)
+            energy += value*value
+        }
+        let rms=Float(sqrt(energy/Double(samples.count)))
+        // Aim for -20 dBFS RMS with at most +12 dB of makeup gain.
+        // Below -50 dBFS, return toward unity instead of chasing quiet noise.
+        let target:Float=rms >= 0.00316 ? min(4,max(0.5,0.1/rms)):1
+        let previous=gain ?? target
+        let responseSeconds=target<previous ? 0.045:0.25
+        let duration=Double(samples.count)/sampleRate
+        let next=previous+(target-previous)*Float(1-exp(-duration/responseSeconds))
+        let increment=(next-previous)/Float(samples.count)
+        var currentGain=previous
+
+        let knee:Float=0.70
+        let ceiling:Float=0.97
+        let headroom=ceiling-knee
+        for index in samples.indices {
+            currentGain += increment
+            let sample=samples[index]
+            let amplified=sample.isFinite ? sample*currentGain:0
+            let magnitude=abs(amplified)
+            if magnitude>knee {
+                let compressed=ceiling-headroom/(1+(magnitude-knee)/headroom)
+                samples[index]=amplified<0 ? -compressed:compressed
+            } else {
+                samples[index]=amplified
+            }
+        }
+        gain=next
     }
 }

@@ -17,7 +17,10 @@ struct CaptureMenu:View {
             Button(model.ui(model.state == .paused ? "Reanudar":"Pausar")) { Task { await model.pauseOrResume() } }
             Button("Detener y resumir") { Task { await model.stop() } }
             Button("Añadir marcador") { Task { await model.addBookmark(capture:true) } }
-        } else { Button("Iniciar captura") { Task { await model.start() } }.disabled(!model.canStartAudio) }
+        } else {
+            Toggle("Separar voces",isOn:Binding(get:{model.diarizationEnabled},set:{model.diarizationEnabled=$0})).disabled(!model.canStartAudio)
+            Button("Iniciar captura") { Task { await model.start() } }.disabled(!model.canStartAudio)
+        }
         Divider(); SettingsLink { Text("Configuración…") }; Divider()
         Button("Salir") { NSApp.terminate(nil) }
     }

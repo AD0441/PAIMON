@@ -3,6 +3,7 @@ import LAICore
 struct TranscriptView:View {
     @Bindable var model:AppModel
     @State private var editing:TranscriptSegment?
+    @State private var speakerToRename:SpeakerRenameTarget?
     var body:some View {
         VStack(spacing:0) {
             HStack {
@@ -81,12 +82,25 @@ struct TranscriptView:View {
         }
         .task(id:model.transcriptSearch) { await model.filterTranscript() }
         .sheet(item:$editing) { segment in TranscriptCorrectionSheet(model:model,segment:segment) }
+        .sheet(item:$speakerToRename) { target in SpeakerRenameSheet(model:model,target:target) }
     }
     private func segmentView(_ segment:TranscriptSegment) -> some View {
         VStack(alignment:.leading,spacing:7) {
             HStack(spacing:8) {
                 Text(timestamp(segment.start)).monospacedDigit()
                 Text(model.ui(segment.source.title))
+                if segment.isFinal,let speaker=model.speakerLabels[segment.id] {
+                    Button {
+                        speakerToRename=SpeakerRenameTarget(speaker:speaker,session:segment.sessionID)
+                    } label: {
+                        if let name=speaker.name { Text(name).lineLimit(1) }
+                        else { Text("Hablante \(speaker.number)") }
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                    .help("Cambiar el nombre de este hablante en la sesión")
+                    .accessibilityIdentifier("renameSpeaker")
+                }
                 if !segment.isFinal { Text("Parcial") }
                 if segment.originalText != nil { Text("Corregido") }
                 if segment.duplicateOf != nil { Text("Posible eco") }
@@ -108,6 +122,40 @@ struct TranscriptView:View {
             Button("Copiar fragmento") { model.copy("[\(timestamp(segment.start))] \(segment.text)") }
             Button("Marcar este fragmento") { Task { await model.addBookmark(time:segment.start,segmentID:segment.id) } }.disabled(!segment.isFinal)
         }
+    }
+}
+private struct SpeakerRenameTarget:Identifiable {
+    let speaker:SessionSpeaker
+    let session:UUID
+    var id:String { speaker.id }
+}
+private struct SpeakerRenameSheet:View {
+    let model:AppModel
+    let target:SpeakerRenameTarget
+    @Environment(\.dismiss) private var dismiss
+    @State private var name=""
+    @State private var saving=false
+
+    var body:some View {
+        VStack(alignment:.leading,spacing:12) {
+            Text("Cambiar nombre del hablante").font(.title2.weight(.semibold))
+            Text("Se aplica a todos sus fragmentos en esta sesión. Deja el nombre vacío para recuperar la etiqueta numerada.")
+                .foregroundStyle(.secondary)
+            TextField("Nombre",text:$name)
+                .textFieldStyle(.roundedBorder)
+            HStack {
+                Spacer()
+                Button("Cancelar",role:.cancel) { dismiss() }
+                Button("Guardar") {
+                    saving=true
+                    Task {
+                        if await model.renameSpeaker(target.speaker,session:target.session,name:name) { dismiss() }
+                        saving=false
+                    }
+                }.keyboardShortcut(.defaultAction).disabled(saving || name==(target.speaker.name ?? ""))
+            }
+        }.padding(24).frame(width:390)
+            .onAppear { name=target.speaker.name ?? "" }
     }
 }
 private struct TranscriptCorrectionSheet:View {

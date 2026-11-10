@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
 - **Versión del documento:** 1.1 · **Fecha:** 9 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.7.0 (15), candidata.
+- **Base revisada:** PAIMON 0.7.1 (17).
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -37,7 +37,7 @@ Este documento consolida lo solicitado, lo mejorado y el trabajo pendiente. Sigu
 
 El recorrido principal es reproducir una reunión, clase, video o podcast en el Mac, pulsar **Iniciar**, leer texto real con tiempos y obtener un informe actualizado sin bloquear la captura. El usuario puede revisar cada afirmación contra su fuente y exportar su sesión.
 
-No se consideran funciones actuales: diarización o nombres de hablantes, cancelación acústica completa, transcripción garantizada de contenido protegido, extracción de pistas de video/URLs, sincronización en nube ni colaboración. No se incorporan como bloqueos de la primera versión estable salvo que se acuerde ampliar el alcance.
+No se consideran funciones actuales: cancelación acústica completa, transcripción garantizada de contenido protegido, extracción de pistas de video/URLs, sincronización en nube ni colaboración. No se incorporan como bloqueos de la primera versión estable salvo que se acuerde ampliar el alcance.
 
 ## 4. Plataforma, arquitectura y privacidad
 
@@ -108,7 +108,7 @@ No se consideran funciones actuales: diarización o nombres de hablantes, cancel
 | --- | --- | --- | --- |
 | DAT-01 | P0 | SQLite incremental con WAL, transcripción independiente, resúmenes versionados y recuperación de sesiones interrumpidas. | **V:** reapertura, compatibilidad, migraciones y persistencia cubiertas. Una caída solo recupera definitivos confirmados. [E1, E2] |
 | DAT-02 | P0 | Historial con nombre, fecha y duración; renombrar, buscar y abrir sesiones sin cargar todo el historial. | **V:** páginas de 50 sesiones y revisión aislada de renombrado/búsqueda. |
-| DAT-03 | P0 | Borrar una sesión elimina texto, resúmenes, hallazgos, marcadores, trabajos, índice y audio asociado. | **V:** cascada y limpieza cubiertas. No es borrado forense de SSD, snapshots ni respaldos; no hay cifrado propio. |
+| DAT-03 | P0 | Borrar una sesión elimina texto, resúmenes, hallazgos, marcadores, trabajos, índice y audio asociado. | **V:** prueba con dos sesiones, vínculos, búsqueda, métricas y grabaciones por fuente. WAL se trunca y la base se compacta al borrar la última sesión. Los originales y las exportaciones son archivos independientes. |
 | HER-01 | P0 | Buscar palabras en la sesión y el historial, con acentos/mayúsculas tolerados y salto al fragmento; cancelar consultas obsoletas. | **V:** FTS5, máximo 50 resultados globales y búsqueda agrupada; la primera indexación puede quedar parcial mientras se captura. |
 | HER-02 | P1 | Marcadores y notas persistentes con tiempos, edición y exportación; no usar notas como evidencia de la transcripción. | **V:** pruebas y recorrido histórico; búsqueda/cambio de sesión conservan marcadores. |
 | HER-03 | P1 | Contexto de objetivo, temario y glosario separado de las fuentes; plantillas Reunión, Clase y Video/podcast. | **V:** editor en sheet, límites de caracteres, identidad y reconstrucción. El contexto orienta, no demuestra hechos. |
@@ -149,7 +149,7 @@ No se consideran funciones actuales: diarización o nombres de hablantes, cancel
 | RND-05 | P1 | Evitar trabajo recurrente innecesario: búsquedas cancelables, indicadores agrupados y lista de apps por notificaciones. | **V:** mejoras 0.6.0; métricas cada 5 s con ventana abierta, sin afirmar consumo cero en reposo. |
 | ENT-01 | P0 | Proyecto Xcode compilable, scripts, dependencias documentadas, pruebas reproducibles y resultados con versión/entorno. | **V:** 84 pruebas registradas y fixture sintético local; scripts de diagnóstico disponibles. No se vuelven a ejecutar por esta edición documental. |
 | ENT-02 | P0 | Validar macOS 26, permisos y recorrido completo con el binario distribuido antes de llamar estable a la entrega. | **N:** build 13 probó importación/síntesis e interfaz aislada, no Core Audio/micrófono actual ni macOS 26. |
-| ENT-03 | P0 | Mantener proyecto limpio: Git, fuentes, evidencias, dos ZIP y acceso a app instalada; sin acumular builds y copias completas. | **V:** actual 0.7.0 (15), anterior 0.6.0 (13). La copia del proyecto enlaza a `/Applications/PAIMON.app`. |
+| ENT-03 | P0 | Mantener proyecto limpio: Git, fuentes, evidencias, dos ZIP y acceso a app instalada; sin acumular builds y copias completas. | **V:** actual 0.7.1 (17), anterior 0.7.0 (16). La copia del proyecto enlaza a `/Applications/PAIMON.app`. |
 | ENT-04 | P1 | Distribución verificable con versión, SHA-256, recursos GitHub y firma adecuada para otros Mac. | **P:** release/ZIP/hash y firma ad hoc existentes; Developer ID, notarización y comprobación en otro Mac pendientes. No sustituir tags publicados. |
 
 ## 13. Mejoras realizadas desde los problemas reportados

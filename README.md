@@ -6,7 +6,7 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Candidata 0.7.0" src="https://img.shields.io/badge/candidata-0.7.0-58616B?style=flat-square">
+    <img alt="Código fuente 0.7.1" src="https://img.shields.io/badge/código%20fuente-0.7.1-58616B?style=flat-square">
   </p>
   <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1">Descargar candidata 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
@@ -53,7 +53,16 @@ Las imágenes de revisión usan datos sintéticos y una instancia separada de la
 
 </details>
 
-## Novedades de la candidata 0.7.0 · compilación 15
+## Novedades en main · 0.7.1 (17)
+
+- **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Requiere FluidWorker y dos modelos Core ML locales.
+- **Mejora el nivel al importar.** La normalización opcional nivela voz baja y suaviza picos. Conserva el archivo original.
+- **Revisa acuerdos y pendientes.** La vista dedicada reúne decisiones, compromisos y preguntas abiertas con sus evidencias. Las exportaciones conservan el informe completo.
+- **Elimina sesiones y sus datos asociados.** Al borrar una sesión, PAIMON retira su audio archivado, transcripción, resumen, nombres, marcadores e índices locales.
+
+Se verificaron la compilación arm64 y 96 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#diarización-local--10-de-noviembre-de-2026).
+
+## Candidata publicada 0.7.0 · compilación 15
 
 - **Escucha desde la evidencia.** Al importar audio, PAIMON conserva un vínculo local al archivo. Puedes escuchar el intervalo citado desde la transcripción o el informe.
 - **Revisa la transcripción.** Corrige un fragmento o restaura el texto reconocido. Se conservan sus tiempos y el resumen queda marcado para actualizarse. La búsqueda y la exportación usan el texto revisado.
@@ -79,7 +88,7 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
-La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.0 (15) y 0.6.0 (13).
+La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.1 (17) y 0.7.0 (16) en esta instalación. Para obtener 0.7.1 desde GitHub, compila el código de `main`.
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
@@ -96,6 +105,12 @@ El icono nuevo está en `Resources/Brand/PAIMON-icon.svg` y `.png`; `Resources/P
 La exportación PDF mantiene la jerarquía tipográfica y las tablas; Markdown conserva encabezados y negritas. **Anexo de evidencias** añade las citas al final, con enlaces internos desde PDF y Markdown. TXT usa texto plano con la misma estructura. JSON conserva los hallazgos y sus referencias estructuradas. Cuando una tarea carece de responsable o fecha, se muestra **No especificado**.
 
 La síntesis de Apple exige un **Resumen general** antes de marcarse como final. Los resúmenes anteriores a la versión 0.3.2 se reconstruyen desde la transcripción al pulsar **Actualizar resumen**; no basta con volver a condensar un resultado antiguo incompleto. El menú contextual de ese botón ofrece **Rehacer desde la transcripción**. Un mismo icono de evidencia puede abrir varios fragmentos cuando el resumen integra distintos momentos. Si el modelo devuelve un resultado insuficiente, se informa del fallo y se conserva la transcripción.
+
+## Separar voces · opcional
+
+**Separar voces** se activa antes de iniciar la captura o de importar audio. Las etiquetas aparecen junto al fragmento cuando el motor encuentra un hablante predominante. Pulsa **Hablante 1**, **Hablante 2** u otra etiqueta para poner un nombre que se conserva en esa sesión. El audio de sistema y micrófono mantiene sus propias etiquetas.
+
+Requiere el ejecutable FluidWorker actualizado y dos modelos Core ML locales. El interruptor está apagado por defecto. [Preparar los modelos de diarización](docs/DEPENDENCIES.md#diarización-local-opcional).
 
 ## Marcadores, búsqueda y plantillas
 
@@ -123,8 +138,9 @@ También existe un paquete Swift reproducible, sin dependencias de terceros en e
 
 - **Añadir / Editar contexto de la sesión** abre un editor separado para objetivo, temario y glosario, sin cambiar la distribución de la ventana principal. Se limita a 250, 600 y 350 caracteres. Sirve como orientación; las afirmaciones, nombres, fechas y acuerdos siguen necesitando evidencia original. Cambiar el contexto de una sesión guardada requiere **Actualizar resumen**; el historial del original se conserva.
 - **Importar audio**, **⌘O** o arrastrar un archivo abre una grabación compatible con AVAudioFile, como AIFF, WAV, M4A o MP3. Se lee por bloques y se transcribe con los mismos motores locales. Apple aplica contrapresión para no llenar la cola; la importación puede avanzar más rápido que la reproducción, según el equipo y el motor. No se duplica ni guarda el audio importado. **Cancelar importación** conserva los fragmentos definitivos ya reconocidos. Captura e importación se realizan de una en una.
+- En **Configuración → Audio y memoria → Audio importado**, puedes activar **Normalizar volumen y comprimir picos**. El ajuste nivela por bloques la señal que recibe el transcriptor, preserva sus tiempos y conserva el archivo original. Parte desactivado.
 - El panel Resumen muestra hasta dónde se ha guardado texto, hasta dónde se ha resumido y cuántos fragmentos quedan pendientes. Durante la generación se actualiza cada dos segundos. Un final aplazado por recursos sigue pendiente de recuperación.
-- **Ejecutiva / Completa** cambia la presentación usando los hallazgos guardados. No genera de nuevo ni carga modelos. Copiar y exportar conservan el informe completo con su formato y evidencia.
+- **Ejecutiva / Completa / Acuerdos y pendientes** cambia la presentación usando los hallazgos guardados. **Acuerdos y pendientes** reúne decisiones, compromisos y preguntas abiertas con sus citas en páginas propias. No genera de nuevo ni carga modelos. Copiar y exportar conservan el informe completo con su formato y evidencia.
 - Los **términos frecuentes** se calculan sin IA sobre una muestra de los fragmentos de la vista: hasta 300 fragmentos y 100.000 caracteres. Pulsarlos busca en esa sesión, sin distinguir acentos o mayúsculas. La frecuencia no equivale a importancia semántica ni representa necesariamente toda la grabación.
 
 ## Google AI · resumen externo opcional

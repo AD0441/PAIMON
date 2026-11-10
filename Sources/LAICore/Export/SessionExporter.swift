@@ -16,14 +16,25 @@ public actor SessionExporter {
         if !options.kinds.isEmpty,try await store.summaryNeedsRefresh(session:session.id) {
             throw LAIError.message("Actualiza el resumen para incluir las correcciones.")
         }
-        let temp=url.deletingLastPathComponent().appendingPathComponent(".lai-export-\(UUID().uuidString).\(format.rawValue)")
-        defer { try? FileManager.default.removeItem(at:temp) }
-        let evidenceURL=FileManager.default.temporaryDirectory.appendingPathComponent("paimon-evidence-\(UUID()).jsonl")
-        FileManager.default.createFile(atPath:evidenceURL.path,contents:nil,attributes:[.posixPermissions:0o600])
-        let evidenceFile=try FileHandle(forWritingTo:evidenceURL)
-        defer { try? evidenceFile.close(); try? FileManager.default.removeItem(at:evidenceURL) }
+        let workspace=try FileManager.default.url(for:.itemReplacementDirectory,in:.userDomainMask,
+                                                  appropriateFor:url.deletingLastPathComponent(),create:true)
+        defer { try? FileManager.default.removeItem(at:workspace) }
+        let temp=workspace.appendingPathComponent("export.\(format.rawValue)")
+        let evidenceFile:FileHandle?
+        if options.evidence,format != .json,!options.kinds.isEmpty {
+            let evidenceURL=workspace.appendingPathComponent("evidence.jsonl")
+            guard FileManager.default.createFile(atPath:evidenceURL.path,contents:nil,attributes:[.posixPermissions:0o600]) else {
+                throw LAIError.message("No se pudo preparar el anexo de evidencias.")
+            }
+            let file=try FileHandle(forUpdating:evidenceURL)
+            // The open descriptor keeps the spool usable until close. Removing
+            // its path now lets the OS reclaim it even if the app terminates.
+            try FileManager.default.removeItem(at:evidenceURL)
+            evidenceFile=file
+        } else { evidenceFile=nil }
+        defer { try? evidenceFile?.close() }
         func recordEvidence(_ report:SessionReport) throws {
-            guard options.evidence,format != .json,let first=report.evidence.first else { return }
+            guard let evidenceFile,let first=report.evidence.first else { return }
             let page=EvidencePage(findings:report.evidence.map(\.finding),referenceOffset:first.reference-1)
             try evidenceFile.write(contentsOf:JSONEncoder().encode(page)); try evidenceFile.write(contentsOf:Data([10]))
         }
@@ -48,12 +59,15 @@ public actor SessionExporter {
                     references += report.evidence.count; offset += page.count
                 }
             }
-            var firstEvidence=true
-            for try await line in evidenceURL.lines {
-                try Task.checkCancellation()
-                let page=try JSONDecoder().decode(EvidencePage.self,from:Data(line.utf8))
-                try writer.evidence(SessionReportFormatter.document(session:session,findings:page.findings,referenceOffset:page.referenceOffset),first:firstEvidence)
-                firstEvidence=false
+            if let evidenceFile {
+                try evidenceFile.seek(toOffset:0)
+                var firstEvidence=true
+                for try await line in evidenceFile.bytes.lines {
+                    try Task.checkCancellation()
+                    let page=try JSONDecoder().decode(EvidencePage.self,from:Data(line.utf8))
+                    try writer.evidence(SessionReportFormatter.document(session:session,findings:page.findings,referenceOffset:page.referenceOffset),first:firstEvidence)
+                    firstEvidence=false
+                }
             }
             if options.bookmarks {
                 var offset=0
@@ -112,12 +126,16 @@ public actor SessionExporter {
                         references += part.evidence.count; offset += page.count
                     }
                 }
-                var firstEvidence=true
-                for try await line in evidenceURL.lines {
-                    try Task.checkCancellation()
-                    let page=try JSONDecoder().decode(EvidencePage.self,from:Data(line.utf8))
-                    let report=SessionReportFormatter.document(session:session,findings:page.findings,referenceOffset:page.referenceOffset)
-                    try write("\n"+SessionReportFormatter.evidenceAnnex(report,markdown:format == .markdown,includeHeading:firstEvidence)); firstEvidence=false
+                if let evidenceFile {
+                    try evidenceFile.seek(toOffset:0)
+                    var firstEvidence=true
+                    for try await line in evidenceFile.bytes.lines {
+                        try Task.checkCancellation()
+                        let page=try JSONDecoder().decode(EvidencePage.self,from:Data(line.utf8))
+                        let report=SessionReportFormatter.document(session:session,findings:page.findings,referenceOffset:page.referenceOffset)
+                        try write("\n"+SessionReportFormatter.evidenceAnnex(report,markdown:format == .markdown,includeHeading:firstEvidence))
+                        firstEvidence=false
+                    }
                 }
             }
             if options.bookmarks {

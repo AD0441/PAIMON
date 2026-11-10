@@ -51,7 +51,17 @@ public actor SessionStore {
         END;
         CREATE TABLE IF NOT EXISTS search_backfill(id INTEGER PRIMARY KEY CHECK(id=1),cursor INTEGER NOT NULL,watermark INTEGER NOT NULL);
         INSERT OR IGNORE INTO search_backfill SELECT 1,0,COALESCE(MAX(seq),0) FROM segments;
-        PRAGMA user_version=3;
+        CREATE TABLE IF NOT EXISTS session_speakers(
+            session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+            id TEXT NOT NULL, number INTEGER NOT NULL, name TEXT, PRIMARY KEY(session,id)
+        );
+        CREATE TABLE IF NOT EXISTS speaker_turns(
+            session TEXT NOT NULL, speaker TEXT NOT NULL, source TEXT NOT NULL,
+            start REAL NOT NULL, end REAL NOT NULL, PRIMARY KEY(session,speaker,start,end),
+            FOREIGN KEY(session,speaker) REFERENCES session_speakers(session,id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS speaker_turns_time ON speaker_turns(session,source,start,end);
+        PRAGMA user_version=4;
         """
         guard sqlite3_exec(connection,schema,nil,nil,nil)==SQLITE_OK else { sqlite3_close(connection); throw LAIError.message("No se pudo crear la base de datos") }
         try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: self.directory.appendingPathComponent("sessions.sqlite").path)
@@ -75,9 +85,66 @@ public actor SessionStore {
         guard sqlite3_step(s)==SQLITE_DONE else { throw failure() }
     }
     public func save(_ session: Session) throws { try write("INSERT INTO sessions(id,created,data) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET created=excluded.created,data=excluded.data",[session.id.uuidString,String(session.created.timeIntervalSince1970),try encode(session)]) }
+    public func updateExistingSession(_ session:Session) throws -> Bool {
+        try write("UPDATE sessions SET created=?,data=? WHERE id=?",
+                  [String(session.created.timeIntervalSince1970),try encode(session),session.id.uuidString])
+        return sqlite3_changes(db)>0
+    }
     public func append(_ segment: TranscriptSegment) throws {
         guard segment.isFinal else { return }
         try write("INSERT INTO segments(session,id,start,data) VALUES(?,?,?,?) ON CONFLICT(session,id) DO UPDATE SET data=excluded.data,start=excluded.start",[segment.sessionID.uuidString,segment.id,String(segment.start),try encode(segment)])
+    }
+    func appendSpeakerTurns(_ turns:[SpeakerTurn],source:AudioSource,session:UUID) throws {
+        guard !turns.isEmpty else { return }
+        let sessionID=session.uuidString
+        try write("BEGIN IMMEDIATE",[])
+        do {
+            for turn in turns.sorted(by:{$0.start==$1.start ? $0.speaker<$1.speaker : $0.start<$1.start}) {
+                // The worker returns turns clipped to a ten-second window.
+                guard turn.start.isFinite,turn.end.isFinite,turn.end>turn.start,turn.end-turn.start<=10.001 else { continue }
+                try write("""
+                    INSERT OR IGNORE INTO session_speakers(session,id,number)
+                    SELECT ?,?,COALESCE(MAX(number),0)+1 FROM session_speakers WHERE session=?
+                    """,[sessionID,turn.speaker,sessionID])
+                try write("INSERT OR IGNORE INTO speaker_turns(session,speaker,source,start,end) VALUES(?,?,?,?,?)",
+                          [sessionID,turn.speaker,source.rawValue,String(turn.start),String(turn.end)])
+            }
+            try write("COMMIT",[])
+        } catch {
+            try? write("ROLLBACK",[])
+            throw error
+        }
+    }
+    public func speakers(for segments:[TranscriptSegment],session:UUID) throws -> [String:SessionSpeaker] {
+        var result:[String:SessionSpeaker]=[:]
+        for segment in segments where segment.sessionID==session && segment.isFinal && segment.end>segment.start {
+            // Query a short indexed interval for each row. A search page may
+            // contain fragments from arbitrarily far apart in a long session.
+            let row=try statement("""
+                SELECT s.id,s.number,s.name,SUM(MIN(t.end,CAST(? AS REAL))-MAX(t.start,CAST(? AS REAL))) AS overlap
+                FROM speaker_turns t JOIN session_speakers s ON s.session=t.session AND s.id=t.speaker
+                WHERE t.session=? AND t.source=? AND t.start>=? AND t.start<? AND t.end>?
+                GROUP BY t.speaker ORDER BY overlap DESC LIMIT 2
+                """,values:[String(segment.end),String(segment.start),session.uuidString,segment.source.rawValue,
+                            String(segment.start-10.01),String(segment.end),String(segment.start)])
+            defer { sqlite3_finalize(row) }
+            let status=sqlite3_step(row)
+            if status==SQLITE_DONE { continue }
+            guard status==SQLITE_ROW,let id=sqlite3_column_text(row,0) else { throw failure() }
+            let best=sqlite3_column_double(row,3)
+            let duration=segment.end-segment.start
+            guard best>=duration*0.5 else { continue }
+            let speaker=SessionSpeaker(id:String(cString:id),number:Int(sqlite3_column_int(row,1)),name:sqlite3_column_text(row,2).map{String(cString:$0)})
+            let next=sqlite3_step(row)
+            guard next==SQLITE_ROW || next==SQLITE_DONE else { throw failure() }
+            if next==SQLITE_DONE || sqlite3_column_double(row,3)<duration*0.25 { result[segment.id]=speaker }
+        }
+        return result
+    }
+    public func renameSpeaker(session:UUID,id:String,name:String) throws {
+        let trimmed=String(name.trimmingCharacters(in:.whitespacesAndNewlines).prefix(100))
+        try write("UPDATE session_speakers SET name=NULLIF(?,'') WHERE session=? AND id=?",[trimmed,session.uuidString,id])
+        guard sqlite3_changes(db)>0 else { throw LAIError.message("Este hablante ya no está en la sesión.") }
     }
     public func transcriptRevision(session:UUID) throws -> Int64 {
         let row=try statement("SELECT transcript_revision FROM session_review WHERE session=?",values:[session.uuidString])
@@ -225,9 +292,9 @@ public actor SessionStore {
         while sqlite3_step(s)==SQLITE_ROW { result.append(try decode(Finding.self,s)) }; return result
     }
     /// A bounded view; the complete register stays on disk and is paged for export.
-    public func reportFindings(session:UUID,template:SummaryTemplate,offset:Int=0) throws -> [Finding] {
+    public func reportFindings(session:UUID,template:SummaryTemplate,kinds:[FindingKind]=[],limit:Int=120,offset:Int=0) throws -> [Finding] {
         let memory=try latestSummary(session:session)?.findings.filter{$0.kind == .topic || $0.kind == .overview} ?? []
-        return memory+(try findings(session:session,template:template,limit:120,offset:offset))
+        return memory+(try findings(session:session,template:template,kinds:kinds,limit:limit,offset:offset))
     }
     public func finalContext(session:UUID,template:SummaryTemplate) throws -> [Finding] {
         var result:[Finding]=[]
@@ -361,6 +428,13 @@ public actor SessionStore {
         let folder=directory.appendingPathComponent(session.uuidString,isDirectory:true)
         if FileManager.default.fileExists(atPath:folder.path) { try FileManager.default.removeItem(at:folder) }
         try write("DELETE FROM sessions WHERE id=?",[session.uuidString])
+        // Keep free pages reusable while history remains. Reclaim them once the
+        // last session is removed without rewriting any surviving transcripts.
+        let remaining=try statement("SELECT 1 FROM sessions LIMIT 1")
+        let status=sqlite3_step(remaining)
+        sqlite3_finalize(remaining)
+        guard status==SQLITE_ROW || status==SQLITE_DONE else { throw failure() }
+        if status==SQLITE_DONE { try write("VACUUM",[]) }
         guard sqlite3_wal_checkpoint_v2(db,nil,SQLITE_CHECKPOINT_TRUNCATE,nil,nil)==SQLITE_OK else { throw failure() }
     }
 }

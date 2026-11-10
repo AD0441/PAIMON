@@ -1,6 +1,127 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Separar voces": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Separate voices"
+          }
+        }
+      }
+    },
+    "Diarización activada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker separation enabled"
+          }
+        }
+      }
+    },
+    "Para la próxima grabación o importación. Requiere FluidWorker y los modelos locales en Ajustes → Modelos.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For the next recording or import. Requires FluidWorker and the local models in Settings → Models."
+          }
+        }
+      }
+    },
+    "Diarización · instalación opcional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker separation · optional setup"
+          }
+        }
+      }
+    },
+    "Carpeta de modelos de diarización": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diarization model folder"
+          }
+        }
+      }
+    },
+    "Usa el mismo FluidWorker. Selecciona la carpeta con pyannote_segmentation.mlmodelc y wespeaker_v2.mlmodelc. Los modelos solo se leen del disco.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uses the same FluidWorker. Choose the folder containing pyannote_segmentation.mlmodelc and wespeaker_v2.mlmodelc. Models are loaded from disk."
+          }
+        }
+      }
+    },
+    "Cambiar el nombre de este hablante en la sesión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename this speaker in the session"
+          }
+        }
+      }
+    },
+    "Hablante %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker %lld"
+          }
+        }
+      }
+    },
+    "Cambiar nombre del hablante": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename speaker"
+          }
+        }
+      }
+    },
+    "Se aplica a todos sus fragmentos en esta sesión. Deja el nombre vacío para recuperar la etiqueta numerada.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to all of this speaker’s segments in this session. Leave the name blank to restore the numbered label."
+          }
+        }
+      }
+    },
+    "Nombre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
     "Vincular audio original": {
       "extractionState": "manual",
       "localizations": {
@@ -1244,6 +1365,39 @@
         }
       }
     },
+    "Acuerdos y pendientes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decisions and Follow-up"
+          }
+        }
+      }
+    },
+    "Sin acuerdos ni pendientes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No decisions or follow-up items"
+          }
+        }
+      }
+    },
+    "Esta vista muestra los acuerdos, compromisos y preguntas abiertas del resumen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This view shows the summary’s decisions, action items, and open questions."
+          }
+        }
+      }
+    },
     "Completa": {
       "extractionState": "manual",
       "localizations": {
@@ -1640,13 +1794,13 @@
         }
       }
     },
-    "Se eliminarán la transcripción, los resúmenes y cualquier audio guardado de esta sesión.": {
+    "Se eliminarán la transcripción, los resúmenes, las notas y las grabaciones que PAIMON guardó para esta sesión.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The transcript, summaries and any audio saved for this session will be deleted."
+            "value": "The transcript, summaries, notes and recordings PAIMON saved for this session will be deleted."
           }
         }
       }
@@ -2175,6 +2329,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Captured output"
+          }
+        }
+      }
+    },
+    "Audio importado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imported Audio"
+          }
+        }
+      }
+    },
+    "Normalizar volumen y comprimir picos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Normalize Volume and Compress Peaks"
+          }
+        }
+      }
+    },
+    "Ajusta el nivel antes de transcribir archivos. El audio original se conserva.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts levels before transcribing files. The original audio is preserved."
           }
         }
       }

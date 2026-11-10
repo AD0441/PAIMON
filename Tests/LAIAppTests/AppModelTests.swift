@@ -149,6 +149,72 @@ struct AppModelTests {
         #expect(try await fixture.store.pendingFinalSession()==nil)
     }
 
+    @Test func deletingCurrentSessionClearsSelectionAndSearchWithoutRemovingOtherSessions() async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let deleted=try await fixture.session("Laboratorio")
+        let retained=try await fixture.session("Biblioteca")
+        let model=fixture.model()
+        model.current=deleted
+        await model.select(deleted.id)
+        model.globalSearchMode=true
+        model.globalQuery="revisar"
+        await model.searchAllTranscripts()
+        #expect(Set(model.searchHits.map(\.sessionID))==[deleted.id,retained.id])
+
+        await model.delete(deleted)
+        #expect(model.current==nil)
+        #expect(model.selected==nil)
+        #expect(fixture.defaults.string(forKey:"lastSelectedSession")==nil)
+        #expect(model.searchHits.map(\.sessionID)==[retained.id])
+        #expect(try await fixture.store.sessions().map(\.id)==[retained.id])
+    }
+
+    @Test func followUpPaginatesTheFilteredRegisterAndRetainsEvidence() async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let session=try await fixture.session("Nueva sesión")
+        func finding(_ kind:FindingKind,_ index:Int) -> Finding {
+            Finding(kind:kind,text:"\(kind.rawValue) \(index)",segmentID:"file-\(index*1000)",
+                    quote:"Evidencia \(index)",start:Double(index),end:Double(index)+0.5)
+        }
+        let unrelated=(1...120).map { finding(.idea,$0) }
+        let decisions=[finding(.decision,121)]
+        var tasks=(122...241).map { finding(.task,$0) }
+        tasks[0].text="Enviar informe"
+        tasks[0].owner="Ana"
+        tasks[1].text="Enviar informe"
+        tasks[1].owner="María"
+        let question=finding(.question,242)
+        let topic=Finding(kind:.topic,text:"Presupuesto",segmentID:"file-0",quote:"presupuesto",start:0,end:1)
+        let overview=finding(.overview,0)
+        try await fixture.store.save(SummarySnapshot(sessionID:session.id,throughRow:1,isFinal:true,
+                                                    findings:[topic,overview]+unrelated+decisions+tasks+[question],
+                                                    processingVersion:4))
+        let model=fixture.model()
+        await model.select(session.id)
+        #expect(model.report?.sections.map(\.kind)==[.overview,.points])
+        model.reportPresentation = .followUp
+        #expect(model.reportLoading)
+        await model.loadFindings()
+
+        #expect(model.report?.title=="Presupuesto")
+        #expect(model.report?.sections.map(\.kind)==[.decisions,.tasks])
+        #expect(model.report?.evidence.count==120)
+        #expect(model.report?.evidence.filter { $0.finding.text=="Enviar informe" }.map(\.owner)==["Ana","María"])
+        #expect(model.moreFindings)
+        #expect(model.hasSummaryToCopy)
+        await model.loadFindings(page:1)
+
+        #expect(model.report?.sections.map(\.kind)==[.tasks,.questions])
+        #expect(model.report?.evidence.last?.sources==question.evidence)
+        #expect(!model.moreFindings)
+        model.reportPresentation = .complete
+        await model.loadFindings()
+        #expect(model.findingPage==0)
+        #expect(model.report?.sections.map(\.kind)==[.overview,.points])
+    }
+
     @Test func transcriptFinishesBeforeItsBackgroundSummary() async throws {
         let fixture=try ModelFixture()
         defer { fixture.clean() }

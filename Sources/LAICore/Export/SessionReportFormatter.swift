@@ -44,7 +44,7 @@ public enum SessionReportFormatter {
         let note=bookmark.note.isEmpty ? "Marcador":bookmark.note
         return markdown ? "- **\(timestamp(bookmark.time))** \(md(note))\n\n":"[\(timestamp(bookmark.time))] \(note)\n\n"
     }
-    public static func document(session:Session,findings:[Finding],referenceOffset:Int=0) -> SessionReport {
+    public static func document(session:Session,findings:[Finding],referenceOffset:Int=0,deduplicate:Bool=true) -> SessionReport {
         let generic=["Nueva sesión","","Sesión"]
         let title=generic.contains(session.title) ? (findings.first{$0.kind == .topic}?.text ?? "Resumen de la sesión"):session.title
         let date=session.created.formatted(.dateTime.locale(Locale(identifier:"es_CL")).day().month(.wide).year().hour().minute())
@@ -61,7 +61,10 @@ public enum SessionReportFormatter {
             case .conclusions: types=[.conclusion]
             }
             var seen=Set<String>()
-            let values=findings.filter { types.contains($0.kind) && seen.insert($0.text.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)).inserted }
+            let values=findings.filter { finding in
+                guard types.contains(finding.kind) else { return false }
+                return !deduplicate || seen.insert(finding.text.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)).inserted
+            }
             guard !values.isEmpty else { continue }
             sections.append(ReportSection(kind:kind,items:values.map { finding in
                 reference += 1; return ReportItem(finding:finding,reference:reference)

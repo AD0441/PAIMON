@@ -14,7 +14,10 @@ import Speech
             } else if arguments.first=="--repair-summary",arguments.count>=3,let id=UUID(uuidString:arguments[1]) {
                 try await repairSummary(id:id,output:URL(fileURLWithPath:arguments[2]))
             } else if arguments.first=="--transcribe",arguments.count>=2 {
-                var settings=AppSettings(); if arguments.count>2 { settings.locale=arguments[2] }
+                let options=arguments.dropFirst(2)
+                var settings=AppSettings()
+                if let locale=options.first(where:{ !$0.hasPrefix("--") }) { settings.locale=locale }
+                settings.enhanceImportedAudio=options.contains("--normalize")
                 let pair=AsyncStream<PipelineEvent>.makeStream()
                 let output=Task { @concurrent in
                     var count=0
