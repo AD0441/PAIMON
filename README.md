@@ -72,6 +72,12 @@ Se verificaron la compilación arm64 y 100 pruebas en un M1 de 8 GB. Quedan por 
 
 La batería incluye 90 pruebas. La captura por aplicación y global, la revisión de transcripciones y la síntesis de Apple se ensayaron con muestras sintéticas en instancias aisladas. Quedan pendientes el micrófono, la combinación de fuentes y el recorrido con el paquete distribuido en macOS 26. [Resultados y alcance](docs/VALIDATION.md).
 
+## Sentimientos de la transcripción
+
+En el panel **Resumen**, abre **Sentimientos** y pulsa **Analizar sentimientos**. El gráfico muestra los puntajes de Apple por fragmento, sin suavizar. Selecciona un punto o un momento destacado para ver la cita y volver al texto original. Cuando faltan tiempos válidos, el gráfico usa el orden de los fragmentos.
+
+El análisis se ejecuta en el Mac. La polaridad depende de los idiomas disponibles en NaturalLanguage. El etiquetado de emociones requiere Apple Intelligence y muestra cuántos fragmentos pudo analizar. En sesiones largas selecciona hasta 48 fragmentos para el etiquetado, entre cambios relevantes y muestras de toda la sesión. Los resultados se guardan en SQLite y se invalidan al editar la transcripción.
+
 ## Clave de Google AI cuando la RAM limita el resumen local
 
 Google AI (Gemini) permite trasladar la inferencia del resumen a sus servidores cuando la memoria disponible limita el modelo local, por ejemplo en un M1 con 8 GB. Captura y transcripción continúan en el Mac. No se han medido ahorros de RAM con esta alternativa.

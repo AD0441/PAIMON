@@ -20,6 +20,7 @@ final class AppModel {
     var moreSessions=false
     private var selectedRecord:Session?
     let importedPlayback = ImportedAudioPlayback()
+    private(set) var sentimentRevision = UUID()
     var selected:UUID? {
         didSet {
             if selected != oldValue {
@@ -351,7 +352,7 @@ final class AppModel {
         guard let store,selected==session else { return false }
         do {
             try await store.renameSpeaker(session:session,id:speaker.id,name:name)
-            if selected==session { refreshSpeakers() }
+            if selected==session { sentimentRevision=UUID(); refreshSpeakers() }
             return true
         } catch {
             message=error.localizedDescription
@@ -928,6 +929,7 @@ final class AppModel {
         do {
             let corrected=try await store.correctSegment(session:segment.sessionID,id:segment.id,text:text)
             if selected==segment.sessionID {
+                if corrected.text != segment.text { sentimentRevision=UUID() }
                 if let index=segments.firstIndex(where:{$0.id==segment.id}) { segments[index]=corrected }
                 refreshTerms()
                 await refreshProcessingProgress()

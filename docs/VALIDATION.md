@@ -307,3 +307,18 @@ Se reconstruyó e instaló la compilación 21 cuando terminó la importación ac
 | --- | --- | --- |
 | `PAIMON-actual.zip` | 0.7.5 (21) | `73edfb9621a376e26c836af6a7b8998cdc422ee693fcb731592965371a647fd9` |
 | `PAIMON-anterior.zip` | 0.7.4 (20) | `965cee27f789e1685a85e0ab95167dd4d8947fb76371f36cf1b2b26475f656d5` |
+
+## Sentimientos en la transcripción · PAIMON 0.8.0 (22)
+
+Compilación Release arm64 verificada en el M1 de 8 GB con macOS 27.3. Pasaron 107 pruebas, entre ellas las 13 de la aplicación y las importaciones reales con Apple Speech y Parakeet sobre audio sintético. El análisis de polaridad se comprobó con muestras en inglés y español. En este equipo, NaturalLanguage ofreció `sentimentScore` en ambos idiomas y Foundation Models indicó soporte para inglés, español y español de Chile. La prueba real de `.contentTagging` reconoció etiquetas en una expresión de preocupación y no clasificó el desacuerdo de la muestra como enojo. Los casos de modelo indisponible e idioma incompatible conservaron la puntuación disponible, con etiquetas vacías.
+
+También se probó texto vacío, división de texto largo, escala por secuencia al faltar tiempos, detección de cambios sin unir valores ausentes, y reapertura e invalidación de la caché de SQLite. El análisis lee páginas de 120 filas. Divide ediciones excepcionalmente largas en citas de hasta 650 caracteres. El gráfico conserva los valores devueltos por Apple y las marcas de los segmentos originales. El etiquetado utiliza hasta 48 citas, prioriza cambios y extremos y distribuye las restantes entre el inicio y el final. La interfaz indica la cobertura. Los 48 fragmentos son un límite de inferencia de PAIMON, independiente de la disponibilidad de idiomas de Apple.
+
+Para repetir el etiquetado real en un Mac compatible, ejecuta `PAIMON_TEST_SENTIMENT_FOUNDATION=1 ./script/test.sh`. La disponibilidad de ambos frameworks se comprueba en ejecución. Las pruebas no usan conversaciones personales ni servicios remotos.
+
+Se instaló y abrió PAIMON 0.8.0 desde Aplicaciones. La compilación instalada coincide con el ZIP actual. Se validaron las firmas de los ZIP extraídos.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.8.0 (22) | `37d6bdd5add318ddc49d1ddf9a7d8e45875db348c803c935344726d29db1a8bb` |
+| `PAIMON-anterior.zip` | 0.7.5 (21) | `d05b1d3756112c1c748de0aabe75bf0c1de21318a4253280d669efe62a757fb4` |

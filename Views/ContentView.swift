@@ -91,7 +91,7 @@ private struct SessionPanes:View {
                         fraction=min(upper,max(lower,transcript+change))/max(1,width)
                     }
                     .help("Arrastra para ajustar el ancho de los paneles")
-                SummaryView(model:model).frame(width:max(0,width-transcript),height:available.size.height).clipped()
+                SessionAnalysisPane(model:model).frame(width:max(0,width-transcript),height:available.size.height).clipped()
             }.frame(width:available.size.width,height:available.size.height)
         }
     }

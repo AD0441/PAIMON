@@ -61,7 +61,23 @@ public actor SessionStore {
             FOREIGN KEY(session,speaker) REFERENCES session_speakers(session,id) ON DELETE CASCADE
         );
         CREATE INDEX IF NOT EXISTS speaker_turns_time ON speaker_turns(session,source,start,end);
-        PRAGMA user_version=4;
+        CREATE TABLE IF NOT EXISTS transcript_sentiment(
+            session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE,
+            version INTEGER NOT NULL, stamp TEXT NOT NULL, data TEXT NOT NULL
+        );
+        CREATE TRIGGER IF NOT EXISTS sentiment_segment_insert AFTER INSERT ON segments BEGIN
+          DELETE FROM transcript_sentiment WHERE session=new.session;
+        END;
+        CREATE TRIGGER IF NOT EXISTS sentiment_segment_update AFTER UPDATE ON segments BEGIN
+          DELETE FROM transcript_sentiment WHERE session=new.session;
+        END;
+        CREATE TRIGGER IF NOT EXISTS sentiment_segment_delete AFTER DELETE ON segments BEGIN
+          DELETE FROM transcript_sentiment WHERE session=old.session;
+        END;
+        CREATE TRIGGER IF NOT EXISTS sentiment_speaker_update AFTER UPDATE OF name ON session_speakers BEGIN
+          DELETE FROM transcript_sentiment WHERE session=new.session;
+        END;
+        PRAGMA user_version=5;
         """
         guard sqlite3_exec(connection,schema,nil,nil,nil)==SQLITE_OK else { sqlite3_close(connection); throw LAIError.message("No se pudo crear la base de datos") }
         try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: self.directory.appendingPathComponent("sessions.sqlite").path)
@@ -209,6 +225,44 @@ public actor SessionStore {
         let s=try statement("SELECT seq,data FROM segments WHERE session=? AND seq>? AND seq<? AND (?='' OR lai_contains(json_extract(data,'$.text'),?)) ORDER BY seq \(order) LIMIT ?",values:[session.uuidString,String(after),String(before),search,search,String(limit)])
         defer { sqlite3_finalize(s) }; var result:[(Int64,TranscriptSegment)]=[]
         while sqlite3_step(s)==SQLITE_ROW { result.append((sqlite3_column_int64(s,0),try decode(TranscriptSegment.self,s,1))) }; return newest ? result.reversed() : result
+    }
+    struct SentimentStamp: Codable, Equatable, Sendable {
+        let rows: Int
+        let lastRow: Int64
+        let revision: Int64
+        let speakers: String
+    }
+    func sentimentStamp(session: UUID) throws -> SentimentStamp {
+        let row=try statement("""
+            SELECT count(*), COALESCE(max(seq), 0),
+                (SELECT json_group_array(json_array(id,number,name))
+                 FROM (SELECT id,number,name FROM session_speakers WHERE session=? ORDER BY id))
+            FROM segments WHERE session=?
+            """, values:[session.uuidString,session.uuidString])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row)==SQLITE_ROW, let names=sqlite3_column_text(row,2) else { throw failure() }
+        let speakers=SHA256.hash(data:Data(String(cString:names).utf8)).description
+        return SentimentStamp(rows:Int(sqlite3_column_int64(row,0)),lastRow:sqlite3_column_int64(row,1),
+                              revision:try transcriptRevision(session:session),speakers:speakers)
+    }
+    public func cachedSentiment(session: UUID) throws -> TranscriptSentiment? {
+        let row=try statement("SELECT stamp,data FROM transcript_sentiment WHERE session=? AND version=?",
+                              values:[session.uuidString,String(TranscriptSentiment.version)])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row)==SQLITE_ROW else { return nil }
+        guard try decode(SentimentStamp.self,row)==sentimentStamp(session:session) else { return nil }
+        return try decode(TranscriptSentiment.self,row,1)
+    }
+    func saveSentiment(_ result: TranscriptSentiment, session: UUID, stamp: SentimentStamp) throws {
+        try Task.checkCancellation()
+        guard let record=try self.session(id:session), !["recording","paused","importing"].contains(record.status),
+              try sentimentStamp(session:session)==stamp else {
+            throw LAIError.message("La transcripción cambió. Vuelve a analizarla.")
+        }
+        try write("""
+            INSERT INTO transcript_sentiment(session,version,stamp,data) VALUES(?,?,?,?)
+            ON CONFLICT(session) DO UPDATE SET version=excluded.version,stamp=excluded.stamp,data=excluded.data
+            """, [session.uuidString,String(TranscriptSentiment.version),try encode(stamp),try encode(result)])
     }
     public func processingProgress(session:UUID) throws -> SessionProcessingProgress {
         let snapshot=try latestSummary(session:session)

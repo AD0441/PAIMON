@@ -1,6 +1,391 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Sección del informe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report section"
+          }
+        }
+      }
+    },
+    "Sentimientos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentiment"
+          }
+        }
+      }
+    },
+    "Análisis automatizado del lenguaje utilizado en la transcripción. Los resultados son orientativos y no representan una evaluación del estado emocional de las personas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automated analysis of the language in the transcript. Results are indicative and do not assess anyone’s emotional state."
+          }
+        }
+      }
+    },
+    "Analizando transcripción…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyzing transcript…"
+          }
+        }
+      }
+    },
+    "Cancelar análisis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel analysis"
+          }
+        }
+      }
+    },
+    "Analizar sentimientos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze sentiment"
+          }
+        }
+      }
+    },
+    "Volver a analizar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze again"
+          }
+        }
+      }
+    },
+    "Termina la captura o importación para analizar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish recording or importing to analyze the transcript."
+          }
+        }
+      }
+    },
+    "El análisis se pausa mientras hay presión de memoria.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysis pauses while the Mac is low on memory."
+          }
+        }
+      }
+    },
+    "Selecciona una sesión con transcripción para analizarla.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a session with a transcript to analyze."
+          }
+        }
+      }
+    },
+    "Esta sesión no contiene texto para analizar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This session has no text to analyze."
+          }
+        }
+      }
+    },
+    "Evolución de la polaridad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentiment over time"
+          }
+        }
+      }
+    },
+    "Selecciona un punto para revisar su fragmento.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a point to read its excerpt."
+          }
+        }
+      }
+    },
+    "Fragmento anterior": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous excerpt"
+          }
+        }
+      }
+    },
+    "Fragmento siguiente": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next excerpt"
+          }
+        }
+      }
+    },
+    "%lld fragmentos sin puntuación de Apple.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld excerpts without a score from Apple."
+          }
+        }
+      }
+    },
+    "NaturalLanguage no devolvió puntuaciones para esta transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NaturalLanguage returned no scores for this transcript."
+          }
+        }
+      }
+    },
+    "Emociones expresadas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expressed emotions"
+          }
+        }
+      }
+    },
+    "La clasificación de emociones requiere Apple Intelligence disponible en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emotion tagging requires Apple Intelligence on this Mac."
+          }
+        }
+      }
+    },
+    "Apple Intelligence no admite el idioma de los fragmentos seleccionados.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence does not support the language of the selected excerpts."
+          }
+        }
+      }
+    },
+    "Apple Intelligence devolvió un análisis parcial.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence returned a partial analysis."
+          }
+        }
+      }
+    },
+    "Emociones analizadas en %lld de %lld fragmentos.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emotions analyzed in %lld of %lld excerpts."
+          }
+        }
+      }
+    },
+    "Sin etiquetas emocionales en los fragmentos analizados.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The analyzed excerpts had no emotion tags."
+          }
+        }
+      }
+    },
+    "Momentos destacados": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Highlights"
+          }
+        }
+      }
+    },
+    "Sin momentos destacados con los datos disponibles.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No highlights from the available data."
+          }
+        }
+      }
+    },
+    "Polaridad positiva destacada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notably positive wording"
+          }
+        }
+      }
+    },
+    "Polaridad negativa destacada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notably negative wording"
+          }
+        }
+      }
+    },
+    "Cambio de polaridad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shift in sentiment"
+          }
+        }
+      }
+    },
+    "Cambio de polaridad sobre el mismo tema": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shift in sentiment on the same topic"
+          }
+        }
+      }
+    },
+    "Emoción expresada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expressed emotion"
+          }
+        }
+      }
+    },
+    "Fragmento %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excerpt %lld"
+          }
+        }
+      }
+    },
+    "Ir a la transcripción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to transcript"
+          }
+        }
+      }
+    },
+    "Positiva": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Positive"
+          }
+        }
+      }
+    },
+    "Neutra": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutral"
+          }
+        }
+      }
+    },
+    "Negativa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Negative"
+          }
+        }
+      }
+    },
     "Instalación manual…": {
       "extractionState": "manual",
       "localizations": {
