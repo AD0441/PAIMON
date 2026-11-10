@@ -3,13 +3,14 @@ import Foundation
 import Synchronization
 
 public enum OptionalModelPackage: String, CaseIterable, Sendable {
-    case diarization, parakeet, mlx
+    case diarization, parakeet, mlx, vocalEmotion
 
     private var revision: String {
         switch self {
         case .diarization: "7eab74f3463c736418d0eb10296261ae581146c9"
         case .parakeet: "8c5ef97a29cd120dc76b354b3f22b7fec3b486f9"
         case .mlx: "8b403126fc14f14cfc99bb4cfa72ecbc129ea677"
+        case .vocalEmotion: "704a2cac36227869e3296996f2c4d3a06fc68683"
         }
     }
 
@@ -18,6 +19,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .diarization: "FluidInference/speaker-diarization-coreml"
         case .parakeet: "FluidInference/parakeet-redux-coreml"
         case .mlx: "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+        case .vocalEmotion: "happyface-studio/emotion2vec-plus-base-coreml"
         }
     }
 
@@ -26,6 +28,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .diarization: Self.diarizationAssets
         case .parakeet: Self.parakeetAssets
         case .mlx: Self.mlxAssets
+        case .vocalEmotion: Self.vocalEmotionAssets
         }
     }
 
@@ -35,6 +38,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .diarization: name="Diarization"
         case .parakeet: name="Parakeet"
         case .mlx: name="MLX-Qwen"
+        case .vocalEmotion: name="Emotion2Vec-8bit"
         }
         return FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0]
             .appendingPathComponent("PAIMON Models",isDirectory:true)
@@ -178,6 +182,14 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
     private static func hex<D:Digest>(_ digest:D) -> String {
         digest.map { String(format:"%02x",$0) }.joined()
     }
+
+    private static let vocalEmotionAssets = [
+        Asset("Emotion2Vec8bit.mlmodelc/analytics/coremldata.bin", 243, "a25e7376f5c8aa8fff13ffd0bebf4de29df71ad1ef9857686c7c87ae8cee38d8"),
+        Asset("Emotion2Vec8bit.mlmodelc/coremldata.bin", 1165, "51d38d4b46abb0e39859bb191d606ad9140e54c05caf0afd5e608609433ac0c3"),
+        Asset("Emotion2Vec8bit.mlmodelc/metadata.json", 3435, "f43946393eb85f97316472ac6905cdae69ed7572"),
+        Asset("Emotion2Vec8bit.mlmodelc/model.mil", 177733, "c97435ab0563b31c279dd84d1e563639ccf5cd9e"),
+        Asset("Emotion2Vec8bit.mlmodelc/weights/weight.bin", 93533888, "d7a4b981f51bbe97d7075a82aaa59536118d1b8eb538493ce9299cc2017fd3a1"),
+    ]
 
     private static let diarizationAssets = [
         Asset("pyannote_segmentation.mlmodelc/analytics/coremldata.bin",243,"b379db0541b35344a34bb7540783ae704c11599bbed5aa8bbbda11c20ad215ee"),

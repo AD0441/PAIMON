@@ -2,23 +2,23 @@
   <img src="Resources/Brand/PAIMON-icon.png" width="112" alt="Icono de PAIMON">
   <h1>PAIMON</h1>
   <p><strong>Transcribe el audio de tu Mac y vuelve a lo que se dijo.</strong></p>
-  <p>Resume la sesión, explora el tono del texto y obtén respuestas con citas a la transcripción.</p>
+  <p>Resume la sesión, explora el texto y la voz, y obtén respuestas con citas a la transcripción.</p>
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.9.0" src="https://img.shields.io/badge/versión-0.9.0-58616B?style=flat-square">
+    <img alt="Versión 0.12.1" src="https://img.shields.io/badge/versión-0.12.1-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/download/v0.9.0/PAIMON-0.9.0.zip"><strong>Descargar PAIMON 0.9.0</strong></a> · <a href="#descargar-instalar-y-ejecutar">Instalación</a> · <a href="#qué-nos-diferencia">Funciones</a> · <a href="#compilar-desde-el-código-fuente">Código fuente</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/download/v0.12.1/PAIMON-0.12.1.zip"><strong>Descargar PAIMON 0.12.1</strong></a> · <a href="#descargar-instalar-y-ejecutar">Instalación</a> · <a href="#qué-nos-diferencia">Funciones</a> · <a href="#compilar-desde-el-código-fuente">Código fuente</a></p>
 </div>
 
 ## Qué nos diferencia
 
-PAIMON captura lo que ya suena en el Mac o transcribe una grabación que ya tienes. Sobre **una misma transcripción**, puedes preparar el acta de una reunión, revisar dónde cambió el tono de una conversación o preguntar quién quedó a cargo de una tarea. Con los modelos preparados, las tres funciones trabajan **en el Mac, sin conexión, clave API ni telemetría**.
+PAIMON captura lo que ya suena en el Mac o transcribe una grabación que ya tienes. Sobre **una misma transcripción**, puedes preparar el acta de una reunión, comparar la polaridad del texto con lo que se estimó de la voz o preguntar quién quedó a cargo de una tarea. Con los modelos preparados, las tres funciones trabajan **en el Mac, sin conexión, clave API ni telemetría**.
 
 | Vista | Qué puedes hacer |
 | --- | --- |
 | **Resumen local** | Reúne ideas, acuerdos, tareas y preguntas abiertas en un informe con citas. [Ver el resumen](#resumen-local) |
-| **Sentimientos** | Revisa cambios de tono y etiquetas de emoción en el texto. Vuelve al pasaje asociado desde el gráfico. [Ver el análisis](#sentimientos-de-la-transcripción) |
+| **Sentimientos** | Revisa el tono del texto, busca sonidos como risas o aplausos y compara texto y voz en una misma línea de tiempo. [Ver el análisis](#sentimientos-de-la-transcripción) |
 | **Asistente local** | Haz preguntas sobre lo conversado, sigue preguntando y abre el fragmento que respalda la respuesta. [Ver el Asistente](#asistente-local-de-la-transcripción) |
 
 ![Portada de PAIMON con su símbolo en un estudio de audio](docs/assets/promo/photographic-cover.png)
@@ -27,21 +27,21 @@ PAIMON captura lo que ya suena en el Mac o transcribe una grabación que ya tien
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga el ZIP de **PAIMON 0.9.0** en un **Mac con Apple Silicon y macOS 26 o posterior**. [Descargar ZIP](https://github.com/AD0441/PAIMON/releases/download/v0.9.0/PAIMON-0.9.0.zip).
+1. Descarga el ZIP de **PAIMON 0.12.1** en un **Mac con Apple Silicon y macOS 26 o posterior**. [Descargar ZIP](https://github.com/AD0441/PAIMON/releases/download/v0.12.1/PAIMON-0.12.1.zip).
 2. Descomprime el archivo y arrastra **PAIMON.app** a **Aplicaciones**. Si ya tienes PAIMON, ciérralo antes de reemplazar la app. El historial se conserva en el almacenamiento local.
 3. Abre PAIMON. En **Ajustes → Inteligencia**, elige español o inglés y pulsa **Comprobar disponibilidad**. Si faltan recursos de voz, ve a **Ajustes → Modelos** y pulsa **Autorizar descarga del idioma seleccionado**. Activa **Apple Intelligence** desde Ajustes del Sistema para usar el resumen de Apple, el Asistente y las etiquetas de emoción.
 4. Pulsa **Importar audio** para empezar con una grabación, o selecciona **Todo el sistema** o una aplicación abierta y pulsa **Iniciar**. Para capturar, concede el permiso de audio del sistema en macOS. Si activas el micrófono, concede también su permiso.
 5. Pulsa **Detener** al terminar la captura y abre **Resumen**, **Sentimientos** o **Asistente**. Para analizar el tono, pulsa **Analizar sentimientos**. Para consultar la sesión, escribe una pregunta y pulsa **Preguntar**.
 
-La descarga tiene firma ad hoc. La notarización y las pruebas de instalación en otros Mac siguen pendientes. La compilación 24 se verificó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases) · [Alcance de las pruebas](docs/VALIDATION.md#asistente-local-de-la-transcripción--paimon-090-24).
+La descarga tiene firma ad hoc. La notarización y las pruebas de instalación en otros Mac siguen pendientes. La compilación 28 se verificó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases) · [Alcance de las pruebas](docs/VALIDATION.md#alineación-de-la-vista-mixto--paimon-0121-28).
 
 <details>
 <summary>Verificar la descarga con SHA-256</summary>
 
-Guarda el archivo de verificación en la misma carpeta que el ZIP y ejecuta el comando desde esa carpeta. [Descargar SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.9.0/PAIMON-0.9.0.zip.sha256).
+Guarda el archivo de verificación en la misma carpeta que el ZIP y ejecuta el comando desde esa carpeta. [Descargar SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.12.1/PAIMON-0.12.1.zip.sha256).
 
 ```bash
-shasum -a 256 -c PAIMON-0.9.0.zip.sha256
+shasum -a 256 -c PAIMON-0.12.1.zip.sha256
 ```
 
 </details>
@@ -78,6 +78,16 @@ Abre **Sentimientos** y pulsa **Analizar sentimientos**. El gráfico te permite 
 ![Gráfico de polaridad y etiquetas de emoción de seis fragmentos sintéticos](docs/images/paimon-sentiment.png)
 
 Las etiquetas de emoción describen expresiones del lenguaje. Por ejemplo, **preocupación** marca un pasaje que expresa inquietud. Pulsa una etiqueta o un punto para revisar su contexto. En los cambios destacados puedes comparar el puntaje anterior con el actual.
+
+### Voz y vista Mixto
+
+En **Sentimientos → Voz**, revisa intensidad, altura tonal y pausas. Elige qué sonidos quieres detectar en **Ajustes → Modelos → Análisis vocal → Sonidos por detectar**. Puedes buscar risas, aplausos y otras categorías del catálogo de Apple.
+
+En **Mixto**, compara la polaridad de la transcripción con las etiquetas experimentales que estima emotion2vec+. Los dos gráficos comparten escala y cursor. Pulsa un punto para volver al fragmento o escuchar el intervalo si el audio está disponible.
+
+![Dos gráficos alineados en PAIMON: polaridad textual arriba y categorías de voz abajo](docs/images/paimon-mixed.png)
+
+*Vista Mixto con datos sintéticos.* La voz se analiza si conservas el audio o puedes vincular el original. El modelo opcional de voz se descarga, activa o borra desde **Ajustes → Modelos → Emociones de voz**. Sus etiquetas son estimaciones del modelo y no determinan cómo se siente una persona.
 
 ## Asistente local de la transcripción
 
@@ -117,7 +127,7 @@ Abre `LocalAudioIntelligence.xcodeproj` y selecciona el esquema **LocalAudioInte
 ./script/test.sh                     # ejecutar las pruebas
 ```
 
-En la versión 0.9.0 pasaron **111 pruebas**. Incluyeron una consulta con el modelo local de Apple sobre una transcripción sintética y casos de citas, sesiones separadas y datos ausentes. En una ventana aislada también se comprobó el salto desde el Asistente al fragmento original y el gráfico de Sentimientos. [Resultados y cómo repetirlos](docs/VALIDATION.md#asistente-local-de-la-transcripción--paimon-090-24).
+La compilación 28 pasó la suite disponible. Se comprobó con datos sintéticos que los dos gráficos de Mixto mantienen el cursor alineado y sus etiquetas separadas en tres anchos de ventana. [Resultados y cómo repetirlos](docs/VALIDATION.md#alineación-de-la-vista-mixto--paimon-0121-28).
 
 - [Requisitos y estado](docs/REQUIREMENTS.md) · [Limitaciones](docs/LIMITATIONS.md)
 - [Arquitectura y privacidad](docs/ARCHITECTURE.md) · [Mediciones en Apple Silicon](docs/PERFORMANCE.md)

@@ -92,6 +92,34 @@ struct SettingsView:View {
                         pathRow("Carpeta Parakeet Redux",key:\.fluidModels,folder:true)
                     }.disabled(model.installingModel != nil)
                 }
+                Section("Análisis vocal") {
+                    Toggle("Mostrar Voz en Sentimientos", isOn: Binding(
+                        get: { model.settings.vocalAnalysisEnabled == true },
+                        set: { model.settings.vocalAnalysisEnabled = $0 }
+                    ))
+                    .toggleStyle(.checkbox)
+                    .accessibilityIdentifier("enableVocalAnalysis")
+                    Text("Mide intensidad, altura y pausas con audio importado o guardado. Los recursos de macOS permiten usarlo sin descargar un modelo adicional.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    VocalSoundSettings(model: model)
+                }
+                Section("Emociones de voz · experimental") {
+                    Text("emotion2vec+ Base estima emociones a partir del audio y se ejecuta en este Mac. Descarga verificada de aproximadamente 94 MB.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Toggle("Activar emociones de voz", isOn: Binding(
+                        get: { model.settings.vocalEmotionEnabled == true && model.installedModels.contains(.vocalEmotion) },
+                        set: { enabled in
+                            model.settings.vocalEmotionEnabled = enabled
+                            if enabled { model.settings.vocalAnalysisEnabled = true }
+                        }
+                    ))
+                    .toggleStyle(.checkbox)
+                    .disabled(!model.installedModels.contains(.vocalEmotion))
+                    .accessibilityIdentifier("enableVocalEmotion")
+                    modelActions(.vocalEmotion, size: "El modelo se activa al completar la descarga.")
+                    Link("emotion2vec+ Base · autores y licencia", destination: URL(string: "https://huggingface.co/happyface-studio/emotion2vec-plus-base-coreml")!)
+                        .font(.caption)
+                }
                 Section("Diarización · instalación opcional") {
                     Text("Separa las voces de una sesión para que puedas asignarles nombres.")
                         .font(.caption).foregroundStyle(.secondary)
@@ -184,7 +212,7 @@ struct SettingsView:View {
         } else if model.installedModels.contains(package) {
             Label("Modelos instalados · disponibles sin Internet",systemImage:"checkmark.circle")
             Button("Borrar modelos",role:.destructive) { model.removeModel(package) }
-                .disabled(model.installingModel != nil || model.summaryWorking)
+                .disabled(model.installingModel != nil || model.summaryWorking || (package == .vocalEmotion && model.vocalEmotionWorking))
                 .accessibilityIdentifier("removeModel-\(package.rawValue)")
         } else {
             Button("Descargar modelos") { model.downloadModel(package) }
@@ -256,5 +284,79 @@ private struct PalettePicker:View {
                     .accessibilityIdentifier("palette-\(palette.rawValue)")
             }
         }.padding(.vertical,6)
+    }
+}
+
+
+private struct VocalSoundSettings: View {
+    var model: AppModel
+    @State private var expanded = false
+    @State private var categories: [String] = []
+    @State private var query = ""
+    @State private var failed = false
+
+    var body: some View {
+        DisclosureGroup("Sonidos por detectar", isExpanded: $expanded) {
+            Text("\(model.vocalSoundIdentifiers.count) categorías seleccionadas")
+                .font(.caption).foregroundStyle(.secondary)
+            if failed {
+                Text("No se pudo leer el catálogo de sonidos de Apple.")
+                    .font(.caption).foregroundStyle(.secondary)
+            } else if categories.isEmpty {
+                ProgressView().controlSize(.small)
+            } else {
+                TextField("Buscar sonidos", text: $query)
+                    .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier("findSoundCategory")
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 7) {
+                        ForEach(filtered, id: \.self) { identifier in
+                            Toggle(model.ui(VocalSoundAnalysis.categoryName(identifier)), isOn: selection(for: identifier))
+                                .toggleStyle(.checkbox)
+                                .accessibilityIdentifier("soundCategory-\(identifier)")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(height: 190)
+                HStack {
+                    Button("Restaurar risas y aplausos") { model.vocalSoundIdentifiers = VocalSoundAnalysis.defaultIdentifiers }
+                    Button("Quitar selección") { model.vocalSoundIdentifiers = [] }
+                        .disabled(model.vocalSoundIdentifiers.isEmpty)
+                }
+                .controlSize(.small)
+            }
+        }
+        .accessibilityIdentifier("vocalSoundPreferences")
+        .task(id: expanded) {
+            guard expanded, categories.isEmpty else { return }
+            failed = false
+            do {
+                let available = try await VocalSoundAnalysis.availableIdentifiers()
+                try Task.checkCancellation()
+                let defaults = VocalSoundAnalysis.defaultIdentifiers
+                categories = available.sorted { (defaults.contains($0) ? 0 : 1, $0) < (defaults.contains($1) ? 0 : 1, $1) }
+            } catch is CancellationError {
+            } catch {
+                failed = true
+            }
+        }
+    }
+
+    private var filtered: [String] {
+        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !term.isEmpty else { return categories }
+        return categories.filter {
+            model.ui(VocalSoundAnalysis.categoryName($0)).localizedStandardContains(term) ||
+                $0.replacingOccurrences(of: "_", with: " ").localizedStandardContains(term)
+        }
+    }
+
+    private func selection(for identifier: String) -> Binding<Bool> {
+        Binding(get: { model.vocalSoundIdentifiers.contains(identifier) }, set: { enabled in
+            var selected = model.vocalSoundIdentifiers
+            if enabled { selected.insert(identifier) } else { selected.remove(identifier) }
+            model.vocalSoundIdentifiers = selected
+        })
     }
 }

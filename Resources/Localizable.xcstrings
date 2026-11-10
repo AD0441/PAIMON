@@ -1,6 +1,1139 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Sonidos por detectar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sounds to detect"
+          }
+        }
+      }
+    },
+    "%lld categorías seleccionadas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld categories selected"
+          }
+        }
+      }
+    },
+    "Buscar sonidos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search sounds"
+          }
+        }
+      }
+    },
+    "Restaurar risas y aplausos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore laughter and applause"
+          }
+        }
+      }
+    },
+    "Quitar selección": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear selection"
+          }
+        }
+      }
+    },
+    "No se pudo leer el catálogo de sonidos de Apple.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load the Apple sound catalog."
+          }
+        }
+      }
+    },
+    "Buscar sonidos seleccionados": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find selected sounds"
+          }
+        }
+      }
+    },
+    "Buscando eventos audibles…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for audible events…"
+          }
+        }
+      }
+    },
+    "Selecciona sonidos en Ajustes → Modelos → Análisis vocal.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select sounds in Settings → Models → Vocal analysis."
+          }
+        }
+      }
+    },
+    "Selecciona al menos un sonido disponible en Ajustes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select at least one available sound in Settings."
+          }
+        }
+      }
+    },
+    "Sound Analysis de Apple marca intervalos de las categorías que seleccionaste. Escúchalos para comprobar el resultado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Sound Analysis marks intervals for your selected categories. Play them to check the results."
+          }
+        }
+      }
+    },
+    "No se detectaron los sonidos seleccionados en esta pista.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected sounds were not detected in this track."
+          }
+        }
+      }
+    },
+    "Puntuación del modelo: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model score: %@"
+          }
+        }
+      }
+    },
+    "Risa de bebé": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baby laughter"
+          }
+        }
+      }
+    },
+    "Risita": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giggling"
+          }
+        }
+      }
+    },
+    "Carcajada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belly laugh"
+          }
+        }
+      }
+    },
+    "Palmas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clapping"
+          }
+        }
+      }
+    },
+    "Habla": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speech"
+          }
+        }
+      }
+    },
+    "Susurro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whispering"
+          }
+        }
+      }
+    },
+    "Gritos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shouting"
+          }
+        }
+      }
+    },
+    "Tos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coughing"
+          }
+        }
+      }
+    },
+    "Estornudo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sneezing"
+          }
+        }
+      }
+    },
+    "Llanto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crying"
+          }
+        }
+      }
+    },
+    "Música": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Music"
+          }
+        }
+      }
+    },
+    "Ladrido": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dog bark"
+          }
+        }
+      }
+    },
+    "Pasos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Footsteps"
+          }
+        }
+      }
+    },
+    "Timbre": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doorbell"
+          }
+        }
+      }
+    },
+    "Mixto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mixed"
+          }
+        }
+      }
+    },
+    "Emociones de voz · experimental": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice emotions · experimental"
+          }
+        }
+      }
+    },
+    "emotion2vec+ Base estima emociones a partir del audio y se ejecuta en este Mac. Descarga verificada de aproximadamente 94 MB.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "emotion2vec+ Base estimates emotions from audio on this Mac. Verified download of approximately 94 MB."
+          }
+        }
+      }
+    },
+    "Activar emociones de voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable voice emotions"
+          }
+        }
+      }
+    },
+    "El modelo se activa al completar la descarga.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The model is enabled when the download finishes."
+          }
+        }
+      }
+    },
+    "emotion2vec+ Base · autores y licencia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "emotion2vec+ Base · authors and license"
+          }
+        }
+      }
+    },
+    "Texto y emociones de voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text and voice emotions"
+          }
+        }
+      }
+    },
+    "Compara la polaridad del texto con las etiquetas que emotion2vec+ estima del audio. Las estimaciones vocales son experimentales.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare text polarity with the labels emotion2vec+ estimates from audio. Voice estimates are experimental."
+          }
+        }
+      }
+    },
+    "Descarga o activa emotion2vec+ en Ajustes → Modelos → Emociones de voz.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download or enable emotion2vec+ in Settings → Models → Voice emotions."
+          }
+        }
+      }
+    },
+    "Abrir Ajustes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        }
+      }
+    },
+    "Analizar texto y voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze text and voice"
+          }
+        }
+      }
+    },
+    "Analizando texto y emociones de voz…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyzing text and voice emotions…"
+          }
+        }
+      }
+    },
+    "Haz clic en el gráfico para fijar un momento.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click the chart to pin a moment."
+          }
+        }
+      }
+    },
+    "Polaridad del texto · −1 a +1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text polarity · −1 to +1"
+          }
+        }
+      }
+    },
+    "Esta pista no tiene polaridad textual disponible.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text polarity is unavailable for this track."
+          }
+        }
+      }
+    },
+    "Emociones estimadas de la voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated voice emotions"
+          }
+        }
+      }
+    },
+    "En esta sesión se analizó una muestra de intervalos de voz.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice analysis covers a sample of intervals from this session."
+          }
+        }
+      }
+    },
+    "Polaridad del texto: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text polarity: %@"
+          }
+        }
+      }
+    },
+    "Voz · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice · %@"
+          }
+        }
+      }
+    },
+    "Voz · Sin etiqueta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice · No label"
+          }
+        }
+      }
+    },
+    "Sin intervalo de voz analizado en este momento.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No voice interval was analyzed at this time."
+          }
+        }
+      }
+    },
+    "Sin etiqueta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No label"
+          }
+        }
+      }
+    },
+    "Emoción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emotion"
+          }
+        }
+      }
+    },
+    "Enojo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anger"
+          }
+        }
+      }
+    },
+    "Disgusto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disgust"
+          }
+        }
+      }
+    },
+    "Miedo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fear"
+          }
+        }
+      }
+    },
+    "Alegría": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Joy"
+          }
+        }
+      }
+    },
+    "Neutral": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutral"
+          }
+        }
+      }
+    },
+    "Tristeza": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sadness"
+          }
+        }
+      }
+    },
+    "Sorpresa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surprise"
+          }
+        }
+      }
+    },
+    "La salida del modelo de emociones no es compatible.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The emotion model output is incompatible."
+          }
+        }
+      }
+    },
+    "Buscar risas y aplausos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find laughter and applause"
+          }
+        }
+      }
+    },
+    "Buscando risas y aplausos…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for laughter and applause…"
+          }
+        }
+      }
+    },
+    "Eventos audibles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audible events"
+          }
+        }
+      }
+    },
+    "Sound Analysis de Apple propone intervalos de risa o aplausos. Puedes escuchar cada intervalo para comprobarlo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Sound Analysis suggests intervals with laughter or applause. Play any interval to check it."
+          }
+        }
+      }
+    },
+    "No se detectaron risas ni aplausos en esta pista.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No laughter or applause was detected in this track."
+          }
+        }
+      }
+    },
+    "Risa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laughter"
+          }
+        }
+      }
+    },
+    "Aplausos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applause"
+          }
+        }
+      }
+    },
+    "Mostrar más eventos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show more events"
+          }
+        }
+      }
+    },
+    "Se muestran los primeros eventos de la pista.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing the first events in the track."
+          }
+        }
+      }
+    },
+    "No hay un fragmento de transcripción en este intervalo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There is no transcript segment in this interval."
+          }
+        }
+      }
+    },
+    "No se pudo terminar el análisis de eventos.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The event analysis could not be completed."
+          }
+        }
+      }
+    },
+    "El clasificador de sonidos no está disponible en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sound classifier is not available on this Mac."
+          }
+        }
+      }
+    },
+    "Análisis vocal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vocal analysis"
+          }
+        }
+      }
+    },
+    "Mostrar Voz en Sentimientos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Voice in Sentiment"
+          }
+        }
+      }
+    },
+    "Mide intensidad, altura y pausas con audio importado o guardado. Los recursos de macOS permiten usarlo sin descargar un modelo adicional.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measure intensity, pitch and pauses in imported or saved audio using macOS resources, without an additional model download."
+          }
+        }
+      }
+    },
+    "Tipo de análisis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysis type"
+          }
+        }
+      }
+    },
+    "Texto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        }
+      }
+    },
+    "Voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice"
+          }
+        }
+      }
+    },
+    "Mide cambios audibles de intensidad, altura y pausas. Las mediciones describen la señal grabada.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measure audible changes in intensity, pitch and pauses in the recorded signal."
+          }
+        }
+      }
+    },
+    "Selecciona una sesión con audio para analizar la voz.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a session with audio for vocal analysis."
+          }
+        }
+      }
+    },
+    "Vincula el archivo original para analizar la voz de esta sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link the original file to analyze the voice in this session."
+          }
+        }
+      }
+    },
+    "Esta sesión no conserva audio. Para futuras capturas, activa «Guardar audio de próximas sesiones» en Ajustes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This session has no saved audio. For future captures, enable “Save audio for upcoming sessions” in Settings."
+          }
+        }
+      }
+    },
+    "Pista de audio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio track"
+          }
+        }
+      }
+    },
+    "Analizando la voz…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyzing voice…"
+          }
+        }
+      }
+    },
+    "Analizar voz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze voice"
+          }
+        }
+      }
+    },
+    "Medición vocal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice measurement"
+          }
+        }
+      }
+    },
+    "Intensidad": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intensity"
+          }
+        }
+      }
+    },
+    "Altura": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitch"
+          }
+        }
+      }
+    },
+    "Pausas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pauses"
+          }
+        }
+      }
+    },
+    "Nivel en dBFS. Los valores cercanos a cero corresponden a una señal más intensa.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level in dBFS. Values closer to zero indicate a louder signal."
+          }
+        }
+      }
+    },
+    "Frecuencia fundamental estimada en Hz. Se muestra cuando hay una señal periódica clara.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated fundamental frequency in Hz, shown for clear periodic signals."
+          }
+        }
+      }
+    },
+    "Porcentaje del intervalo medido con señal de nivel bajo (−46 dBFS o menos).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share of the measured interval with a low signal level (−46 dBFS or less)."
+          }
+        }
+      }
+    },
+    "Tiempo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time"
+          }
+        }
+      }
+    },
+    "Medición": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measurement"
+          }
+        }
+      }
+    },
+    "Intervalo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interval"
+          }
+        }
+      }
+    },
+    "Mediciones vocales por tiempo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vocal measurements over time"
+          }
+        }
+      }
+    },
+    "No se pudo estimar la altura en esta pista.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitch could not be estimated for this track."
+          }
+        }
+      }
+    },
+    "%@ a %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ to %@"
+          }
+        }
+      }
+    },
+    "Intensidad: %@ dBFS": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intensity: %@ dBFS"
+          }
+        }
+      }
+    },
+    "Altura estimada: %@ Hz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated pitch: %@ Hz"
+          }
+        }
+      }
+    },
+    "Variación tonal: %@ Hz": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitch variation: %@ Hz"
+          }
+        }
+      }
+    },
+    "Tiempo de nivel bajo: %@ s": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low-level time: %@ s"
+          }
+        }
+      }
+    },
+    "Ritmo estimado del fragmento: %@ palabras/min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated segment rate: %@ words/min"
+          }
+        }
+      }
+    },
+    "Escuchar intervalo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play interval"
+          }
+        }
+      }
+    },
+    "No hay intervalos de audio disponibles para analizar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No audio intervals are available for analysis."
+          }
+        }
+      }
+    },
     "Asistente": {
       "extractionState": "manual",
       "localizations": {

@@ -21,6 +21,7 @@ final class AppModel {
     private var selectedRecord:Session?
     let importedPlayback = ImportedAudioPlayback()
     private(set) var sentimentRevision = UUID()
+    private(set) var audioLinkRevision = UUID()
     var selected:UUID? {
         didSet {
             if selected != oldValue {
@@ -45,6 +46,11 @@ final class AppModel {
     private(set) var installingModel:OptionalModelPackage?
     private(set) var modelDownloadProgress:Double=0
     private(set) var modelErrors:[OptionalModelPackage:String]=[:]
+    var vocalEmotionWorking = false
+    var vocalSoundIdentifiers: Set<String> {
+        get { settings.vocalSoundLabels.map(Set.init) ?? VocalSoundAnalysis.defaultIdentifiers }
+        set { settings.vocalSoundLabels = newValue.sorted() }
+    }
     private(set) var installedModels=Set(OptionalModelPackage.allCases.filter(\.installed))
     var diarizationEnabled:Bool {
         get { settings.diarizationEnabled==true }
@@ -850,6 +856,9 @@ final class AppModel {
                     case .diarization: self.settings.diarizationModels=directory.path
                     case .parakeet: self.settings.fluidModels=directory.path
                     case .mlx: self.settings.mlxModel=directory.path
+                    case .vocalEmotion:
+                        self.settings.vocalAnalysisEnabled = true
+                        self.settings.vocalEmotionEnabled = true
                     }
                     self.installedModels.insert(package)
                 }
@@ -867,7 +876,7 @@ final class AppModel {
     }
     func cancelModelDownload() { modelDownload?.cancel() }
     func removeModel(_ package:OptionalModelPackage) {
-        guard !active,!summaryWorking,modelDownload==nil else { return }
+        guard !active,!summaryWorking,modelDownload==nil, package != .vocalEmotion || !vocalEmotionWorking else { return }
         do {
             try package.remove()
             installedModels.remove(package)
@@ -882,6 +891,8 @@ final class AppModel {
             case .mlx:
                 if settings.mlxModel==path { settings.mlxModel="" }
                 settings.summary = .apple
+            case .vocalEmotion:
+                settings.vocalEmotionEnabled = false
             }
             modelErrors[package]=nil
         } catch { modelErrors[package]=error.localizedDescription }
@@ -959,6 +970,7 @@ final class AppModel {
         }
         guard selected==session.id,!active,let store else { return nil }
         try await store.saveAudioBookmark(ImportedAudioPlayback.bookmark(for:url),session:session.id)
+        audioLinkRevision = UUID()
         return url
     }
     func linkOriginalAudio() async {

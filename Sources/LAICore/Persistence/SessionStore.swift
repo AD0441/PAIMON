@@ -390,6 +390,19 @@ public actor SessionStore {
         let s=try statement("SELECT data FROM summary_metrics WHERE session=? ORDER BY created DESC LIMIT 200",values:[session.uuidString]); defer { sqlite3_finalize(s) }; var result:[SummaryRunMetrics]=[]
         while sqlite3_step(s)==SQLITE_ROW { result.append(try decode(SummaryRunMetrics.self,s)) }; return result
     }
+    public func overlappingSegment(session: UUID, source: AudioSource, from start: Double, to end: Double) throws -> TranscriptSegment? {
+        let row = try statement("""
+            SELECT data FROM segments
+            WHERE session=? AND start < CAST(? AS REAL) AND json_extract(data,'$.source')=?
+              AND CAST(json_extract(data,'$.end') AS REAL) > CAST(? AS REAL)
+            ORDER BY start DESC LIMIT 1
+            """, values: [session.uuidString, String(end), source.rawValue, String(start)])
+        defer { sqlite3_finalize(row) }
+        let status = sqlite3_step(row)
+        if status == SQLITE_DONE { return nil }
+        guard status == SQLITE_ROW else { throw failure() }
+        return try decode(TranscriptSegment.self, row)
+    }
     public func segmentWindow(session:UUID,segmentID:String) throws -> [(Int64,TranscriptSegment)] {
         let s=try statement("SELECT seq FROM segments WHERE session=? AND id=?",values:[session.uuidString,segmentID]); defer { sqlite3_finalize(s) }
         guard sqlite3_step(s)==SQLITE_ROW else { return [] }

@@ -31,9 +31,42 @@ struct SessionAnalysisPane: View {
                     .allowsHitTesting(selected == .assistant)
                     .accessibilityHidden(selected != .assistant)
                 if selected == .sentiment {
-                    SentimentView(model: model).id(model.selected)
+                    SentimentModes(model: model).id(model.selected)
                 }
             }
+        }
+    }
+}
+
+private struct SentimentModes: View {
+    var model: AppModel
+    @State private var mode: Mode = .text
+    private enum Mode: Hashable { case text, voice, mixed }
+
+    var body: some View {
+        if model.settings.vocalAnalysisEnabled == true {
+            VStack(spacing: 0) {
+                Picker("Tipo de análisis", selection: $mode) {
+                    Text("Texto").tag(Mode.text)
+                    Text("Voz").tag(Mode.voice)
+                    Text("Mixto").tag(Mode.mixed)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .accessibilityIdentifier("sentimentMode")
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                Divider()
+                ZStack {
+                    if mode == .text { SentimentView(model: model) }
+                    VocalAnalysisView(model: model, visible: mode != .text, mixed: mode == .mixed)
+                        .opacity(mode == .text ? 0 : 1)
+                        .allowsHitTesting(mode != .text)
+                        .accessibilityHidden(mode == .text)
+                }
+            }
+        } else {
+            SentimentView(model: model)
         }
     }
 }
@@ -47,7 +80,6 @@ private struct SentimentView: View {
     @State private var request = 0
     @State private var analyzeNext = false
     @State private var focused: Int?
-    @State private var chartSelection: Double?
     @State private var selectedEmotion: String?
 
     private struct Job: Hashable {
@@ -110,7 +142,6 @@ private struct SentimentView: View {
         progress = nil
         error = nil
         focused = nil
-        chartSelection = nil
         selectedEmotion = nil
         report = nil
         guard let session = model.selectedSession, let store = model.store else { return }
@@ -149,15 +180,14 @@ private struct SentimentView: View {
                     Label("\(boundary.count) de \(boundary.total) fragmentos puntuados quedaron en \(value). Apple devolvió el mismo extremo para la mayoría. Lee las citas para comprobar el tono en contexto.", systemImage: "info.circle")
                         .font(.caption).foregroundStyle(.secondary)
                 }
-                SentimentChart(report: report, selection: $chartSelection)
-                    .onChange(of: chartSelection) { _, value in
-                        guard let value else { return }
-                        let timed = report.usesTime
-                        focused = report.points.lazy.filter { $0.score != nil }.min {
-                            abs(position($0, timed: timed) - value) < abs(position($1, timed: timed) - value)
-                        }?.id
-                    }
-                Text("Selecciona un punto para revisar su fragmento.").font(.caption).foregroundStyle(.secondary)
+                let selected = focused.flatMap { report.points.indices.contains($0) ? report.points[$0] : nil }
+                SentimentChart(report: report, selection: selected.map { position($0, timed: report.usesTime) }) { value in
+                    let timed = report.usesTime
+                    focused = report.points.lazy.filter { $0.score != nil }.min {
+                        abs(position($0, timed: timed) - value) < abs(position($1, timed: timed) - value)
+                    }?.id
+                }
+                Text("Haz clic en el gráfico para fijar un momento.").font(.caption).foregroundStyle(.secondary)
                 if let focused, report.points.indices.contains(focused) {
                     let point = report.points[focused]
                     VStack(alignment: .leading, spacing: 8) {
@@ -289,7 +319,8 @@ private struct SentimentView: View {
 
 private struct SentimentChart: View {
     var report: TranscriptSentiment
-    @Binding var selection: Double?
+    var selection: Double?
+    var select: (Double) -> Void
 
     var body: some View {
         let timed = report.usesTime
@@ -332,7 +363,7 @@ private struct SentimentChart: View {
                     }
                 }
             }
-            .chartXSelection(value: $selection)
+            .pinChartSelection(select)
             .frame(height: 190)
             .accessibilityLabel("Evolución de la polaridad")
             HStack(spacing: 10) {
@@ -358,6 +389,37 @@ private struct SentimentChart: View {
         return report.points.compactMap { point in
             guard let score = point.score else { group += 1; return nil }
             return Sample(position: position(point, timed: timed), score: score, group: group)
+        }
+    }
+}
+
+
+extension View {
+    /// Only a click inside the plot changes the selection. Leaving the chart
+    /// keeps the selected interval and its controls available.
+    func pinChartSelection(_ select: @escaping (Double) -> Void) -> some View {
+        pinChartSelection { time, _ in select(time) }
+    }
+
+    /// The second value is the time covered by three points around the click.
+    func pinChartSelection(_ select: @escaping (Double, Double) -> Void) -> some View {
+        chartOverlay { proxy in
+            GeometryReader { geometry in
+                Color.clear
+                    .contentShape(Rectangle())
+                    .gesture(SpatialTapGesture().onEnded { tap in
+                        guard let anchor = proxy.plotFrame else { return }
+                        let frame = geometry[anchor]
+                        let x = tap.location.x - frame.minX
+                        guard frame.contains(tap.location),
+                              let time = proxy.value(atX: x, as: Double.self),
+                              time.isFinite else { return }
+                        let nearbyX = x + (x + 3 < frame.width ? 3 : -3)
+                        let nearbyTime = proxy.value(atX: nearbyX, as: Double.self) ?? time
+                        select(time, abs(nearbyTime - time))
+                    })
+            }
+            .accessibilityHidden(true)
         }
     }
 }

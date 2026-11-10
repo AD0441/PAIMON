@@ -346,3 +346,47 @@ PAIMON 0.9.0 se instaló en Aplicaciones. Se comprobó la firma de la aplicació
 | --- | --- | --- |
 | `PAIMON-actual.zip` | 0.9.0 (24) | `9ef35ae7016eef3a1e166a6a8bcbe0bc7f09db57aad1a1b38e5ba001a5a6ace4` |
 | `PAIMON-anterior.zip` | 0.8.1 (23) | `ba4a8fdd73e73baad62a96970851643f534f4a9516d6ebe197a7286af26247d6` |
+
+## Análisis vocal local · PAIMON 0.10.0 (25)
+
+Activa **Ajustes → Modelos → Análisis vocal → Mostrar Voz en Sentimientos**. Abre una sesión terminada con su audio importado vinculado o con audio de captura guardado y selecciona **Sentimientos → Voz → Analizar voz**. Elige la pista cuando estén disponibles sistema y micrófono. Pulsa un intervalo del gráfico para ver intensidad en dBFS, altura estimada en Hz, variación tonal y tiempo de nivel bajo. El ritmo se estima en palabras por minuto a partir del fragmento de transcripción que coincide. Si hay texto o audio disponible para ese intervalo, la vista permite saltar al fragmento o reproducirlo.
+
+La medición lee ventanas de hasta 100 ms con AVFoundation y calcula RMS y autocorrelación con Accelerate. El gráfico usa hasta 900 intervalos por pista. El umbral de −46 dBFS distingue señal de nivel bajo, sensible al volumen de grabación y al ruido. Las pistas archivadas conservan su reloj de sesión y los huecos sin captura. El cálculo empieza por solicitud, se cancela al ocultar Voz o empezar una captura, y se cancela durante presión de memoria. Los resultados de Voz se mantienen en la vista mientras la sesión está abierta en Sentimientos.
+
+En el M1 de 8 GB pasaron 115 pruebas, incluidas las integraciones nativas de voz y el asistente. Las pruebas nuevas verificaron RMS, dos frecuencias conocidas, silencio, pistas separadas, pausas del archivo y búsqueda de transcripción por fuente. El archivo sintético de 15:05 produjo 453 puntos y su prueba pasó en aproximadamente 5 s, incluida la preparación del archivo y durante la ejecución de la suite. En la instancia aislada de Release se activó Voz, se analizó un audio español importado y se comprobó el salto a la transcripción.
+
+Se probó aparte el candidato **emotion2vec+ Base Core ML de 8 bits**, revisión `704a2cac36227869e3296996f2c4d3a06fc68683`. Se descargaron temporalmente cinco archivos, con 93.716.464 bytes verificados. En un fragmento de voz sintética de 3 s, ambas configuraciones devolvieron nueve probabilidades válidas y la etiqueta principal neutra. Con CPU, la carga tomó 398 ms, la primera predicción 103 ms y la mediana de cinco predicciones siguientes 81 ms. La huella máxima del proceso de prueba fue 105 MB. Con CPU y GPU, los tiempos fueron 1.979, 3.176 y 55 ms, con una huella máxima de 238 MB. Las cifras son de una sola ejecución por configuración y la huella corresponde al proceso, sin contabilizar por separado servicios del sistema. La calidad con voces reales de español chileno y ruido queda por validar antes de añadir la descarga a Ajustes. [Ficha de la conversión](https://huggingface.co/happyface-studio/emotion2vec-plus-base-coreml).
+
+Se instaló PAIMON 0.10.0 en Aplicaciones. Se verificaron las firmas de la app y de los respaldos 0.10.0 (25) y 0.9.0 (24).
+
+## Risas y aplausos · PAIMON 0.11.0 (26)
+
+En una sesión terminada con audio, abre **Sentimientos → Voz**, elige la pista y pulsa **Buscar risas y aplausos**. Cada resultado indica el intervalo de la sesión y permite escucharlo o ir a un fragmento de transcripción coincidente. El clasificador integrado de Sound Analysis trabaja por solicitud. PAIMON conserva las detecciones con puntuación de al menos 0,65 en ventanas de 1,5 s con 50 % de solape, reúne las ventanas contiguas del mismo tipo y muestra hasta 200 eventos. Al analizar audio archivado conserva el reloj de cada fuente y descarta ventanas que cruzan una pausa de grabación. La puntuación y los tiempos dependen del clasificador.
+
+Pasaron 117 pruebas. La integración nativa detectó risas y aplausos en dos grabaciones de referencia, y no produjo eventos en la muestra sintética que solo contiene voz. Las pruebas de sincronización comprobaron el intervalo original de audio, la separación por pista, la fusión de ventanas y el descarte al cruzar una pausa. [Clasificador de Apple](https://developer.apple.com/documentation/soundanalysis/classifying-sounds-in-an-audio-file?changes=_8_9_8%2C_8_9_8).
+
+Para repetir la integración, descarga las grabaciones públicas [Bursting out laughing, de ezwa](https://commons.wikimedia.org/wiki/File:Bursting_out_laughing.ogg) y [Applause after a concert, de Amada44](https://commons.wikimedia.org/wiki/File:Sound_Effects_-_Applause_after_a_concert.ogg). Convierte cada una a WAV PCM, mono a 16 kHz y con un máximo de 18 s mediante FFmpeg. Nombra los archivos `laughter.wav` y `applause.wav` y ejecuta la prueba con su directorio.
+
+```bash
+PAIMON_TEST_SOUND_FIXTURES=/ruta/a/las/muestras ./script/test.sh --filter appleSoundAnalysisRecognizesLaughterAndApplauseAndSkipsSpeech
+```
+
+En la instancia aislada de Release, una mezcla de 42 s con voz sintética y las dos grabaciones de referencia produjo dos intervalos de risa y uno de aplausos. Se comprobó el salto desde el primer evento al fragmento coincidente. Se compiló e instaló Release arm64 y se verificaron las firmas de la app y de los respaldos 0.11.0 (26) y 0.10.0 (25).
+
+## Emociones de voz y vista Mixto · PAIMON 0.12.0 (27)
+
+En **Ajustes → Modelos → Emociones de voz**, descarga **emotion2vec+ Base de 8 bits**. PAIMON verifica los cinco archivos (93.716.464 bytes), activa la opción y habilita **Sentimientos → Mixto**. Puedes apagar el modelo con el interruptor o borrar la descarga. El modelo se carga por solicitud y la inferencia usa Core ML en CPU, según las mediciones del M1 registradas en la compilación 25. El paquete corresponde a la conversión de happyface-studio, a partir de emotion2vec+ Base de Ziyang Ma y colaboradores, bajo la licencia del modelo FunASR. [Conversión y atribución](https://huggingface.co/happyface-studio/emotion2vec-plus-base-coreml) · [Licencia del modelo](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE).
+
+En una sesión con audio importado vinculado o archivado, selecciona una pista y pulsa **Analizar texto y voz**. PAIMON muestra la polaridad del texto y las categorías estimadas por el modelo vocal en gráficos con el mismo eje temporal. La selección se fija con un clic y permanece mientras se mueve el mouse a los controles. Se revisan hasta 120 ventanas de hasta 3 s, separadas en sesiones largas. Se omiten etiquetas para tramos silenciosos, categorías indeterminadas y resultados con puntuación inferior a 0,65 o con una diferencia menor a 0,15 entre las dos primeras clases. Las etiquetas son experimentales y su precisión con voces chilenas reales y ruido sigue pendiente.
+
+**Ajustes → Modelos → Análisis vocal → Sonidos por detectar** permite seleccionar varias categorías del catálogo que ofrece Sound Analysis en macOS. La selección predeterminada comprende risas y aplausos y sus variantes. **Buscar sonidos seleccionados** en **Sentimientos → Voz** se limita a las categorías activadas. Las categorías sin nombre localizado se muestran con el nombre del catálogo de Apple. [Catálogo de clasificaciones](https://developer.apple.com/documentation/soundanalysis/snclassifysoundrequest/knownclassifications?language=objc).
+
+Pasaron 120 pruebas. En la integración real, emotion2vec+ procesó la muestra de voz española en Core ML y devolvió una estimación neutral en al menos un tramo. Sound Analysis encontró habla al seleccionarla y devolvió cero eventos al buscar aplausos en esa misma muestra. Para repetir la prueba de Core ML, apunta `PAIMON_TEST_VOICE_MODEL` al directorio que contiene `Emotion2Vec8bit.mlmodelc` y ejecuta `./script/test.sh --filter emotion2vecProcessesTheSpanishAudioFixtureThroughCoreML`.
+
+En la instancia aislada se verificó la descarga desde Ajustes y se observaron los dos gráficos sobre la muestra sintética. Al seleccionar un tiempo se mostraron la polaridad del texto, la estimación vocal y los controles para escuchar el intervalo o abrir el fragmento. Se instaló Release arm64 en Aplicaciones y se verificaron las firmas de la app y de los respaldos 0.12.0 (27) y 0.11.0 (26).
+
+## Alineación de la vista Mixto · PAIMON 0.12.1 (28)
+
+Los gráficos de texto y voz reservan la misma columna para sus etiquetas y comparten el área horizontal y el reloj de la sesión. Las emociones tienen una fila por categoría y el punto de cada ventana se dibuja en el centro del intervalo analizado. Al estrechar el panel disminuye la cantidad de horas impresas sin cambiar la escala.
+
+Se renderizó el componente SwiftUI con datos sintéticos de 20 min 40 s y ocho filas, en paneles de 340, 460 y 820 puntos. Las etiquetas quedaron fuera de los datos y el cursor de 00:17:20 coincidió píxel por píxel en ambas gráficas en los tres anchos. Pasó la suite disponible de `./script/test.sh`. Xcode compiló Release arm64 y se verificó la firma de 0.12.1 (28) instalada en Aplicaciones. No se usó el audio de la instancia de revisión del usuario.
