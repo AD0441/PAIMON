@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Código fuente 0.7.4" src="https://img.shields.io/badge/código%20fuente-0.7.4-58616B?style=flat-square">
+    <img alt="Versión 0.7.4" src="https://img.shields.io/badge/versión-0.7.4-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1">Descargar candidata 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.4">Descargar PAIMON 0.7.4</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![PAIMON: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
@@ -83,12 +83,12 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga la [candidata 0.7.0 y su SHA-256](https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1). Requiere Apple Silicon y macOS 26.0 o posterior. Las pruebas de esta candidata se realizaron en un M1 de 8 GB con macOS 27.3. La [versión anterior 0.6.0](https://github.com/AD0441/PAIMON/releases/tag/v0.6.0) sigue disponible.
-2. Verifica opcionalmente: `shasum -a 256 -c PAIMON-0.7.0-rc.1.zip.sha256`.
+1. Descarga el [ZIP de PAIMON 0.7.4](https://github.com/AD0441/PAIMON/releases/download/v0.7.4/PAIMON-0.7.4.zip). Requiere Apple Silicon y macOS 26.0 o posterior. Se probó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases).
+2. Si quieres verificar el ZIP, descarga el [archivo SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.7.4/PAIMON-0.7.4.zip.sha256) a la misma carpeta y ejecuta `shasum -a 256 -c PAIMON-0.7.4.zip.sha256`.
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
-La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.4 (20) y 0.7.3 (19) en esta instalación. Para obtener 0.7.4 desde GitHub, compila el código de `main`.
+La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.4 (20) y 0.7.3 (19) en esta instalación.
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
