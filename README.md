@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.7.4" src="https://img.shields.io/badge/versión-0.7.4-58616B?style=flat-square">
+    <img alt="Versión 0.7.5" src="https://img.shields.io/badge/versión-0.7.5-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.4">Descargar PAIMON 0.7.4</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.5">Descargar PAIMON 0.7.5</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![PAIMON: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
@@ -53,14 +53,15 @@ Las imágenes de revisión usan datos sintéticos y una instancia separada de la
 
 </details>
 
-## Novedades en main · 0.7.4 (20)
+## Novedades en main · 0.7.5 (21)
 
+- **Parakeet corregido en el M1.** Carga el modelo con CPU y GPU y conserva el audio sobrante al cortar bloques de voz continua.
 - **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Descarga los modelos desde Ajustes con un botón. La aplicación empaquetada incluye FluidWorker.
 - **Mejora el nivel al importar.** La normalización opcional nivela voz baja y suaviza picos. Conserva el archivo original.
 - **Revisa acuerdos y pendientes.** La vista dedicada reúne decisiones, compromisos y preguntas abiertas con sus evidencias. Las exportaciones conservan el informe completo.
 - **Elimina sesiones y sus datos asociados.** Al borrar una sesión, PAIMON retira su audio archivado, transcripción, resumen, nombres, marcadores e índices locales.
 
-Se verificaron la compilación arm64 y 98 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#diarización-local--10-de-noviembre-de-2026).
+Se verificaron la compilación arm64 y 100 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#corrección-de-parakeet--paimon-075-21).
 
 ## Candidata publicada 0.7.0 · compilación 15
 
@@ -83,8 +84,8 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga el [ZIP de PAIMON 0.7.4](https://github.com/AD0441/PAIMON/releases/download/v0.7.4/PAIMON-0.7.4.zip). Requiere Apple Silicon y macOS 26.0 o posterior. Se probó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases).
-2. Si quieres verificar el ZIP, descarga el [archivo SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.7.4/PAIMON-0.7.4.zip.sha256) a la misma carpeta y ejecuta `shasum -a 256 -c PAIMON-0.7.4.zip.sha256`.
+1. Descarga el [ZIP de PAIMON 0.7.5](https://github.com/AD0441/PAIMON/releases/download/v0.7.5/PAIMON-0.7.5.zip). Requiere Apple Silicon y macOS 26.0 o posterior. Se probó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases).
+2. Si quieres verificar el ZIP, descarga el [archivo SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.7.5/PAIMON-0.7.5.zip.sha256) a la misma carpeta y ejecuta `shasum -a 256 -c PAIMON-0.7.5.zip.sha256`.
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
