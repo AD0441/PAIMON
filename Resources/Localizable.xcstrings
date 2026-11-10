@@ -1,6 +1,281 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Asistente": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assistant"
+          }
+        }
+      }
+    },
+    "Asistente local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local assistant"
+          }
+        }
+      }
+    },
+    "Haz preguntas sobre la transcripción. El asistente usa Apple Intelligence en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask questions about the transcript. The assistant uses Apple Intelligence on this Mac."
+          }
+        }
+      }
+    },
+    "Selecciona una sesión para hacer preguntas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a session to ask questions."
+          }
+        }
+      }
+    },
+    "Por ejemplo, «¿Qué se decidió?» o «¿Qué tareas quedaron pendientes?»": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For example, “What was decided?” or “What tasks are still open?”"
+          }
+        }
+      }
+    },
+    "No encontré una respuesta respaldada en los fragmentos consultados.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I couldn't find an answer supported by the excerpts."
+          }
+        }
+      }
+    },
+    "Se consultó una parte de la transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only part of the transcript was consulted."
+          }
+        }
+      }
+    },
+    "Buscando en la transcripción…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking through the transcript…"
+          }
+        }
+      }
+    },
+    "Volver a comprobar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check again"
+          }
+        }
+      }
+    },
+    "Termina la captura o importación para preguntar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish recording or importing to ask a question."
+          }
+        }
+      }
+    },
+    "El asistente se pausa mientras hay presión de memoria.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The assistant pauses while the system is under memory pressure."
+          }
+        }
+      }
+    },
+    "Escribe una pregunta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type a question"
+          }
+        }
+      }
+    },
+    "Preguntar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask"
+          }
+        }
+      }
+    },
+    "El asistente requiere Apple Intelligence disponible en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The assistant requires Apple Intelligence to be available on this Mac."
+          }
+        }
+      }
+    },
+    "Apple Intelligence no admite el idioma de esta pregunta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence doesn't support the language of this question."
+          }
+        }
+      }
+    },
+    "La pregunta y sus citas superan el espacio del modelo local.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The question and its excerpts exceed the local model's context limit."
+          }
+        }
+      }
+    },
+    "El modelo local no pudo responder. Intenta reformular la pregunta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The local model couldn't answer. Try rephrasing the question."
+          }
+        }
+      }
+    },
+    "La cola de inferencia local está ocupada. Reintenta después.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The local model is busy. Try again later."
+          }
+        }
+      }
+    },
+    "Cada punto muestra cómo Apple clasificó el tono de un fragmento. −1 es el extremo negativo, 0 es neutro y +1 es el extremo positivo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each point shows how Apple classified the tone of an excerpt. −1 is the negative end, 0 is neutral, and +1 is the positive end."
+          }
+        }
+      }
+    },
+    "%lld de %lld fragmentos puntuados quedaron en %@. Apple devolvió el mismo extremo para la mayoría. Lee las citas para comprobar el tono en contexto.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld scored excerpts landed at %@. Apple returned the same extreme for most excerpts. Read the quotes to check the tone in context."
+          }
+        }
+      }
+    },
+    "Apple Intelligence asigna etiquetas al lenguaje de los fragmentos. Por ejemplo, «preocupación» señala una expresión de inquietud. El número indica en cuántos fragmentos apareció cada etiqueta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence labels the language of the excerpts. For example, “concern” marks an expression of unease. The number shows how many excerpts received each label."
+          }
+        }
+      }
+    },
+    "Selecciona una etiqueta para leer los fragmentos asociados.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a label to read its associated excerpts."
+          }
+        }
+      }
+    },
+    "Fragmentos con «%@»": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Excerpts tagged “%@”"
+          }
+        }
+      }
+    },
+    "Un cambio de polaridad es una diferencia de al menos %@ entre dos fragmentos consecutivos con puntaje. Puede ocurrir aunque ambos puntajes tengan el mismo signo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A shift in sentiment is a difference of at least %@ between two consecutive scored excerpts. It can occur even when both scores have the same sign."
+          }
+        }
+      }
+    },
+    "Puntaje anterior %@ → actual %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous score %@ → current %@"
+          }
+        }
+      }
+    },
     "Sección del informe": {
       "extractionState": "manual",
       "localizations": {

@@ -56,7 +56,19 @@ private func point(_ index: Int, score: Double?, time: Double? = nil, emotions: 
     #expect(!report.usesTime)
     #expect(report.moments().map(\.id) == [0, 1, 4])
     #expect(report.moments().map(\.reason) == [.positive, .topicChange, .change])
+    #expect(report.moments().map(\.previousScore) == [nil, 0.8, 0.5])
     #expect(report.emotionCounts.first?.tag == "preocupación")
+}
+
+@Test func concentrationUsesExactAppleScoresAndExcludesMissingValues() {
+    let scores: [Double?] = [-1, -1, -1, -0.99, 0.2, nil, nil]
+    let points = scores.enumerated().map { point($0.offset, score: $0.element) }
+    let report = TranscriptSentiment(points: points, tagging: .unavailable, tagged: 0)
+    #expect(report.boundaryConcentration?.score == -1)
+    #expect(report.boundaryConcentration?.count == 3)
+    #expect(report.boundaryConcentration?.total == 5)
+    let smallSample = TranscriptSentiment(points: Array(points.prefix(4)), tagging: .unavailable, tagged: 0)
+    #expect(smallSample.boundaryConcentration == nil)
 }
 
 @Test func cachePersistsAndInvalidatesWhenTranscriptChanges() async throws {

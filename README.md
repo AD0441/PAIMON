@@ -2,13 +2,13 @@
   <img src="Resources/Brand/PAIMON-icon.png" width="112" alt="Icono de PAIMON">
   <h1>PAIMON</h1>
   <p><strong>Del sonido al conocimiento.</strong></p>
-  <p>Captura audio, revisa transcripciones y reúne conclusiones en tu Mac.</p>
+  <p>Captura audio, revisa transcripciones y haz preguntas sobre tus sesiones en el Mac.</p>
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.8.0" src="https://img.shields.io/badge/versión-0.8.0-58616B?style=flat-square">
+    <img alt="Versión 0.9.0" src="https://img.shields.io/badge/versión-0.9.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.8.0">Descargar PAIMON 0.8.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.9.0">Descargar PAIMON 0.9.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#asistente-local-de-la-transcripción">Asistente</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![PAIMON: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
@@ -18,6 +18,26 @@
 PAIMON captura el audio del Mac y lo convierte en transcripciones y resúmenes con referencias al original. Incluye captura del sistema o de una app, micrófono opcional, búsqueda y exportación; también se controla desde la barra de menús.
 
 **Procesamiento local por defecto, sin telemetría.** Google AI es una opción externa de resumen: requiere activación y una clave propia guardada en el Llavero. Al elegirla, se envían texto, contexto y resúmenes previos a Google, nunca audio. Todos los motores se aplazan durante presión de memoria; no se han medido ahorros de RAM.
+
+## Novedades en PAIMON 0.9.0
+
+- **Asistente local.** Consulta acuerdos, tareas o temas de una sesión y haz preguntas de seguimiento. Apple Intelligence busca respaldo en la transcripción. Las citas llevan al fragmento original.
+- **Polaridad más fácil de leer.** El gráfico explica los valores de −1 a +1 y avisa cuando muchos puntajes coinciden en un extremo. Las etiquetas de emoción abren sus citas y los cambios destacados muestran el puntaje anterior y el nuevo.
+- **Interfaz en español e inglés.** Las tres pestañas del panel de análisis siguen el idioma elegido en Configuración.
+
+Compilación 24 verificada con 111 pruebas en un M1 de 8 GB, incluida una consulta real con Apple Intelligence y una transcripción sintética. [Resultados reproducibles](docs/VALIDATION.md#asistente-local-de-la-transcripción--paimon-090-24).
+
+## Asistente local de la transcripción
+
+1. Abre una sesión con transcripción y selecciona **Asistente**, junto a **Resumen** y **Sentimientos**.
+2. Escribe una pregunta como «¿Qué se decidió comprar?» y pulsa **Preguntar**. Puedes hacer una pregunta de seguimiento.
+3. Pulsa una cita con su marca de tiempo para ir al fragmento original. Si los pasajes consultados no respaldan la respuesta, el asistente te lo indica.
+
+![PAIMON muestra la respuesta del Asistente local y una cita clicable en una sesión sintética](docs/images/paimon-assistant.png)
+
+*Captura de una reunión sintética. La cita de los 42 segundos destaca el fragmento original.*
+
+El Asistente requiere Apple Intelligence disponible en el Mac. Procesa las preguntas y los fragmentos en el equipo, sin conexión ni clave API, incluso cuando Google AI está seleccionado para resumir. En sesiones largas busca pasajes relevantes y limita cuánto texto consulta. Las preguntas y respuestas se mantienen en memoria mientras la sesión está seleccionada. El Asistente se pausa durante la captura, la importación o la presión de memoria.
 
 ## Simplicidad con impacto
 
@@ -42,42 +62,24 @@ Si necesitas una plataforma de notas compartidas, [Otter](https://help.otter.ai/
 | Audio del sistema o una aplicación; micrófono opcional | Texto con horas, búsqueda, términos y marcadores | Resumen general, ideas, decisiones, tareas y conclusiones |
 | Sin dispositivos virtuales ni silenciar la reproducción | Contexto y plantillas para reunión, clase o podcast | Citas verificables y exportación TXT, Markdown, PDF y JSON |
 
-![Transcripción y resumen de una muestra sintética local](https://github.com/AD0441/PAIMON/releases/download/v0.6.0/paimon-session.png)
+![Transcripción y resumen de una muestra sintética local](docs/images/paimon-session.png)
 
 Las imágenes de revisión usan datos sintéticos y una instancia separada de la instalación del usuario. Las transcripciones originales se conservan independientemente de los resúmenes.
 
 <details>
 <summary><strong>Consultar la evidencia de cada conclusión</strong></summary>
 
-![Referencias temporales al texto original](https://github.com/AD0441/PAIMON/releases/download/v0.6.0/paimon-evidence.png)
+![Referencias temporales al texto original](docs/images/paimon-evidence.png)
 
 </details>
 
-## Novedades en main · 0.8.0 (22)
-
-- **Sentimientos.** Revisa la polaridad, las emociones expresadas y sus citas desde una segunda pestaña de Resumen. El análisis usa los modelos locales de Apple.
-- **Parakeet corregido en el M1.** Carga el modelo con CPU y GPU y conserva el audio sobrante al cortar bloques de voz continua.
-- **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Descarga los modelos desde Ajustes con un botón. La aplicación empaquetada incluye FluidWorker.
-- **Mejora el nivel al importar.** La normalización opcional nivela voz baja y suaviza picos. Conserva el archivo original.
-- **Revisa acuerdos y pendientes.** La vista dedicada reúne decisiones, compromisos y preguntas abiertas con sus evidencias. Las exportaciones conservan el informe completo.
-- **Elimina sesiones y sus datos asociados.** Al borrar una sesión, PAIMON retira su audio archivado, transcripción, resumen, nombres, marcadores e índices locales.
-
-Se verificaron la compilación arm64 y 107 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#sentimientos-en-la-transcripción--paimon-080-22).
-
-## Candidata publicada 0.7.0 · compilación 15
-
-- **Escucha desde la evidencia.** Al importar audio, PAIMON conserva un vínculo local al archivo. Puedes escuchar el intervalo citado desde la transcripción o el informe.
-- **Revisa la transcripción.** Corrige un fragmento o restaura el texto reconocido. Se conservan sus tiempos y el resumen queda marcado para actualizarse. La búsqueda y la exportación usan el texto revisado.
-- **Recupera el resumen.** La transcripción queda disponible mientras se prepara la síntesis final. Los trabajos pendientes se guardan en SQLite. Tras un aviso de memoria, los reintentos esperan de 15 a 120 segundos de presión normal.
-- **Sigue la preparación de captura.** PAIMON indica cuándo comprueba los recursos de voz, el micrófono y el audio del sistema. La etapa de permisos permite abrir Ajustes del Sistema.
-
-La batería incluye 90 pruebas. La captura por aplicación y global, la revisión de transcripciones y la síntesis de Apple se ensayaron con muestras sintéticas en instancias aisladas. Quedan pendientes el micrófono, la combinación de fuentes y el recorrido con el paquete distribuido en macOS 26. [Resultados y alcance](docs/VALIDATION.md).
-
 ## Sentimientos de la transcripción
 
-En el panel **Resumen**, abre **Sentimientos** y pulsa **Analizar sentimientos**. El gráfico muestra los puntajes de Apple por fragmento, sin suavizar. Selecciona un punto o un momento destacado para ver la cita y volver al texto original. Cuando faltan tiempos válidos, el gráfico usa el orden de los fragmentos.
+Abre **Sentimientos** y pulsa **Analizar sentimientos**. El gráfico muestra los puntajes de Apple por fragmento, sin suavizar. −1 es el extremo negativo, 0 es neutro y +1 es el extremo positivo. Selecciona un punto o un momento destacado para ver la cita y volver al texto original. Cuando faltan tiempos válidos, el gráfico usa el orden de los fragmentos. Si la mayoría de los puntajes coincide en un extremo, la vista indica cuántos fragmentos lo recibieron. Las emociones expresadas son etiquetas para el lenguaje de los fragmentos. Por ejemplo, «preocupación» marca una expresión de inquietud. Pulsa una etiqueta para ver sus citas. Un cambio de polaridad destacado compara los puntajes de dos fragmentos consecutivos cuando la diferencia alcanza 0,55.
 
 El análisis se ejecuta en el Mac. La polaridad depende de los idiomas disponibles en NaturalLanguage. El etiquetado de emociones requiere Apple Intelligence y muestra cuántos fragmentos pudo analizar. En sesiones largas selecciona hasta 48 fragmentos para el etiquetado, entre cambios relevantes y muestras de toda la sesión. Los resultados se guardan en SQLite y se invalidan al editar la transcripción.
+
+![Panel Sentimientos con el gráfico de polaridad y las etiquetas de seis fragmentos sintéticos](docs/images/paimon-sentiment.png)
 
 ## Clave de Google AI cuando la RAM limita el resumen local
 
@@ -91,8 +93,8 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga el [ZIP de PAIMON 0.8.0](https://github.com/AD0441/PAIMON/releases/download/v0.8.0/PAIMON-0.8.0.zip). Requiere Apple Silicon y macOS 26.0 o posterior. Se probó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases).
-2. Si quieres verificar el ZIP, descarga el [archivo SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.8.0/PAIMON-0.8.0.zip.sha256) a la misma carpeta y ejecuta `shasum -a 256 -c PAIMON-0.8.0.zip.sha256`.
+1. Descarga el [ZIP de PAIMON 0.9.0](https://github.com/AD0441/PAIMON/releases/download/v0.9.0/PAIMON-0.9.0.zip). Requiere Apple Silicon y macOS 26.0 o posterior. Se probó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases).
+2. Si quieres verificar el ZIP, descarga el [archivo SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.9.0/PAIMON-0.9.0.zip.sha256) a la misma carpeta y ejecuta `shasum -a 256 -c PAIMON-0.9.0.zip.sha256`.
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
@@ -104,7 +106,7 @@ El icono nuevo está en `Resources/Brand/PAIMON-icon.svg` y `.png`; `Resources/P
 
 ## Compilar desde el código fuente
 
-1. Abre `LocalAudioIntelligence.xcodeproj` en Xcode 27.1, la versión verificada aquí, con SDK macOS 27 y Swift 6.4. El target conserva deployment target 26.0 y arquitectura arm64; las APIs nuevas tienen comprobaciones de disponibilidad para ejecutar en macOS 26.
+1. Abre `LocalAudioIntelligence.xcodeproj` en Xcode 27.2, con SDK macOS 27.2 y Swift 6.4. El target conserva deployment target 26.0 y arquitectura arm64; las APIs nuevas tienen comprobaciones de disponibilidad para ejecutar en macOS 26.
 2. Selecciona el esquema **LocalAudioIntelligence**, destino **My Mac**, y ejecuta. Firma local ad hoc; para distribuir usa tu identidad Developer ID.
 3. En Configuración → Inteligencia, comprueba el motor. En Modelos puedes **autorizar** la instalación de recursos Speech del idioma elegido. Activa Apple Intelligence en Ajustes del Sistema si el resumen indica que falta el modelo.
 4. Reproduce un video o entra en la reunión, selecciona Todo el sistema o una aplicación abierta y pulsa **Iniciar**. Acepta el permiso de grabación de audio del sistema de macOS. Si activas micrófono, autoriza también ese permiso.
@@ -154,10 +156,13 @@ También existe un paquete Swift reproducible, sin dependencias de terceros en e
 ## Preparar, importar y revisar sesiones
 
 - **Añadir / Editar contexto de la sesión** abre un editor separado para objetivo, temario y glosario, sin cambiar la distribución de la ventana principal. Se limita a 250, 600 y 350 caracteres. Sirve como orientación; las afirmaciones, nombres, fechas y acuerdos siguen necesitando evidencia original. Cambiar el contexto de una sesión guardada requiere **Actualizar resumen**; el historial del original se conserva.
+- **Iniciar** muestra cuándo PAIMON comprueba los recursos de voz, el micrófono y el audio del sistema. Si faltan permisos, puedes abrir Ajustes del Sistema desde la app.
 - **Importar audio**, **⌘O** o arrastrar un archivo abre una grabación compatible con AVAudioFile, como AIFF, WAV, M4A o MP3. Se lee por bloques y se transcribe con los mismos motores locales. Apple aplica contrapresión para no llenar la cola; la importación puede avanzar más rápido que la reproducción, según el equipo y el motor. No se duplica ni guarda el audio importado. **Cancelar importación** conserva los fragmentos definitivos ya reconocidos. Captura e importación se realizan de una en una.
 - En **Configuración → Audio y memoria → Audio importado**, puedes activar **Normalizar volumen y comprimir picos**. El ajuste nivela por bloques la señal que recibe el transcriptor, preserva sus tiempos y conserva el archivo original. Parte desactivado.
 - El panel Resumen muestra hasta dónde se ha guardado texto, hasta dónde se ha resumido y cuántos fragmentos quedan pendientes. Durante la generación se actualiza cada dos segundos. Un final aplazado por recursos sigue pendiente de recuperación.
 - **Ejecutiva / Completa / Acuerdos y pendientes** cambia la presentación usando los hallazgos guardados. **Acuerdos y pendientes** reúne decisiones, compromisos y preguntas abiertas con sus citas en páginas propias. No genera de nuevo ni carga modelos. Copiar y exportar conservan el informe completo con su formato y evidencia.
+- **Revisa y escucha los fragmentos.** Corrige el texto reconocido o restaura el original sin cambiar los tiempos. Copiar, buscar y exportar usan el texto revisado. Si el archivo importado sigue disponible, puedes escuchar el intervalo citado.
+- **Eliminar una sesión** retira su audio archivado y sus transcripciones, resúmenes, notas e índices locales.
 - Los **términos frecuentes** se calculan sin IA sobre una muestra de los fragmentos de la vista: hasta 300 fragmentos y 100.000 caracteres. Pulsarlos busca en esa sesión, sin distinguir acentos o mayúsculas. La frecuencia no equivale a importancia semántica ni representa necesariamente toda la grabación.
 
 ## Google AI · resumen externo opcional
@@ -194,7 +199,7 @@ El procesamiento Apple v3 exige que la frase que expresa un acuerdo respalde ese
 
 En **Configuración → Apariencia** puedes elegir Petróleo, Salvia, Cobre o Grafito. La paleta cambia los acentos de la interfaz sin cargar modelos, imágenes remotas ni animaciones continuas. El modo claro u oscuro sigue macOS.
 
-![Cuatro paletas nativas en Opciones](https://github.com/AD0441/PAIMON/releases/download/v0.6.0/paimon-appearance.png)
+![Cuatro paletas nativas en Opciones](docs/images/paimon-appearance.png)
 
 **Creado por Sebastián Pastén F.**
 

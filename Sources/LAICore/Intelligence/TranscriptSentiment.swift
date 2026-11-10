@@ -20,11 +20,22 @@ public struct TranscriptSentiment: Codable, Sendable {
     }
 
     static let version = 1
+    public static let changeThreshold = 0.55
     public let points: [SentimentPoint]
     public let tagging: Tagging
     public let tagged: Int
 
     public var usesTime: Bool { !points.isEmpty && points.allSatisfy { $0.time != nil } }
+    public var boundaryConcentration: (score: Double, count: Int, total: Int)? {
+        let scores = points.compactMap(\.score)
+        guard scores.count >= 5 else { return nil }
+        for boundary in [-1.0, 1.0] {
+            let count = scores.count { $0 == boundary }
+            if count > scores.count / 2 { return (boundary, count, scores.count) }
+        }
+        return nil
+    }
+
     public var emotionCounts: [(tag: String, count: Int)] {
         var counts: [String: Int] = [:]
         for point in points {
@@ -39,6 +50,7 @@ public struct TranscriptSentiment: Codable, Sendable {
         public enum Reason: Sendable { case positive, negative, change, topicChange, emotion }
         public let point: SentimentPoint
         public let reason: Reason
+        public let previousScore: Double?
         public var id: Int { point.id }
     }
 
@@ -51,7 +63,7 @@ public struct TranscriptSentiment: Codable, Sendable {
             let linked = previous.map { !Set($0.context).isDisjoint(with: point.context) } ?? false
             let reason: Moment.Reason
             let priority: Double
-            if change >= 0.55 {
+            if change >= Self.changeThreshold {
                 reason = linked ? .topicChange : .change
                 priority = 2 + change
             } else if let score = point.score, abs(score) >= 0.55 {
@@ -61,7 +73,8 @@ public struct TranscriptSentiment: Codable, Sendable {
                 reason = .emotion
                 priority = 0.5
             } else { continue }
-            candidates.append((priority, Moment(point: point, reason: reason)))
+            let previousScore = change >= Self.changeThreshold ? previous?.score : nil
+            candidates.append((priority, Moment(point: point, reason: reason, previousScore: previousScore)))
         }
         return candidates.sorted {
             $0.priority == $1.priority ? $0.moment.id < $1.moment.id : $0.priority > $1.priority

@@ -5,13 +5,14 @@ import SwiftUI
 struct SessionAnalysisPane: View {
     var model: AppModel
     @State private var selected: Tab = .summary
-    private enum Tab: Hashable { case summary, sentiment }
+    private enum Tab: Hashable { case summary, sentiment, assistant }
 
     var body: some View {
         VStack(spacing: 0) {
             Picker("Sección del informe", selection: $selected) {
                 Text("Resumen").tag(Tab.summary)
                 Text("Sentimientos").tag(Tab.sentiment)
+                Text("Asistente").tag(Tab.assistant)
             }
             .pickerStyle(.segmented)
             .labelsHidden()
@@ -24,6 +25,11 @@ struct SessionAnalysisPane: View {
                     .opacity(selected == .summary ? 1 : 0)
                     .allowsHitTesting(selected == .summary)
                     .accessibilityHidden(selected != .summary)
+                TranscriptAssistantView(model: model, visible: selected == .assistant)
+                    .id(model.selected)
+                    .opacity(selected == .assistant ? 1 : 0)
+                    .allowsHitTesting(selected == .assistant)
+                    .accessibilityHidden(selected != .assistant)
                 if selected == .sentiment {
                     SentimentView(model: model).id(model.selected)
                 }
@@ -34,6 +40,7 @@ struct SessionAnalysisPane: View {
 
 private struct SentimentView: View {
     var model: AppModel
+    @Environment(\.locale) private var locale
     @State private var report: TranscriptSentiment?
     @State private var progress: Double?
     @State private var error: String?
@@ -41,6 +48,7 @@ private struct SentimentView: View {
     @State private var analyzeNext = false
     @State private var focused: Int?
     @State private var chartSelection: Double?
+    @State private var selectedEmotion: String?
 
     private struct Job: Hashable {
         var session: UUID?
@@ -103,6 +111,7 @@ private struct SentimentView: View {
         error = nil
         focused = nil
         chartSelection = nil
+        selectedEmotion = nil
         report = nil
         guard let session = model.selectedSession, let store = model.store else { return }
         do {
@@ -133,6 +142,13 @@ private struct SentimentView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Evolución de la polaridad").font(.headline)
             if report.points.contains(where: { $0.score != nil }) {
+                Text("Cada punto muestra cómo Apple clasificó el tono de un fragmento. −1 es el extremo negativo, 0 es neutro y +1 es el extremo positivo.")
+                    .font(.caption).foregroundStyle(.secondary)
+                if let boundary = report.boundaryConcentration {
+                    let value = boundary.score < 0 ? "−1" : "+1"
+                    Label("\(boundary.count) de \(boundary.total) fragmentos puntuados quedaron en \(value). Apple devolvió el mismo extremo para la mayoría. Lee las citas para comprobar el tono en contexto.", systemImage: "info.circle")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
                 SentimentChart(report: report, selection: $chartSelection)
                     .onChange(of: chartSelection) { _, value in
                         guard let value else { return }
@@ -164,6 +180,8 @@ private struct SentimentView: View {
             }
             Divider()
             Text("Emociones expresadas").font(.headline)
+            Text("Apple Intelligence asigna etiquetas al lenguaje de los fragmentos. Por ejemplo, «preocupación» señala una expresión de inquietud. El número indica en cuántos fragmentos apareció cada etiqueta.")
+                .font(.caption).foregroundStyle(.secondary)
             switch report.tagging {
             case .unavailable: Text("La clasificación de emociones requiere Apple Intelligence disponible en este Mac.")
             case .unsupported: Text("Apple Intelligence no admite el idioma de los fragmentos seleccionados.")
@@ -177,21 +195,48 @@ private struct SentimentView: View {
             if report.emotionCounts.isEmpty, report.tagged > 0 {
                 Text("Sin etiquetas emocionales en los fragmentos analizados.").font(.caption).foregroundStyle(.secondary)
             }
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 118), alignment: .leading)], alignment: .leading, spacing: 8) {
-                ForEach(report.emotionCounts, id: \.tag) { item in
-                    Text("\(item.tag) · \(item.count)")
-                        .font(.caption)
-                        .padding(.horizontal, 8).padding(.vertical, 4)
-                        .background(.quaternary, in: Capsule())
+            if !report.emotionCounts.isEmpty {
+                Text("Selecciona una etiqueta para leer los fragmentos asociados.").font(.caption).foregroundStyle(.secondary)
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 118), alignment: .leading)], alignment: .leading, spacing: 8) {
+                    ForEach(report.emotionCounts, id: \.tag) { item in
+                        Button {
+                            selectedEmotion = selectedEmotion == item.tag ? nil : item.tag
+                        } label: {
+                            Label("\(item.tag) · \(item.count)",
+                                  systemImage: selectedEmotion == item.tag ? "checkmark" : "tag")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.bordered)
+                        .accessibilityAddTraits(selectedEmotion == item.tag ? .isSelected : [])
+                    }
+                }
+                if let selectedEmotion {
+                    LazyVStack(alignment: .leading, spacing: 12) {
+                        Text("Fragmentos con «\(selectedEmotion)»").font(.subheadline.weight(.semibold))
+                        ForEach(report.points.filter { $0.emotions.contains(selectedEmotion) }) { point in
+                            pointContent(point)
+                        }
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 8))
                 }
             }
             Divider()
             Text("Momentos destacados").font(.headline)
+            let threshold = TranscriptSentiment.changeThreshold.formatted(.number.locale(locale).precision(.fractionLength(2)))
+            Text("Un cambio de polaridad es una diferencia de al menos \(threshold) entre dos fragmentos consecutivos con puntaje. Puede ocurrir aunque ambos puntajes tengan el mismo signo.")
+                .font(.caption).foregroundStyle(.secondary)
             let moments = report.moments()
             if moments.isEmpty { Text("Sin momentos destacados con los datos disponibles.").font(.caption).foregroundStyle(.secondary) }
             ForEach(moments) { moment in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title(moment.reason)).font(.subheadline.weight(.semibold))
+                    if let previous = moment.previousScore, let current = moment.point.score {
+                        let format = FloatingPointFormatStyle<Double>.number.locale(locale).precision(.fractionLength(2))
+                        Text("Puntaje anterior \(previous.formatted(format)) → actual \(current.formatted(format))")
+                            .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                    }
                     pointContent(moment.point)
                 }
                 .padding(10)

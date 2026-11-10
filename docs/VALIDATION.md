@@ -322,3 +322,27 @@ Se instaló y abrió PAIMON 0.8.0 desde Aplicaciones. La compilación instalada 
 | --- | --- | --- |
 | `PAIMON-actual.zip` | 0.8.0 (22) | `37d6bdd5add318ddc49d1ddf9a7d8e45875db348c803c935344726d29db1a8bb` |
 | `PAIMON-anterior.zip` | 0.7.5 (21) | `d05b1d3756112c1c748de0aabe75bf0c1de21318a4253280d669efe62a757fb4` |
+
+## Lectura de los puntajes de polaridad · PAIMON 0.8.1 (23)
+
+Se renderizó el gráfico con −1, 0 y +1 como datos sintéticos y se comprobó que cada punto coincidía con su marca del eje vertical. Una frase informativa en español recibió −0,8 de NaturalLanguage en este Mac. La variante sin puntuación recibió −1. La vista conserva los valores originales y muestra cuántos fragmentos recibieron exactamente el mismo extremo cuando constituyen la mayoría de al menos cinco fragmentos con puntaje.
+
+Las etiquetas de emoción incluyen sus citas y el salto destacado muestra ambos puntajes. Pasaron 108 pruebas, incluidas las de concentración en un extremo, cambios entre fragmentos y análisis nativo. Se compiló Release, se instaló PAIMON en Aplicaciones y se verificaron las firmas de ambos respaldos.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.8.1 (23) | `3c594155e5322f06d2555f36c6c666b958aa04f4caf2c89bfd7da0275fe554ef` |
+| `PAIMON-anterior.zip` | 0.8.0 (22) | `0a7566cb35d9584308c0b6be045ef824ffe99576d3cf78530f69394b55d91456` |
+
+## Asistente local de la transcripción · PAIMON 0.9.0 (24)
+
+Compilación Release arm64 verificada en el M1 con 8 GB y macOS 27.3. Pasaron 111 pruebas con las integraciones locales habilitadas. La prueba del asistente usó una transcripción sintética. Apple Intelligence respondió qué se había acordado comprar con una cita del segmento original y se abstuvo cuando se le preguntó por un dato ausente. Otras pruebas verificaron el límite de búsqueda, el aislamiento entre sesiones y el rechazo de citas inventadas o atribuidas al fragmento incorrecto. Para repetir la prueba real del asistente, ejecuta `PAIMON_TEST_ASSISTANT_FOUNDATION=1 ./script/test.sh` en un Mac con Apple Intelligence disponible.
+
+En la ventana aislada de Release se importó una segunda muestra de 48 s generada con la voz local de macOS. El Asistente respondió dos preguntas y una cita abrió el fragmento de los 42 s. Sentimientos calculó seis puntos y mostró las etiquetas y la explicación del cambio de polaridad. Las imágenes publicadas muestran esta sesión sintética.
+
+PAIMON 0.9.0 se instaló en Aplicaciones. Se comprobó la firma de la aplicación instalada y la de cada respaldo extraído.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.9.0 (24) | `9ef35ae7016eef3a1e166a6a8bcbe0bc7f09db57aad1a1b38e5ba001a5a6ace4` |
+| `PAIMON-anterior.zip` | 0.8.1 (23) | `ba4a8fdd73e73baad62a96970851643f534f4a9516d6ebe197a7286af26247d6` |

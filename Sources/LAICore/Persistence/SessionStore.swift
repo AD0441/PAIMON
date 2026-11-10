@@ -396,6 +396,57 @@ public actor SessionStore {
         let anchor=sqlite3_column_int64(s,0)
         return try segments(session:session,limit:150,newest:true,before:anchor+1)+segments(session:session,after:anchor,limit:150)
     }
+    func assistantContext(session: Session, keywords: [String], anchors: [String]) throws -> (segments: [TranscriptSegment], count: Int) {
+        let id = session.id.uuidString
+        let countRow = try statement("SELECT count(*) FROM segments WHERE session=?", values: [id])
+        defer { sqlite3_finalize(countRow) }
+        guard sqlite3_step(countRow) == SQLITE_ROW else { throw failure() }
+        let count = Int(sqlite3_column_int64(countRow, 0))
+        guard count > 0 else { return ([], 0) }
+
+        var result: [TranscriptSegment] = []
+        var included: Set<String> = []
+        let limit = 12
+        func collect(_ sql: String, values: [String]) throws {
+            let row = try statement(sql, values: values)
+            defer { sqlite3_finalize(row) }
+            while result.count < limit {
+                try Task.checkCancellation()
+                let status = sqlite3_step(row)
+                if status == SQLITE_DONE { break }
+                guard status == SQLITE_ROW else { throw failure() }
+                let segment = try decode(TranscriptSegment.self, row)
+                if segment.isFinal, segment.duplicateOf == nil, !segment.text.isEmpty, included.insert(segment.id).inserted {
+                    result.append(segment)
+                }
+            }
+        }
+
+        if count <= limit {
+            try collect("SELECT data FROM segments WHERE session=? ORDER BY seq", values: [id])
+            return (result, count)
+        }
+        if !keywords.isEmpty {
+            let match = keywords.prefix(8).map { "\"\($0)\"*" }.joined(separator: " OR ")
+            try collect("""
+                SELECT g.data FROM transcript_search JOIN segments g ON g.seq=transcript_search.rowid
+                WHERE transcript_search MATCH ? AND g.session=? AND json_extract(g.data,'$.duplicateOf') IS NULL
+                ORDER BY transcript_search.rank LIMIT 7
+                """, values: [match, id])
+        }
+        let summaryAnchors = try reportFindings(session: session.id, template: session.template,
+                                               kinds: [.decision, .task, .idea, .conclusion], limit: 5)
+            .map(\.segmentID)
+        for anchor in Array(anchors.prefix(3)) + summaryAnchors where result.count < 9 && !included.contains(anchor) {
+            try collect("SELECT data FROM segments WHERE session=? AND id=?", values: [id, anchor])
+        }
+        let slots = limit - result.count
+        for index in 0..<slots {
+            let offset = slots == 1 ? count / 2 : index * (count - 1) / (slots - 1)
+            try collect("SELECT data FROM segments WHERE session=? ORDER BY seq LIMIT 1 OFFSET ?", values: [id, String(offset)])
+        }
+        return (result, count)
+    }
     public func latestSummary(session: UUID) throws -> SummarySnapshot? {
         let s=try statement("SELECT data FROM summaries WHERE session=? ORDER BY seq DESC LIMIT 1",values:[session.uuidString]); defer { sqlite3_finalize(s) }
         return sqlite3_step(s)==SQLITE_ROW ? try decode(SummarySnapshot.self,s) : nil

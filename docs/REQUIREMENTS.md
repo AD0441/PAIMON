@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
-- **Versión del documento:** 1.1 · **Fecha:** 9 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.8.0 (22).
+- **Versión del documento:** 1.2 · **Fecha:** 10 de noviembre de 2026.
+- **Base revisada:** PAIMON 0.9.0 (24).
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -15,7 +15,7 @@ Este documento consolida lo solicitado, lo mejorado y el trabajo pendiente. Sigu
 - **P — Parcial:** hay una solución, pero no cubre todo el requisito original.
 - **N — Pendiente:** falta implementar o ejecutar la validación correspondiente.
 - Los códigos son estables. Al modificar una función, actualizar su estado, criterio y evidencia, sin borrar resultados históricos ni presentar pruebas anteriores como nuevas.
-- Cada evidencia conserva su versión y entorno. La candidata incluye 90 pruebas y un ensayo de captura en Release aislada con la compilación 14. [Validación por versión](VALIDATION.md).
+- Cada evidencia conserva su versión y entorno. La compilación 24 incluye 111 pruebas y una revisión aislada de Asistente y Sentimientos con audio sintético. [Validación por versión](VALIDATION.md).
 - Esta lista no ordena implementar todos los pendientes ahora. Las propuestas nuevas se distinguen de los acuerdos del producto.
 
 ## 2. Decisiones confirmadas
@@ -91,6 +91,7 @@ No se consideran funciones actuales: cancelación acústica completa, transcripc
 | RES-09 | P0 | Rehacer desde el original tras cambio de motor, contexto, plantilla o versión de procesamiento; una respuesta tardía no modifica otra sesión. | **V:** identidad de configuración y tokens de selección; pruebas AppModel de éxito, fallo e indisponibilidad tardíos. |
 | RES-10 | P1 | MLX local cuantizado de aproximadamente 1,5–1,7B como alternativa opcional, sin instalación automática ni modelos pesados simultáneos innecesarios. | **P:** script, worker y ruta offline presentes; no ejecutado con pesos. Falta igualar esquema/validación a Apple v4 y medir carga, latencia y memoria. [E3, E4] |
 | RES-11 | P1 | Revisar compromisos o preguntas cuando intervenciones posteriores los cambien o resuelvan, sin borrar su evidencia histórica. | **P:** acumulación y deduplicación existentes; falta conciliación semántica completa de estados. La síntesis recibe un contexto acotado. |
+| RES-12 | P1 | Hacer preguntas sobre la sesión seleccionada en una tercera pestaña, con IA local y citas que abren la transcripción. | **V:** dos respuestas y navegación verificadas en la app aislada. Las pruebas cubren búsqueda acotada, separación entre sesiones y abstención ante un dato ausente. Requiere Apple Intelligence. [E2] |
 
 ## 8. Google AI externo y voluntario
 
@@ -147,9 +148,9 @@ No se consideran funciones actuales: cancelación acústica completa, transcripc
 | RND-03 | P0 | Medir CPU, memoria total relevante, latencia, pérdidas y respuesta de UI durante una reunión real prolongada en M1/8 GB. | **N:** importaciones de 35:37 y de cargas repetidas de 1:02:07 y 2:04:15 verificadas. Faltan captura en vivo prolongada y consumo global de modelos. [E7] |
 | RND-04 | P1 | Identificar CPU/GPU/ANE de los modelos opcionales mediante perfil, sin inferirlo del nombre Core ML. | **N:** configuraciones documentadas, perfil con pesos pendiente. Speech/Foundation Models no garantizan públicamente acelerador por operación. |
 | RND-05 | P1 | Evitar trabajo recurrente innecesario: búsquedas cancelables, indicadores agrupados y lista de apps por notificaciones. | **V:** mejoras 0.6.0; métricas cada 5 s con ventana abierta, sin afirmar consumo cero en reposo. |
-| ENT-01 | P0 | Proyecto Xcode compilable, scripts, dependencias documentadas, pruebas reproducibles y resultados con versión/entorno. | **V:** 84 pruebas registradas y fixture sintético local; scripts de diagnóstico disponibles. No se vuelven a ejecutar por esta edición documental. |
+| ENT-01 | P0 | Proyecto Xcode compilable, scripts, dependencias documentadas, pruebas reproducibles y resultados con versión/entorno. | **V:** 111 pruebas registradas en 0.9.0 y muestra sintética local. Los scripts permiten reproducir la validación. |
 | ENT-02 | P0 | Validar macOS 26, permisos y recorrido completo con el binario distribuido antes de llamar estable a la entrega. | **N:** build 13 probó importación/síntesis e interfaz aislada, no Core Audio/micrófono actual ni macOS 26. |
-| ENT-03 | P0 | Mantener proyecto limpio: Git, fuentes, evidencias, dos ZIP y acceso a app instalada; sin acumular builds y copias completas. | **V:** actual 0.8.0 (22), anterior 0.7.5 (21). La copia del proyecto enlaza a `/Applications/PAIMON.app`. |
+| ENT-03 | P0 | Mantener proyecto limpio: Git, fuentes, evidencias, dos ZIP y acceso a app instalada; sin acumular builds y copias completas. | **V:** actual 0.9.0 (24), anterior 0.8.1 (23). La copia del proyecto enlaza a `/Applications/PAIMON.app`. |
 | ENT-04 | P1 | Distribución verificable con versión, SHA-256, recursos GitHub y firma adecuada para otros Mac. | **P:** release/ZIP/hash y firma ad hoc existentes; Developer ID, notarización y comprobación en otro Mac pendientes. No sustituir tags publicados. |
 
 ## 13. Mejoras realizadas desde los problemas reportados
