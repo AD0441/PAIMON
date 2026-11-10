@@ -49,8 +49,8 @@ actor DiarizationSession {
 
     init?(settings: AppSettings, sessionID: UUID, store: SessionStore, events: AsyncStream<PipelineEvent>.Continuation) {
         guard settings.diarizationEnabled == true else { return nil }
-        executable = settings.fluidWorker
-        models = settings.diarizationModels ?? ""
+        executable = DiarizationModels.workerPath(configured:settings.fluidWorker) ?? ""
+        models = settings.diarizationModels ?? (DiarizationModels.installed ? DiarizationModels.directory.path : "")
         self.sessionID = sessionID
         self.store = store
         self.events = events
@@ -61,7 +61,7 @@ actor DiarizationSession {
         do {
             if !started {
                 guard !models.isEmpty, !executable.isEmpty else {
-                    throw LAIError.message("Configura FluidWorker y los modelos de diarización en Ajustes → Modelos.")
+                    throw LAIError.message("Abre Ajustes → Modelos para preparar la separación de voces.")
                 }
                 try await worker.start(executable: executable, arguments: ["--diarize", models])
                 started = true

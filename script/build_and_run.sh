@@ -36,6 +36,15 @@ case "$MODE" in
   run) /usr/bin/open -n "$APP_BUNDLE" ;;
   --verify) /usr/bin/open -n "$APP_BUNDLE"; sleep 2; pgrep -x "$APP_NAME" >/dev/null ;;
   --install)
+    FLUID_HELPER="${PAIMON_FLUID_WORKER:-$HOME/Library/Application Support/PAIMON Tools/FluidWorker}"
+    if [[ -x "$FLUID_HELPER" ]]; then
+      /usr/bin/codesign --verify --strict "$FLUID_HELPER"
+      /bin/mkdir -p "$APP_BUNDLE/Contents/Helpers"
+      /usr/bin/install -m 755 "$FLUID_HELPER" "$APP_BUNDLE/Contents/Helpers/FluidWorker"
+      /bin/cp Integrations/FluidWorker/FluidAudio-LICENSE.txt "$APP_BUNDLE/Contents/Resources/"
+      /usr/bin/codesign --force --sign - --options runtime --entitlements Resources/LocalAudioIntelligence.entitlements "$APP_BUNDLE"
+      /usr/bin/codesign --verify --deep --strict "$APP_BUNDLE"
+    fi
     # Let the app flush capture and SQLite instead of killing it mid-write.
     /usr/bin/xcrun swift -module-cache-path "$SWIFTPM_MODULECACHE_OVERRIDE" -e '
       import AppKit

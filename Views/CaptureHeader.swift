@@ -64,7 +64,7 @@ struct CaptureHeader:View {
                 } else {
                     Toggle("Separar voces",isOn:$model.diarizationEnabled)
                         .toggleStyle(.checkbox)
-                        .help("Para la próxima grabación o importación. Requiere FluidWorker y los modelos locales en Ajustes → Modelos.")
+                        .help("Para la próxima grabación o importación. Descarga los modelos en Ajustes → Modelos.")
                         .accessibilityIdentifier("enableDiarization")
                 }
             }.font(.caption)

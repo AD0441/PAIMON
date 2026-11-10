@@ -40,6 +40,10 @@ final class AppModel {
     var segments:[TranscriptSegment]=[] { didSet { refreshSpeakers() } }
     private(set) var speakerLabels:[String:SessionSpeaker]=[:]
     @ObservationIgnored private var speakerTask:Task<Void,Never>?
+    @ObservationIgnored private var diarizationDownload:Task<Void,Never>?
+    private(set) var diarizationProgress:Double?
+    private(set) var diarizationModelError:String?
+    private(set) var hasDownloadedDiarizationModels=DiarizationModels.installed
     var diarizationEnabled:Bool {
         get { settings.diarizationEnabled==true }
         set { settings.diarizationEnabled=newValue }
@@ -825,6 +829,38 @@ final class AppModel {
             if current?.id==session.id { current=session }
             await refreshSessions()
         } catch { message=error.localizedDescription }
+    }
+    func downloadDiarizationModels() {
+        guard !active,diarizationDownload==nil else { return }
+        diarizationModelError=nil
+        diarizationProgress=0
+        diarizationDownload=Task { [weak self] in
+            do {
+                let directory=try await DiarizationModels.download { [weak self] fraction in
+                    await self?.showDiarizationDownload(fraction)
+                }
+                self?.settings.diarizationModels=directory.path
+                self?.hasDownloadedDiarizationModels=true
+            } catch is CancellationError {
+            } catch let error as URLError where error.code == .cancelled {
+            } catch {
+                self?.diarizationModelError=error.localizedDescription
+            }
+            self?.diarizationProgress=nil
+            self?.diarizationDownload=nil
+        }
+    }
+    private func showDiarizationDownload(_ fraction:Double) { diarizationProgress=fraction }
+    func cancelDiarizationDownload() { diarizationDownload?.cancel() }
+    func removeDiarizationModels() {
+        guard !active,diarizationDownload==nil else { return }
+        do {
+            try DiarizationModels.remove()
+            hasDownloadedDiarizationModels=false
+            if settings.diarizationModels==DiarizationModels.directory.path { settings.diarizationModels=nil }
+            diarizationEnabled=false
+            diarizationModelError=nil
+        } catch { diarizationModelError=error.localizedDescription }
     }
     func installSpeech() async {
         speechStatus="Descargando recursos de voz autorizados…"

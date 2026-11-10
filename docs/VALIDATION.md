@@ -263,3 +263,14 @@ PAIMON 0.7.1 (17) se compiló en Release arm64, se instaló en Aplicaciones y se
 - `PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh` pasó 96 pruebas, incluidas importación con Apple Speech y audio sintético, activación y desactivación de la integración mediante un ejecutable de prueba, alineación temporal, separación de fuentes, nombres persistentes y borrado en cascada. Se comprobó la respuesta de FluidWorker real cuando faltan los modelos.
 - Para reproducir la prueba pendiente con inferencia real, [prepara los modelos](DEPENDENCIES.md#diarización-local-opcional), activa **Separar voces** e importa un audio de prueba con al menos dos voces alternadas y turnos de varios segundos. Comprueba que una voz que reaparece conserva su etiqueta. Pulsa la etiqueta, guarda el nombre y vuelve a abrir la sesión. Después reproduce el mismo audio en otra aplicación y repite con captura del sistema, incluyendo una pausa y reanudación.
 - Pendientes la precisión con dos o más voces, el retraso en captura real y la memoria adicional de Core ML. Las pruebas automáticas de etiquetas verifican la integración y usan respuestas deterministas.
+
+## Descarga de modelos desde Ajustes · PAIMON 0.7.2 (18)
+
+Xcode compiló Release arm64 y se verificó el inicio desde Aplicaciones. El ejecutable FluidWorker y su licencia están dentro del bundle firmado y del ZIP actual. Se verificó la firma de ambos ZIP extraídos.
+
+`PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh` pasó 97 pruebas. El instalador aceptó un archivo con el digest correcto, reutilizó una instalación íntegra y descartó una descarga alterada sin dejar restos. Las consultas de cabecera a ambos pesos y al aviso de atribución devolvieron HTTP 200. La descarga de los pesos queda a cargo del botón explícito en Ajustes.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.7.2 (18) | `040d10fcd2ddd9263d0d0f196f3eec4d0c23a66bf35a1d30e834f522b188523c` |
+| `PAIMON-anterior.zip` | 0.7.1 (17) | `47ad0ffc3ded763b14a019dd5343f2177031dfb1c312b4abc612612b66913423` |

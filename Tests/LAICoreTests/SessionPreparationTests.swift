@@ -252,3 +252,33 @@ func optionalDiarizationKeepsImportAndPersistsLabels(_ enabled:Bool) async throw
     try await reopened.delete(session:session.id)
     #expect(try await store.speakers(for:segments,session:session.id).isEmpty)
 }
+
+@Test(arguments:[false,true])
+func diarizationModelInstallationVerifiesFilesBeforeSelectingThem(_ corrupt:Bool) async throws {
+    let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:root) }
+    let destination=root.appendingPathComponent("installed")
+    let asset=DiarizationModels.Asset("speaker.mlmodelc/weights.bin",3,"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    let fetch:@Sendable (URL) async throws -> URL = { url in
+        #expect(url.host=="huggingface.co")
+        #expect(url.path.hasSuffix("/speaker.mlmodelc/weights.bin"))
+        let temporary=root.appendingPathComponent("download")
+        try Data((corrupt ? "bad":"abc").utf8).write(to:temporary)
+        return temporary
+    }
+    if corrupt {
+        await #expect(throws:LAIError.self) {
+            _=try await DiarizationModels.install(at:destination,assets:[asset],fetch:fetch,progress:{ _ in })
+        }
+        #expect(try FileManager.default.contentsOfDirectory(atPath:root.path).isEmpty)
+    } else {
+        let result=try await DiarizationModels.install(at:destination,assets:[asset],fetch:fetch,progress:{ _ in })
+        #expect(result==destination)
+        #expect(try Data(contentsOf:result.appendingPathComponent(asset.path))==Data("abc".utf8))
+        _=try await DiarizationModels.install(at:destination,assets:[asset],fetch:{ _ in
+            Issue.record("An intact model was downloaded again")
+            throw LAIError.message("Unexpected network request")
+        },progress:{ _ in })
+        #expect(try FileManager.default.contentsOfDirectory(atPath:root.path)==["installed"])
+    }
+}

@@ -33,16 +33,13 @@ El manifiesto de preparación excluye el artefacto NeMo de normalización de tex
 
 ### Diarización local opcional
 
-1. Compila de nuevo `FluidWorker` con `./script/prepare_fluid.sh` y selecciónalo en **Ajustes → Modelos**. El mismo ejecutable admite transcripción y diarización. Puedes usar Apple Speech y dejar vacía la carpeta Parakeet si solo necesitas separar voces.
-2. Revisa [la procedencia y licencias de los modelos](https://huggingface.co/FluidInference/speaker-diarization-coreml/blob/main/NOTICE.md). Obtén explícitamente del [repositorio oficial de pesos](https://huggingface.co/FluidInference/speaker-diarization-coreml/tree/7eab74f) las carpetas completas `pyannote_segmentation.mlmodelc` y `wespeaker_v2.mlmodelc`. Por ejemplo, con el CLI de Hugging Face instalado:
+En la app instalada, abre **Ajustes → Modelos → Diarización** y pulsa **Descargar modelos**. PAIMON obtiene unos 14 MB desde Hugging Face, verifica tamaño y digest por archivo, instala ambos modelos y selecciona la carpeta. Activa **Separar voces** y pulsa un hablante en la transcripción para cambiarle el nombre. **Borrar modelos** elimina la descarga de PAIMON y desactiva la opción. Las carpetas seleccionadas manualmente se gestionan desde **Usar modelos propios**.
 
-   ```bash
-   hf download FluidInference/speaker-diarization-coreml --revision 7eab74f --include 'pyannote_segmentation.mlmodelc/**' 'wespeaker_v2.mlmodelc/**' --local-dir "$HOME/Library/Application Support/PAIMON Models/Diarization"
-   ```
+La compilación empaquetada incluye FluidWorker y su licencia Apache 2.0. Para empaquetar desde un checkout limpio, compila primero con `./script/prepare_fluid.sh` y ejecuta `PAIMON_FLUID_WORKER=/ruta/al/FluidWorker ./script/build_and_run.sh --install`. El mismo ejecutable admite transcripción y diarización.
 
-3. Selecciona la carpeta que contiene ambos modelos en **Ajustes → Modelos → Diarización**. Marca **Separar voces** antes de iniciar una captura o importar. Pulsa un hablante en la transcripción para cambiar su nombre en esa sesión.
+Los pesos son conversiones a Core ML de pyannote y WeSpeaker por Fluid Inference. La app descarga también los avisos de atribución desde la misma revisión fijada. [Procedencia y licencias](https://huggingface.co/FluidInference/speaker-diarization-coreml/blob/7eab74f3463c736418d0eb10296261ae581146c9/NOTICE.md) · [Archivos de los modelos](https://huggingface.co/FluidInference/speaker-diarization-coreml/tree/7eab74f3463c736418d0eb10296261ae581146c9).
 
-La app carga los archivos locales mediante `DiarizerModels.load(localSegmentationModel:localEmbeddingModel:)` y no ejecuta la descarga. La configuración permite CPU y Neural Engine. Core ML decide dónde se ejecuta cada operación. La cola de captura admite 32 búferes y se conservan ventanas PCM de hasta diez segundos por fuente, más el bloque entrante. En vivo, los turnos pueden aparecer después del texto. Una pausa o un bloque perdido separan ventanas sin desplazar la transcripción. Los turnos ambiguos quedan sin etiqueta. Micrófono y sistema mantienen identificadores independientes.
+La app carga los archivos locales mediante `DiarizerModels.load(localSegmentationModel:localEmbeddingModel:)` durante las sesiones. La descarga solo se inicia al pulsar el botón. La configuración permite CPU y Neural Engine. Core ML decide dónde se ejecuta cada operación. La cola de captura admite 32 búferes y se conservan ventanas PCM de hasta diez segundos por fuente, más el bloque entrante. En vivo, los turnos pueden aparecer después del texto. Una pausa o un bloque perdido separan ventanas sin desplazar la transcripción. Los turnos ambiguos quedan sin etiqueta. Micrófono y sistema mantienen identificadores independientes.
 
 ## MLX opcional
 

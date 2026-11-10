@@ -1,6 +1,83 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Descargar modelos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download models"
+          }
+        }
+      }
+    },
+    "Descargando modelos…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading models…"
+          }
+        }
+      }
+    },
+    "Cancelar descarga": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel download"
+          }
+        }
+      }
+    },
+    "Modelos instalados · disponibles sin Internet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Models installed · available offline"
+          }
+        }
+      }
+    },
+    "Borrar modelos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete models"
+          }
+        }
+      }
+    },
+    "Aproximadamente 14 MB desde Hugging Face. Después puedes separar voces sin Internet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About 14 MB from Hugging Face. Separate voices offline after downloading."
+          }
+        }
+      }
+    },
+    "Usar modelos propios": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use your own models"
+          }
+        }
+      }
+    },
     "Separar voces": {
       "extractionState": "manual",
       "localizations": {
@@ -23,13 +100,13 @@
         }
       }
     },
-    "Para la próxima grabación o importación. Requiere FluidWorker y los modelos locales en Ajustes → Modelos.": {
+    "Para la próxima grabación o importación. Descarga los modelos en Ajustes → Modelos.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "For the next recording or import. Requires FluidWorker and the local models in Settings → Models."
+            "value": "For the next recording or import. Download the models in Settings → Models."
           }
         }
       }

@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
 - **Versión del documento:** 1.1 · **Fecha:** 9 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.7.1 (17).
+- **Base revisada:** PAIMON 0.7.2 (18).
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -149,7 +149,7 @@ No se consideran funciones actuales: cancelación acústica completa, transcripc
 | RND-05 | P1 | Evitar trabajo recurrente innecesario: búsquedas cancelables, indicadores agrupados y lista de apps por notificaciones. | **V:** mejoras 0.6.0; métricas cada 5 s con ventana abierta, sin afirmar consumo cero en reposo. |
 | ENT-01 | P0 | Proyecto Xcode compilable, scripts, dependencias documentadas, pruebas reproducibles y resultados con versión/entorno. | **V:** 84 pruebas registradas y fixture sintético local; scripts de diagnóstico disponibles. No se vuelven a ejecutar por esta edición documental. |
 | ENT-02 | P0 | Validar macOS 26, permisos y recorrido completo con el binario distribuido antes de llamar estable a la entrega. | **N:** build 13 probó importación/síntesis e interfaz aislada, no Core Audio/micrófono actual ni macOS 26. |
-| ENT-03 | P0 | Mantener proyecto limpio: Git, fuentes, evidencias, dos ZIP y acceso a app instalada; sin acumular builds y copias completas. | **V:** actual 0.7.1 (17), anterior 0.7.0 (16). La copia del proyecto enlaza a `/Applications/PAIMON.app`. |
+| ENT-03 | P0 | Mantener proyecto limpio: Git, fuentes, evidencias, dos ZIP y acceso a app instalada; sin acumular builds y copias completas. | **V:** actual 0.7.2 (18), anterior 0.7.1 (17). La copia del proyecto enlaza a `/Applications/PAIMON.app`. |
 | ENT-04 | P1 | Distribución verificable con versión, SHA-256, recursos GitHub y firma adecuada para otros Mac. | **P:** release/ZIP/hash y firma ad hoc existentes; Developer ID, notarización y comprobación en otro Mac pendientes. No sustituir tags publicados. |
 
 ## 13. Mejoras realizadas desde los problemas reportados

@@ -84,16 +84,34 @@ struct SettingsView:View {
                     Text("Ejecuta script/prepare_fluid.sh para compilar el motor. Los modelos se preparan por separado y no se descargan al iniciar una sesión.").font(.caption).foregroundStyle(.secondary)
                 }
                 Section("Diarización · instalación opcional") {
-                    HStack {
-                        TextField("Carpeta de modelos de diarización",text:Binding(
-                            get:{model.settings.diarizationModels ?? ""},
-                            set:{model.settings.diarizationModels=$0}
-                        ))
-                        Button("Elegir…") {
-                            if let path=model.choosePath(folder:true) { model.settings.diarizationModels=path }
-                        }
+                    Toggle("Separar voces",isOn:$model.diarizationEnabled).toggleStyle(.checkbox)
+                        .accessibilityIdentifier("settingsEnableDiarization")
+                    if let fraction=model.diarizationProgress {
+                        ProgressView("Descargando modelos…",value:fraction)
+                        Button("Cancelar descarga") { model.cancelDiarizationDownload() }
+                    } else if model.hasDownloadedDiarizationModels {
+                        Label("Modelos instalados · disponibles sin Internet",systemImage:"checkmark.circle")
+                        Button("Borrar modelos",role:.destructive) { model.removeDiarizationModels() }
+                            .accessibilityIdentifier("removeDiarizationModels")
+                    } else {
+                        Button("Descargar modelos") { model.downloadDiarizationModels() }
+                            .accessibilityIdentifier("downloadDiarizationModels")
+                        Text("Aproximadamente 14 MB desde Hugging Face. Después puedes separar voces sin Internet.").font(.caption).foregroundStyle(.secondary)
                     }
-                    Text("Usa el mismo FluidWorker. Selecciona la carpeta con pyannote_segmentation.mlmodelc y wespeaker_v2.mlmodelc. Los modelos solo se leen del disco.").font(.caption).foregroundStyle(.secondary)
+                    if let error=model.diarizationModelError {
+                        Text(error).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                    }
+                    DisclosureGroup("Usar modelos propios") {
+                        HStack {
+                            TextField("Carpeta de modelos de diarización",text:Binding(
+                                get:{model.settings.diarizationModels ?? ""},
+                                set:{model.settings.diarizationModels=$0.isEmpty ? nil:$0}
+                            ))
+                            Button("Elegir…") {
+                                if let path=model.choosePath(folder:true) { model.settings.diarizationModels=path }
+                            }
+                        }.disabled(model.diarizationProgress != nil)
+                    }
                 }
                 Section("MLX · instalación opcional") {
                     pathRow("Python de MLX",key:\.mlxPython,folder:false)

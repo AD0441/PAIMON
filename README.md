@@ -6,7 +6,7 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Código fuente 0.7.1" src="https://img.shields.io/badge/código%20fuente-0.7.1-58616B?style=flat-square">
+    <img alt="Código fuente 0.7.2" src="https://img.shields.io/badge/código%20fuente-0.7.2-58616B?style=flat-square">
   </p>
   <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1">Descargar candidata 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
@@ -53,14 +53,14 @@ Las imágenes de revisión usan datos sintéticos y una instancia separada de la
 
 </details>
 
-## Novedades en main · 0.7.1 (17)
+## Novedades en main · 0.7.2 (18)
 
-- **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Requiere FluidWorker y dos modelos Core ML locales.
+- **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Descarga los modelos desde Ajustes con un botón. La aplicación empaquetada incluye FluidWorker.
 - **Mejora el nivel al importar.** La normalización opcional nivela voz baja y suaviza picos. Conserva el archivo original.
 - **Revisa acuerdos y pendientes.** La vista dedicada reúne decisiones, compromisos y preguntas abiertas con sus evidencias. Las exportaciones conservan el informe completo.
 - **Elimina sesiones y sus datos asociados.** Al borrar una sesión, PAIMON retira su audio archivado, transcripción, resumen, nombres, marcadores e índices locales.
 
-Se verificaron la compilación arm64 y 96 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#diarización-local--10-de-noviembre-de-2026).
+Se verificaron la compilación arm64 y 97 pruebas en un M1 de 8 GB. Quedan por medir la precisión y el consumo adicional de la diarización con los pesos Core ML. [Resultados](docs/VALIDATION.md#diarización-local--10-de-noviembre-de-2026).
 
 ## Candidata publicada 0.7.0 · compilación 15
 
@@ -88,7 +88,7 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
-La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.1 (17) y 0.7.0 (16) en esta instalación. Para obtener 0.7.1 desde GitHub, compila el código de `main`.
+La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.2 (18) y 0.7.1 (17) en esta instalación. Para obtener 0.7.2 desde GitHub, compila el código de `main`.
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
@@ -110,7 +110,7 @@ La síntesis de Apple exige un **Resumen general** antes de marcarse como final.
 
 **Separar voces** se activa antes de iniciar la captura o de importar audio. Las etiquetas aparecen junto al fragmento cuando el motor encuentra un hablante predominante. Pulsa **Hablante 1**, **Hablante 2** u otra etiqueta para poner un nombre que se conserva en esa sesión. El audio de sistema y micrófono mantiene sus propias etiquetas.
 
-Requiere el ejecutable FluidWorker actualizado y dos modelos Core ML locales. El interruptor está apagado por defecto. [Preparar los modelos de diarización](docs/DEPENDENCIES.md#diarización-local-opcional).
+En **Ajustes → Modelos**, pulsa **Descargar modelos** (unos 14 MB) y activa la casilla **Separar voces**. La descarga se verifica y se selecciona automáticamente. **Borrar modelos** libera ese espacio y apaga la opción. [Detalles del motor y de los modelos](docs/DEPENDENCIES.md#diarización-local-opcional).
 
 ## Marcadores, búsqueda y plantillas
 
