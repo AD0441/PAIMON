@@ -17,12 +17,13 @@
 
 ## Qué nos diferencia
 
-**Del audio que ya suena en tu Mac a respuestas que puedes comprobar.** Pregunta qué se decidió, quién quedó a cargo o cuándo se habló de un tema. Las citas del resumen y del Asistente te llevan al fragmento de la transcripción que respalda la respuesta.
+**Resumen, Sentimientos y Asistente en tu Mac.** PAIMON convierte una misma conversación en un informe, un gráfico del tono del texto y un asistente al que puedes hacerle preguntas. Cada vista te permite volver a lo que se dijo.
 
-- **Pregunta y sigue conversando.** El Asistente usa Apple Intelligence en el Mac para responder sobre la sesión elegida. Si los fragmentos consultados no respaldan una respuesta, te lo indica. [Ver el Asistente en uso](#asistente-local-de-la-transcripción).
-- **Llévate los acuerdos y las tareas.** Revisa decisiones, compromisos y preguntas abiertas con sus citas. Copia el informe con formato o expórtalo en TXT, Markdown, PDF o JSON.
-- **Captura lo que ya escuchas.** Graba el audio del sistema o de una aplicación sin instalar dispositivos virtuales. Añade el micrófono cuando lo necesites, controla la captura desde la barra de menús o importa una grabación.
-- **Tú decides dónde se procesa.** El flujo local funciona sin cuenta, clave API ni telemetría. Si activas Google AI con tu propia clave, solo el resumen se procesa fuera del Mac. El audio y las preguntas del Asistente se quedan en el equipo. [Cómo funciona la opción de Google AI](#google-ai--resumen-externo-opcional).
+- **Resumen local.** Reúne ideas, decisiones, compromisos y preguntas abiertas. Abre las citas en la transcripción y llévate el informe en TXT, Markdown, PDF o JSON.
+- **Análisis de sentimientos local.** Explora cómo cambia el tono del texto a lo largo de la sesión. Selecciona un punto del gráfico o una etiqueta de emoción para revisar los fragmentos asociados. [Ver el análisis de sentimientos](#sentimientos-de-la-transcripción).
+- **Asistente local.** Pregunta qué se decidió o quién quedó a cargo y haz preguntas de seguimiento. Las citas te llevan al fragmento original. Si los pasajes consultados no respaldan una respuesta, te lo indica. [Ver el Asistente en uso](#asistente-local-de-la-transcripción).
+
+Puedes empezar con el audio del sistema, de una aplicación o de un archivo. Con los modelos locales preparados, las tres funciones procesan la sesión en el Mac sin conexión, sin clave API y sin telemetría. El Asistente y las etiquetas de emoción requieren Apple Intelligence. Si eliges [Google AI](#google-ai--resumen-externo-opcional), se envía texto solo para generar el resumen. El audio, el análisis de sentimientos y las preguntas del Asistente se quedan en el Mac.
 
 ## Novedades en PAIMON 0.9.0
 
