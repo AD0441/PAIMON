@@ -1,6 +1,72 @@
 {
   "sourceLanguage": "es",
   "strings": {
+    "Instalación manual…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual setup…"
+          }
+        }
+      }
+    },
+    "Solo para un entorno MLX que ya instalaste por tu cuenta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For an MLX environment you set up yourself."
+          }
+        }
+      }
+    },
+    "Instalación manual de MLX": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual MLX setup"
+          }
+        }
+      }
+    },
+    "Usa estos campos si ya preparaste tu propio entorno. Con «Descargar modelos», PAIMON configura todo automáticamente.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use these fields if you already set up your own environment. Download Models configures everything automatically."
+          }
+        }
+      }
+    },
+    "Script de integración": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Integration script"
+          }
+        }
+      }
+    },
+    "Carpeta del modelo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model folder"
+          }
+        }
+      }
+    },
     "Transcribe audio en varios idiomas en este Mac. Puedes elegirlo como alternativa a Apple Speech.": {
       "extractionState": "manual",
       "localizations": {

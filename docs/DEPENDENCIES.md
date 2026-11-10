@@ -47,7 +47,7 @@ En **Ajustes → Modelos → MLX · Qwen 1.5B**, el botón **Descargar modelos**
 
 El puente `mlx_summary.py` viene en el bundle Xcode. Ejecuta MLX mediante GPU Metal y CPU con contexto acotado, generación determinista y JSON validado. La inferencia usa archivos locales y el proceso se termina al cerrar cada resumen. La casilla de MLX se aplica a nuevas sesiones; las sesiones anteriores conservan su selección de motor.
 
-Para desarrollo o para un modelo compatible propio, `LAI_PYTHON=/ruta/a/python3.11 ./script/prepare_mlx.sh` prepara el entorno manual y **Usar modelos propios** permite elegir las tres rutas. La aplicación requiere Internet al pulsar **Descargar modelos**, que consulta Hugging Face, GitHub y PyPI. Ninguna de esas solicitudes contiene audio ni texto de las sesiones.
+Para desarrollo o para un modelo compatible propio, `LAI_PYTHON=/ruta/a/python3.11 ./script/prepare_mlx.sh` prepara el entorno manual y **Instalación manual…** permite elegir las tres rutas en un panel separado. La aplicación requiere Internet al pulsar **Descargar modelos**, que consulta Hugging Face, GitHub y PyPI. Ninguna de esas solicitudes contiene audio ni texto de las sesiones.
 
 ## Google AI opcional · sin SDK externo
 

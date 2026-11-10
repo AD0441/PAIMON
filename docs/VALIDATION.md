@@ -285,3 +285,12 @@ Pasaron 98 pruebas con `PAIMON_TEST_NATIVE_IMPORT=1 ./script/test.sh`. Los tres 
 | --- | --- | --- |
 | `PAIMON-actual.zip` | 0.7.3 (19) | `6358a80f4817b0c9a8fb6b34b09ebc3a6af651597e501ab7ffcbd7c6582260d3` |
 | `PAIMON-anterior.zip` | 0.7.2 (18) | `499ac860c1aaeb2dac83cabfb918645935aeee54dc59e2d0574fb8030f00daf2` |
+
+## Instalación manual de MLX · PAIMON 0.7.4 (20)
+
+La configuración manual se abre en un panel separado. Xcode compiló Release arm64 y PAIMON inició desde Aplicaciones. Se comprobaron las traducciones incluidas en el bundle y pasaron las 98 pruebas. Se verificaron la firma de ambos respaldos y la coincidencia del ejecutable instalado con el ZIP actual.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.7.4 (20) | `4d3c6ff9c30054729b94027c66496929c4862d7b2e474afae0c4f09ce5069dfc` |
+| `PAIMON-anterior.zip` | 0.7.3 (19) | `1fbd758982cf3100f730ce01833eeae455854eb841e7c7cbcead675983e64e3d` |

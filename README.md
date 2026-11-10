@@ -6,7 +6,7 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Código fuente 0.7.3" src="https://img.shields.io/badge/código%20fuente-0.7.3-58616B?style=flat-square">
+    <img alt="Código fuente 0.7.4" src="https://img.shields.io/badge/código%20fuente-0.7.4-58616B?style=flat-square">
   </p>
   <p><a href="https://github.com/AD0441/PAIMON/releases/tag/v0.7.0-rc.1">Descargar candidata 0.7.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#de-escuchar-a-entender">En uso</a> · <a href="#descargar-instalar-y-ejecutar">Empezar</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
@@ -53,7 +53,7 @@ Las imágenes de revisión usan datos sintéticos y una instancia separada de la
 
 </details>
 
-## Novedades en main · 0.7.3 (19)
+## Novedades en main · 0.7.4 (20)
 
 - **Separa voces.** Activa el interruptor para capturar o importar. Las etiquetas se pueden renombrar por sesión. Descarga los modelos desde Ajustes con un botón. La aplicación empaquetada incluye FluidWorker.
 - **Mejora el nivel al importar.** La normalización opcional nivela voz baja y suaviza picos. Conserva el archivo original.
@@ -88,7 +88,7 @@ No hay cambio automático a la nube. Mientras macOS indica presión de memoria, 
 3. Cierra PAIMON, descomprime y copia **PAIMON.app** a **Aplicaciones**. La firma ad hoc puede impedir abrirla en otros Mac; la firma Developer ID y notarización siguen pendientes.
 4. Abre la app y comprueba los recursos de voz y Apple Intelligence en Configuración. Reproduce audio y pulsa **Iniciar**. macOS solicitará el permiso del audio del sistema y, solo si lo activas, del micrófono.
 
-La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.3 (19) y 0.7.2 (18) en esta instalación. Para obtener 0.7.3 desde GitHub, compila el código de `main`.
+La app está en **/Applications/PAIMON.app** y se abre desde Finder o Spotlight sin Xcode. Actualizar conserva el historial local. En el proyecto, **PAIMON.app** es un enlace a esa instalación. **Versiones/PAIMON-actual.zip** y **Versiones/PAIMON-anterior.zip** conservan 0.7.4 (20) y 0.7.3 (19) en esta instalación. Para obtener 0.7.4 desde GitHub, compila el código de `main`.
 
 El instalador verifica la firma y el ZIP extraído antes de sustituir la aplicación; recompilar la misma versión no desplaza el archivo anterior. El enlace evita que File Provider modifique los recursos firmados del bundle. Para llevarla a otro Mac usa el ZIP.
 
@@ -113,7 +113,7 @@ En **Ajustes → Modelos**, cada motor opcional tiene una explicación, una casi
 - **FluidAudio con Parakeet Redux** transcribe audio multilingüe en el Mac. Requiere aproximadamente 220 MB.
 - **MLX con Qwen 1.5B** resume la transcripción usando la GPU del Mac. Usa cerca de 1,4 GB de disco con su entorno local incluido.
 
-Tras la descarga, los motores trabajan sin Internet. Los recursos de Apple siguen bajo gestión de macOS. [Detalles de los modelos y del entorno](docs/DEPENDENCIES.md).
+Si preparaste un entorno MLX propio, las rutas están en **Instalación manual…**. Tras la descarga, los motores trabajan sin Internet. Los recursos de Apple siguen bajo gestión de macOS. [Detalles de los modelos y del entorno](docs/DEPENDENCIES.md).
 
 ## Separar voces · opcional
 

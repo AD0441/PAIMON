@@ -4,6 +4,7 @@ import LAICore
 struct SettingsView:View {
     @Bindable var model:AppModel
     @State private var googleKey=""
+    @State private var showManualMLX=false
     var body:some View {
         TabView {
             Form {
@@ -117,11 +118,10 @@ struct SettingsView:View {
                         set:{model.settings.summary=$0 ? .mlx:.apple}
                     )).toggleStyle(.checkbox)
                     modelActions(.mlx,size:"Aproximadamente 1,4 GB instalados con su entorno local.")
-                    DisclosureGroup("Usar modelos propios") {
-                        pathRow("Python de MLX",key:\.mlxPython,folder:false)
-                        pathRow("mlx_summary.py",key:\.mlxScript,folder:false)
-                        pathRow("Modelo cuantizado local",key:\.mlxModel,folder:true)
-                    }.disabled(model.installingModel != nil)
+                    Button("Instalación manual…") { showManualMLX=true }
+                        .buttonStyle(.link)
+                        .help("Solo para un entorno MLX que ya instalaste por tu cuenta.")
+                        .disabled(model.installingModel != nil)
                 }
             }.formStyle(.grouped).disabled(model.active).tabItem { Label("Modelos",systemImage:"shippingbox") }
             Form {
@@ -153,8 +153,26 @@ struct SettingsView:View {
                 }
             }.formStyle(.grouped).tabItem { Label("Apariencia",systemImage:"paintpalette") }
         }.padding(12).frame(width:720,height:640)
+            .sheet(isPresented:$showManualMLX) { manualMLXSettings }
             .modifier(AppTheme(palette:model.settings.colorPalette ?? .petroleum,language:model.settings.interfaceLanguage ?? .spanish)).onDisappear { googleKey="" }
     }
+    private var manualMLXSettings: some View {
+        VStack(alignment:.leading,spacing:16) {
+            Text("Instalación manual de MLX").font(.headline)
+            Text("Usa estos campos si ya preparaste tu propio entorno. Con «Descargar modelos», PAIMON configura todo automáticamente.")
+                .foregroundStyle(.secondary)
+            Form {
+                pathRow("Python de MLX",key:\.mlxPython,folder:false)
+                pathRow("Script de integración",key:\.mlxScript,folder:false)
+                pathRow("Carpeta del modelo",key:\.mlxModel,folder:true)
+            }.formStyle(.grouped).disabled(model.active || model.installingModel != nil)
+            HStack {
+                Spacer()
+                Button("Listo") { showManualMLX=false }.keyboardShortcut(.defaultAction)
+            }
+        }.padding(24).frame(width:550,height:310)
+    }
+
     @ViewBuilder private func modelActions(_ package:OptionalModelPackage,size:LocalizedStringKey) -> some View {
         if model.installingModel==package {
             ProgressView(value:model.modelDownloadProgress) {
