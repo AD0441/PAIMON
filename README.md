@@ -15,9 +15,14 @@
 
 *Composición promocional generada con IA a partir de recursos reales de la app. [Procedencia y capturas originales](docs/assets/promo/photographic-cover.md).*
 
-PAIMON captura el audio del Mac y lo convierte en transcripciones y resúmenes con referencias al original. Incluye captura del sistema o de una app, micrófono opcional, búsqueda y exportación; también se controla desde la barra de menús.
+## Qué nos diferencia
 
-**Procesamiento local por defecto, sin telemetría.** Google AI es una opción externa de resumen: requiere activación y una clave propia guardada en el Llavero. Al elegirla, se envían texto, contexto y resúmenes previos a Google, nunca audio. Todos los motores se aplazan durante presión de memoria; no se han medido ahorros de RAM.
+**Del audio que ya suena en tu Mac a respuestas que puedes comprobar.** Pregunta qué se decidió, quién quedó a cargo o cuándo se habló de un tema. Las citas del resumen y del Asistente te llevan al fragmento de la transcripción que respalda la respuesta.
+
+- **Pregunta y sigue conversando.** El Asistente usa Apple Intelligence en el Mac para responder sobre la sesión elegida. Si los fragmentos consultados no respaldan una respuesta, te lo indica. [Ver el Asistente en uso](#asistente-local-de-la-transcripción).
+- **Llévate los acuerdos y las tareas.** Revisa decisiones, compromisos y preguntas abiertas con sus citas. Copia el informe con formato o expórtalo en TXT, Markdown, PDF o JSON.
+- **Captura lo que ya escuchas.** Graba el audio del sistema o de una aplicación sin instalar dispositivos virtuales. Añade el micrófono cuando lo necesites, controla la captura desde la barra de menús o importa una grabación.
+- **Tú decides dónde se procesa.** El flujo local funciona sin cuenta, clave API ni telemetría. Si activas Google AI con tu propia clave, solo el resumen se procesa fuera del Mac. El audio y las preguntas del Asistente se quedan en el equipo. [Cómo funciona la opción de Google AI](#google-ai--resumen-externo-opcional).
 
 ## Novedades en PAIMON 0.9.0
 
@@ -44,16 +49,6 @@ El Asistente requiere Apple Intelligence disponible en el Mac. Procesa las pregu
 **Concéntrate en lo que vale la pena.** Creamos herramientas nativas para Mac que reúnen lo necesario en un flujo claro: menos pasos repetidos, decisiones visibles y control sobre tu trabajo. En PAIMON, eso significa atender a la conversación y después revisar qué se dijo, qué se decidió y de dónde sale cada conclusión.
 
 Compartimos una filosofía y una [identidad visual](docs/FAMILY.md); cada aplicación conserva su propósito, su sello y sus límites.
-
-## Qué nos diferencia
-
-| Lo que necesitas | Nuestra ventaja práctica | Alcance que debes conocer |
-| --- | --- | --- |
-| Capturar lo que ya escuchas | Audio del sistema o de una app, micrófono opcional y control desde la barra de menús. | La captura y los recursos de voz requieren permisos y disponibilidad del sistema. |
-| Volver a la evidencia de una conclusión | Resúmenes con citas temporales a la transcripción; originales conservados, búsqueda y marcadores. | Las citas ayudan a revisar el resultado; no garantizan una transcripción o síntesis sin errores. |
-| Decidir dónde se procesa el contenido | Procesamiento local por defecto, sin telemetría; exportación TXT, Markdown, PDF y JSON. | Google AI es opcional: al activarlo se envían texto y contexto a Google; nunca audio. |
-
-Si necesitas una plataforma de notas compartidas, [Otter](https://help.otter.ai/hc/en-us/articles/360048269733-Record-a-conversation) ofrece grabación, transcripción y colaboración con cuenta; su transcripción en tiempo real requiere conexión. PAIMON prioriza la captura y la revisión personal en el Mac con procesamiento local por defecto. No sustituye todas las integraciones de una plataforma de equipo ni promete mayor precisión. [Motores y pruebas](docs/VALIDATION.md) · [Limitaciones](docs/LIMITATIONS.md).
 
 ## De escuchar a entender
 
