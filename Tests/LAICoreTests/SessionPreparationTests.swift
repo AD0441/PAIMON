@@ -300,3 +300,39 @@ func optionalModelInstallationVerifiesFilesBeforeSelectingThem(_ package:Optiona
     }
     #expect(try FileManager.default.contentsOfDirectory(atPath:root.path).isEmpty)
 }
+
+@Test func parakeetSplitsLongSpeechAtTheWorkerLimitAndKeepsItsRemainder() throws {
+    let limit=FluidSpeechEngine.Utterance.limit
+    let remainder:[Float]=[0.02,0.03,0.04]
+    var utterance=FluidSpeechEngine.Utterance(samples:[Float](repeating:0.1,count:limit)+remainder,start:8,speech:true)
+    let window=utterance.takeFullWindow()
+    let first=try #require(window)
+    #expect(first.samples.count==limit)
+    #expect(first.start==8)
+    #expect(utterance.start==23)
+    #expect(utterance.samples==remainder)
+    #expect(utterance.speech)
+    let next=utterance.takeFullWindow()
+    #expect(next==nil)
+}
+
+@Test(.enabled(if:ProcessInfo.processInfo.environment["PAIMON_TEST_PARAKEET_WORKER"] != nil),.timeLimit(.minutes(1)))
+func nativeParakeetImportProducesRealSpanishText() async throws {
+    let environment=ProcessInfo.processInfo.environment
+    let executable=try #require(environment["PAIMON_TEST_PARAKEET_WORKER"])
+    let models=try #require(environment["PAIMON_TEST_PARAKEET_MODELS"])
+    let fixture=URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Fixtures/spanish-synthetic.aiff")
+    let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:directory) }
+    var settings=AppSettings()
+    settings.transcription = .fluid
+    settings.fluidWorker=executable
+    settings.fluidModels=models
+    let store=try SessionStore(directory:directory)
+    let session=Session(title:"Parakeet fixture",settings:settings)
+    let events=AsyncStream<PipelineEvent>.makeStream()
+    let completed=try await AudioFileTranscriber.importSession(url:fixture,session:session,store:store,events:events.continuation)
+    let text=try await store.segments(session:session.id).map{$0.1.text}.joined(separator:" ").lowercased()
+    #expect(completed.status=="completed")
+    #expect(text.contains("micrófonos"))
+}

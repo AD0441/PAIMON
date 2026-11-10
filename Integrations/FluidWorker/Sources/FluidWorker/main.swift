@@ -15,7 +15,8 @@ import Darwin
             guard CommandLine.arguments.count==2 else { throw NSError(domain:"FluidWorker",code:1,userInfo:[NSLocalizedDescriptionKey:"Expected local model directory"]) }
             let directory=URL(fileURLWithPath:CommandLine.arguments[1],isDirectory:true)
             let configuration=AsrModels.defaultConfiguration()
-            configuration.computeUnits = .cpuAndNeuralEngine
+            // Redux's first ANE load can outlast the worker timeout on an M1.
+            configuration.computeUnits = .cpuAndGPU
             // loadLocal fails on absent files; it NEVER calls download helpers.
             let models=try AsrModels.loadLocal(from:directory,version:.redux,configuration:configuration)
             let manager=AsrManager(config:.default); try await manager.loadModels(models)

@@ -294,3 +294,16 @@ La configuración manual se abre en un panel separado. Xcode compiló Release ar
 | --- | --- | --- |
 | `PAIMON-actual.zip` | 0.7.4 (20) | `4d3c6ff9c30054729b94027c66496929c4862d7b2e474afae0c4f09ce5069dfc` |
 | `PAIMON-anterior.zip` | 0.7.3 (19) | `1fbd758982cf3100f730ce01833eeae455854eb841e7c7cbcead675983e64e3d` |
+
+## Corrección de Parakeet · PAIMON 0.7.5 (21)
+
+En el M1 de 8 GB, las muestras de pila de la instancia abierta y del ejecutable aislado encontraron a Parakeet Redux esperando la preparación de Core ML para el Neural Engine. Con CPU y GPU, Core ML cargó el encoder en 1,39 s. El ejecutable corregido transcribió la muestra sintética de 9 s en 10,37 s en la primera ejecución. La prueba de importación mediante PAIMON reconoció el texto y terminó en 4,51 s con los recursos ya preparados.
+
+La suite pasó 100 pruebas, incluidas las importaciones reales con Apple Speech y Parakeet y el corte de voz continua al límite de 240.000 muestras. Para repetir la prueba de Parakeet, configura `PAIMON_TEST_PARAKEET_WORKER` con la ruta de FluidWorker corregido y `PAIMON_TEST_PARAKEET_MODELS` con la carpeta de Parakeet instalada, y ejecuta `./script/test.sh`. Se verificó la compilación Release arm64. La prueba utiliza únicamente el audio sintético del proyecto.
+
+Se reconstruyó e instaló la compilación 21 cuando terminó la importación activa. El ejecutable reconstruido transcribió la misma muestra en 4,18 s y coincide byte a byte con el auxiliar de la app instalada. Se verificaron las firmas de ambos ZIP extraídos.
+
+| Respaldo local | Versión | SHA-256 |
+| --- | --- | --- |
+| `PAIMON-actual.zip` | 0.7.5 (21) | `73edfb9621a376e26c836af6a7b8998cdc422ee693fcb731592965371a647fd9` |
+| `PAIMON-anterior.zip` | 0.7.4 (20) | `965cee27f789e1685a85e0ab95167dd4d8947fb76371f36cf1b2b26475f656d5` |
