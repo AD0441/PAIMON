@@ -38,6 +38,9 @@ public struct AppSettings: Codable, Sendable {
     public var enhanceImportedAudio:Bool?
     public var vocalAnalysisEnabled: Bool?
     public var vocalEmotionEnabled: Bool?
+    public var vocalEmotionModel: VocalEmotionModel?
+    public var vocalEmbeddingsEnabled: Bool?
+    public var vocalChangeThreshold: Double?
     public var vocalSoundLabels: [String]?
     public var diarizationEnabled:Bool?
     public var diarizationModels:String?

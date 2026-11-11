@@ -31,6 +31,18 @@ public struct VocalAudioTrack: Sendable, Identifiable {
         }
     }
 
+    @concurrent public func playbackRange(start:Double,end:Double) async throws -> ClosedRange<Double>? {
+        let file=try AVAudioFile(forReading:url)
+        let rate=file.processingFormat.sampleRate
+        var result:ClosedRange<Double>?
+        try await forEachSpan(fileLength:file.length,rate:rate,duration:max(end,Double(file.length)/rate)) { span in
+            guard result==nil,span.start<=start,start<end,end<=span.start+Double(span.count)/rate else { return }
+            let audioStart=Double(span.frame)/rate+start-span.start
+            result=audioStart...(audioStart+end-start)
+        }
+        return result
+    }
+
     struct Span {
         var frame: Int64
         var count: Int64

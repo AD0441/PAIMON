@@ -856,9 +856,10 @@ final class AppModel {
                     case .diarization: self.settings.diarizationModels=directory.path
                     case .parakeet: self.settings.fluidModels=directory.path
                     case .mlx: self.settings.mlxModel=directory.path
-                    case .vocalEmotion:
+                    case .vocalEmotion, .vocalEmotionLarge, .vocalEmotionSuperb:
                         self.settings.vocalAnalysisEnabled = true
                         self.settings.vocalEmotionEnabled = true
+                        self.settings.vocalEmotionModel = VocalEmotionModel.allCases.first { $0.package == package }
                     }
                     self.installedModels.insert(package)
                 }
@@ -876,7 +877,7 @@ final class AppModel {
     }
     func cancelModelDownload() { modelDownload?.cancel() }
     func removeModel(_ package:OptionalModelPackage) {
-        guard !active,!summaryWorking,modelDownload==nil, package != .vocalEmotion || !vocalEmotionWorking else { return }
+        guard !active,!summaryWorking,modelDownload==nil, !package.isVocalEmotion || !vocalEmotionWorking else { return }
         do {
             try package.remove()
             installedModels.remove(package)
@@ -891,8 +892,8 @@ final class AppModel {
             case .mlx:
                 if settings.mlxModel==path { settings.mlxModel="" }
                 settings.summary = .apple
-            case .vocalEmotion:
-                settings.vocalEmotionEnabled = false
+            case .vocalEmotion, .vocalEmotionLarge, .vocalEmotionSuperb:
+                if (settings.vocalEmotionModel ?? .base).package == package { settings.vocalEmotionEnabled = false }
             }
             modelErrors[package]=nil
         } catch { modelErrors[package]=error.localizedDescription }
@@ -939,20 +940,42 @@ final class AppModel {
         guard canEditTranscript,selected==segment.sessionID,let store else { return false }
         do {
             let corrected=try await store.correctSegment(session:segment.sessionID,id:segment.id,text:text)
-            if selected==segment.sessionID {
-                if corrected.text != segment.text { sentimentRevision=UUID() }
-                if let index=segments.firstIndex(where:{$0.id==segment.id}) { segments[index]=corrected }
-                refreshTerms()
-                await refreshProcessingProgress()
-                if selected==segment.sessionID,processingProgress.summaryNeedsRefresh {
-                    summaryStatus="Actualiza el resumen para incluir las correcciones."
-                }
-            }
+            await transcriptWasCorrected(corrected, previousText:segment.text)
             return true
         } catch {
             message=error.localizedDescription
             return false
         }
+    }
+    private func transcriptWasCorrected(_ corrected:TranscriptSegment,previousText:String) async {
+        guard selected==corrected.sessionID else { return }
+        if corrected.text != previousText { sentimentRevision=UUID() }
+        if let index=segments.firstIndex(where:{$0.id==corrected.id}) { segments[index]=corrected }
+        refreshTerms()
+        await refreshProcessingProgress()
+        if selected==corrected.sessionID,processingProgress.summaryNeedsRefresh {
+            summaryStatus="Actualiza el resumen para incluir las correcciones."
+        }
+    }
+    func acceptTranscriptReview(_ review:TranscriptReviewSuggestion) async throws {
+        guard canEditTranscript,!pressure,selected==review.sessionID,let store else {
+            throw LAIError.message("Termina el procesamiento antes de aplicar correcciones.")
+        }
+        let corrected=try await store.acceptReview(id:review.id,session:review.sessionID)
+        await transcriptWasCorrected(corrected,previousText:review.sourceText)
+    }
+    func playTranscriptReview(_ review:TranscriptReviewSuggestion) async {
+        guard !active,selected==review.sessionID,let store else { return }
+        if review.source == .file { await playOriginalAudio(start:review.start,end:review.end); return }
+        do {
+            let directory=await store.directory.appendingPathComponent(review.sessionID.uuidString)
+            guard let track=VocalAudioTrack.archived(in:directory).first(where:{$0.source==review.source}),
+                  let interval=try await track.playbackRange(start:review.start,end:review.end),
+                  selected==review.sessionID,!active else {
+                throw LAIError.message("No hay audio guardado para este intervalo.")
+            }
+            try await importedPlayback.play(track.url,start:interval.lowerBound,end:interval.upperBound)
+        } catch { message=error.localizedDescription }
     }
     private func chooseOriginalAudio(for session:Session) async throws -> URL? {
         let picker=NSOpenPanel()

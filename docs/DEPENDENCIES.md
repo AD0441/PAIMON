@@ -62,3 +62,9 @@ Documentación oficial consultada el 21 de octubre de 2026: [modelos](https://ai
 ## Recursos visuales e idioma · 0.6.0
 
 Sin nuevas dependencias externas: catálogo nativo `Resources/Localizable.xcstrings`, SwiftUI, AppKit y Core Graphics. `script/render_brand.swift` genera las fuentes SVG, PNG y portada; `script/rebuild_icon.sh` usa `sips` e `iconutil` de macOS. [Procedencia del sello y marca](BRAND.md). Ko-fi es un enlace que abre el navegador al pulsarlo; la app no descarga su badge.
+
+## Modelos vocales opcionales y revisión inteligente
+
+PAIMON 0.13.0 permite seleccionar emotion2vec+ Base, Large o Wav2Vec2 Base SUPERB ER. Los dos últimos son conversiones Core ML con clasificación y embeddings en una inferencia. Sus descargas fijan tamaños y SHA-256 e incluyen las licencias originales. No añaden dependencias a SwiftPM ni requieren Python al ejecutar la app. [Procedencia, interfaces, tamaños y preparación de desarrollo](VOCAL-MODELS.md).
+
+La revisión de transcripciones utiliza Apple Foundation Models, el tokenizador del framework y la persistencia SQLite existente. No instala otro modelo ni contacta proveedores externos. [Revisión y trazabilidad](TRANSCRIPT-REVIEW.md).

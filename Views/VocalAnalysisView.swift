@@ -61,7 +61,7 @@ struct VocalAnalysisView: View {
 
     private var paused: Bool { model.active || model.pressure }
     private var emotionEnabled: Bool {
-        model.settings.vocalEmotionEnabled == true && model.installedModels.contains(.vocalEmotion)
+        model.settings.vocalEmotionEnabled == true && model.installedModels.contains((model.settings.vocalEmotionModel ?? .base).package)
     }
 
     private var emotionPoint: VocalEmotionPoint? {
@@ -80,7 +80,7 @@ struct VocalAnalysisView: View {
             VStack(alignment: .leading, spacing: 14) {
                 if mixed {
                     Label("Texto y emociones de voz", systemImage: "waveform.and.text").font(.headline)
-                    Text("Compara la polaridad del texto con las etiquetas que emotion2vec+ estima del audio. Las estimaciones vocales son experimentales.")
+                    Text("Compara la polaridad del texto con las etiquetas del modelo vocal seleccionado. Las estimaciones vocales son experimentales.")
                         .font(.caption).foregroundStyle(.secondary)
                 } else {
                     Label("Análisis vocal", systemImage: "waveform").font(.headline)
@@ -93,7 +93,7 @@ struct VocalAnalysisView: View {
                 } else if tracks.isEmpty {
                     unavailable
                 } else if mixed && !emotionEnabled {
-                    Text("Descarga o activa emotion2vec+ en Ajustes → Modelos → Emociones de voz.")
+                    Text("Descarga o activa el modelo seleccionado en Ajustes → Modelos → Emociones de voz.")
                         .font(.callout).foregroundStyle(.secondary)
                     SettingsLink { Text("Abrir Ajustes") }
                 } else {
@@ -118,6 +118,8 @@ struct VocalAnalysisView: View {
         }
         .task(id: EvidenceRequest(time: mixed ? mixedTime : point?.start, mixed: mixed, revision: model.sentimentRevision)) { await loadEvidence() }
         .onChange(of: source) { reset() }
+        .onChange(of: model.settings.vocalEmotionModel) { reset() }
+        .onChange(of: model.settings.vocalEmbeddingsEnabled) { reset() }
         .onChange(of: mixed) { cancel(); error = nil }
         .onChange(of: emotionEnabled) { _, enabled in
             if !enabled {
@@ -355,12 +357,16 @@ struct VocalAnalysisView: View {
         }
 
         return VStack(alignment: .leading, spacing: 10) {
+            Text(report.model.title).font(.caption).foregroundStyle(.secondary)
             MixedTimeline(text: plotted, voice: voice, labels: labels, duration: duration, selection: $mixedTime)
             if report.sampled {
                 Text("En esta sesión se analizó una muestra de intervalos de voz.").foregroundStyle(.secondary)
             }
             Text("Haz clic en el gráfico para fijar un momento.").foregroundStyle(.secondary)
             if let mixedTime { mixedDetails(at: mixedTime) }
+            if report.points.contains(where: { $0.embedding != nil }) {
+                VocalEmbeddingView(model: model, report: report, source: source, selection: $mixedTime)
+            }
         }
         .font(.caption)
     }
@@ -535,7 +541,8 @@ struct VocalAnalysisView: View {
     private func analyzeEmotion(_ track: VocalAudioTrack, duration: Double, token: UUID) async throws -> VocalEmotionReport {
         model.vocalEmotionWorking = true
         defer { model.vocalEmotionWorking = false }
-        return try await VocalEmotionAnalysis.analyze(track: track, sessionDuration: duration) { fraction in
+        return try await VocalEmotionAnalysis.analyze(track: track, sessionDuration: duration,
+            choice: model.settings.vocalEmotionModel ?? .base, embeddings: model.settings.vocalEmbeddingsEnabled == true) { fraction in
             await MainActor.run {
                 if generation == token { progress = fraction * 0.55 }
             }

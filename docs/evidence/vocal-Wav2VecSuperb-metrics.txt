@@ -1,0 +1,25 @@
+model Wav2VecSuperb.mlmodelc CPU only
+output embedding Optional([1, 256]) Optional(__C.MLMultiArrayDataType)
+output logits Optional([1, 4]) Optional(__C.MLMultiArrayDataType)
+output probs Optional([1, 4]) Optional(__C.MLMultiArrayDataType)
+load 0.013302875 seconds inference 0.941196333 seconds footprintBefore 1606016 footprintAfter 43336568
+probabilities [0.8951714634895325, 0.062149763107299805, 0.042675215750932693, 3.633429059846094e-06]
+embedding 256
+        0.98 real         0.28 user         0.35 sys
+           446627840  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               19004  page reclaims
+               35082  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   8  voluntary context switches
+               39973  involuntary context switches
+          3511382897  instructions retired
+          1638971884  cycles elapsed
+           106365816  peak memory footprint

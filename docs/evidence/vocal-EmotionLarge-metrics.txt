@@ -1,0 +1,25 @@
+model EmotionLarge.mlmodelc CPU only
+output embedding Optional([1, 1024]) Optional(__C.MLMultiArrayDataType)
+output logits Optional([1, 9]) Optional(__C.MLMultiArrayDataType)
+output probs Optional([1, 9]) Optional(__C.MLMultiArrayDataType)
+load 0.032779792 seconds inference 1.594710584 seconds footprintBefore 1606016 footprintAfter 43336760
+probabilities [1.4688952433061786e-05, 8.285283911391161e-06, 3.0949056963436306e-05, 0.08801037818193436, 0.9104922413825989, 4.113959661822264e-08, 0.001188799855299294, 0.0002546682662796229, 6.750108111353015e-11]
+embedding 1024
+        1.67 real         0.47 user         0.66 sys
+           734494720  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               26714  page reclaims
+               60903  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 147  voluntary context switches
+               74314  involuntary context switches
+          5452053072  instructions retired
+          2910352308  cycles elapsed
+            83887160  peak memory footprint

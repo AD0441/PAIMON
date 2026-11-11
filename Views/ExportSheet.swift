@@ -10,6 +10,9 @@ struct ExportSheet:View {
             Text("Exportar sesión").font(.title2.weight(.semibold))
             Picker("Formato",selection:$format) { ForEach(ExportFormat.allCases,id:\.self) { Text($0.rawValue.uppercased()).tag($0) } }.pickerStyle(.segmented)
             Toggle("Transcripción completa",isOn:$options.transcript)
+            if options.transcript {
+                Toggle("Exportar texto original sin correcciones",isOn:$options.originalTranscript)
+            }
             Toggle("Marcadores y notas",isOn:$options.bookmarks)
             Toggle("Anexo de evidencias",isOn:$options.evidence).disabled(format == .json)
             Text(model.ui(format == .json ? "JSON conserva las citas y referencias estructuradas.":"Las citas van en un anexo. PDF y Markdown incluyen enlaces desde el resumen.")).font(.caption).foregroundStyle(.secondary)

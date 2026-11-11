@@ -2,6 +2,7 @@ import SwiftUI
 import LAICore
 struct TranscriptView:View {
     @Bindable var model:AppModel
+    @State private var showReview=false
     @State private var editing:TranscriptSegment?
     @State private var speakerToRename:SpeakerRenameTarget?
     var body:some View {
@@ -23,6 +24,13 @@ struct TranscriptView:View {
                     if model.importedPlayback.isPlaying {
                         Button("Detener reproducción") { model.importedPlayback.stop() }
                     }
+                    Spacer()
+                }.font(.caption).padding(.horizontal,16).padding(.bottom,8)
+            }
+            if model.selectedSession != nil,!model.active {
+                HStack {
+                    Button { showReview=true } label: { Label("Revisar transcripción",systemImage:"text.badge.checkmark") }
+                        .disabled(!model.canEditTranscript || model.pressure)
                     Spacer()
                 }.font(.caption).padding(.horizontal,16).padding(.bottom,8)
             }
@@ -81,6 +89,7 @@ struct TranscriptView:View {
             Text("Vista paginada de 300 fragmentos. Exporta para obtener el documento completo.").font(.caption2).foregroundStyle(.secondary).padding(10)
         }
         .task(id:model.transcriptSearch) { await model.filterTranscript() }
+        .sheet(isPresented:$showReview) { TranscriptReviewView(model:model) }
         .sheet(item:$editing) { segment in TranscriptCorrectionSheet(model:model,segment:segment) }
         .sheet(item:$speakerToRename) { target in SpeakerRenameSheet(model:model,target:target) }
     }

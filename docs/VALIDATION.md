@@ -390,3 +390,23 @@ En la instancia aislada se verificó la descarga desde Ajustes y se observaron l
 Los gráficos de texto y voz reservan la misma columna para sus etiquetas y comparten el área horizontal y el reloj de la sesión. Las emociones tienen una fila por categoría y el punto de cada ventana se dibuja en el centro del intervalo analizado. Al estrechar el panel disminuye la cantidad de horas impresas sin cambiar la escala.
 
 Se renderizó el componente SwiftUI con datos sintéticos de 20 min 40 s y ocho filas, en paneles de 340, 460 y 820 puntos. Las etiquetas quedaron fuera de los datos y el cursor de 00:17:20 coincidió píxel por píxel en ambas gráficas en los tres anchos. Pasó la suite disponible de `./script/test.sh`. Xcode compiló Release arm64 y se verificó la firma de 0.12.1 (28) instalada en Aplicaciones. No se usó el audio de la instancia de revisión del usuario.
+
+## Tres modelos, embeddings y revisión inteligente · PAIMON 0.13.0 (29)
+
+Pasaron 132 pruebas con los modelos vocales nuevos y Apple Intelligence habilitados para las muestras sintéticas. El motor Core ML procesó audio real de la muestra de prueba con Large y SUPERB ER, devolvió vectores finitos de 1024 y 256 componentes y conservó sus tiempos. Apple Foundation Models revisó texto sintético sin modificarlo automáticamente. Las pruebas comprobaron aceptación de varias correcciones, original inmutable, cambios manuales posteriores, rechazo, protección de cifras y negaciones, exportación del original y eliminación de las sugerencias con la sesión.
+
+Una prueba adicional descargó ambos paquetes públicos a almacenamiento temporal, verificó tamaños y SHA-256 y completó la instalación en 24,84 s. No instaló los modelos nuevos en las preferencias del usuario. La versión existente de Base se conserva. La inspección de MLModelDescription confirmó las salidas de las dos conversiones. [Modelos y mediciones](VOCAL-MODELS.md) · [Revisión y trazabilidad](TRANSCRIPT-REVIEW.md).
+
+En una instancia aislada con la grabación sintética se observaron las tres opciones del selector, los botones de descarga separados y la selección de Large, con la activación bloqueada mientras no está instalado. También se revisó la presentación de Ajustes. No se afirma haber completado el recorrido visual del diálogo de revisión: el control de ventanas agotó su tiempo después de cerrar Ajustes. La lógica de revisión y aceptación sí se comprobó mediante las pruebas descritas.
+
+Se compiló Release arm64 con Xcode 27.2 y se instaló 0.13.0 (29) en Aplicaciones, con firma estricta verificada. El proyecto conserva el enlace a la app y dos ZIP: el actual y 0.12.1 (28). No se tocaron las transcripciones de la instancia anterior de revisión.
+
+Para repetir las pruebas específicas en un entorno preparado:
+
+~~~bash
+PAIMON_TEST_EXTENDED_VOICE_MODELS=/ruta/a/los/dos/modelos \
+PAIMON_TEST_APPLE_REVIEW=1 ./script/test.sh
+
+PAIMON_TEST_VOCAL_DOWNLOADS=1 ./script/test.sh \
+  --filter managedVocalDownloadsVerifyAndInstallThePublishedPackages
+~~~

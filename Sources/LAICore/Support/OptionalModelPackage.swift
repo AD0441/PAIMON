@@ -3,7 +3,11 @@ import Foundation
 import Synchronization
 
 public enum OptionalModelPackage: String, CaseIterable, Sendable {
-    case diarization, parakeet, mlx, vocalEmotion
+    case diarization, parakeet, mlx, vocalEmotion, vocalEmotionLarge, vocalEmotionSuperb
+
+    public var isVocalEmotion: Bool { self == .vocalEmotion || isVocalExtension }
+    private var isVocalExtension: Bool { self == .vocalEmotionLarge || self == .vocalEmotionSuperb }
+    public var installedBytes: Int { assets.reduce(0) { $0+$1.bytes } }
 
     private var revision: String {
         switch self {
@@ -11,6 +15,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .parakeet: "8c5ef97a29cd120dc76b354b3f22b7fec3b486f9"
         case .mlx: "8b403126fc14f14cfc99bb4cfa72ecbc129ea677"
         case .vocalEmotion: "704a2cac36227869e3296996f2c4d3a06fc68683"
+        case .vocalEmotionLarge, .vocalEmotionSuperb: "vocal-models-v1"
         }
     }
 
@@ -20,6 +25,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .parakeet: "FluidInference/parakeet-redux-coreml"
         case .mlx: "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
         case .vocalEmotion: "happyface-studio/emotion2vec-plus-base-coreml"
+        case .vocalEmotionLarge, .vocalEmotionSuperb: "AD0441/PAIMON"
         }
     }
 
@@ -29,6 +35,8 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .parakeet: Self.parakeetAssets
         case .mlx: Self.mlxAssets
         case .vocalEmotion: Self.vocalEmotionAssets
+        case .vocalEmotionLarge: Self.vocalEmotionLargeAssets
+        case .vocalEmotionSuperb: Self.vocalEmotionSuperbAssets
         }
     }
 
@@ -39,6 +47,8 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         case .parakeet: name="Parakeet"
         case .mlx: name="MLX-Qwen"
         case .vocalEmotion: name="Emotion2Vec-8bit"
+        case .vocalEmotionLarge: name="Emotion2Vec-Large"
+        case .vocalEmotionSuperb: name="Wav2Vec2-SUPERB"
         }
         return FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0]
             .appendingPathComponent("PAIMON Models",isDirectory:true)
@@ -46,7 +56,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
     }
 
     public var installed: Bool {
-        assets.allSatisfy { asset in
+        !assets.isEmpty && assets.allSatisfy { asset in
             let size=try? directory.appendingPathComponent(asset.path).resourceValues(forKeys:[.fileSizeKey]).fileSize
             return size==asset.bytes
         } && (self != .mlx || ManagedMLXRuntime.isReady(in:directory))
@@ -63,7 +73,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         }
     }
 
-    @concurrent public func download(progress: @Sendable @escaping (Double) async -> Void) async throws -> URL {
+    @concurrent public func download(to destination: URL? = nil, progress: @Sendable @escaping (Double) async -> Void) async throws -> URL {
         let configuration=URLSessionConfiguration.ephemeral
         configuration.httpShouldSetCookies=false
         configuration.urlCredentialStorage=nil
@@ -74,7 +84,7 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         let files=assets
         let total=Double(files.reduce(0) { $0+$1.bytes })
         let fraction=self == .mlx ? 0.94 : 1.0
-        return try await install(at:directory,assets:files,fetch:{ url,asset,completed in
+        return try await install(at:destination ?? directory,assets:files,fetch:{ url,asset,completed in
             let delegate=TransferProgress { received in
                 let value=Double(completed+min(Int(received),asset.bytes))/total*fraction
                 Task { await progress(value) }
@@ -104,11 +114,13 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         let path: String
         let bytes: Int
         let digest: String
+        let remote: String?
 
-        init(_ path: String, _ bytes: Int, _ digest: String) {
+        init(_ path: String, _ bytes: Int, _ digest: String, remote: String? = nil) {
             self.path=path
             self.bytes=bytes
             self.digest=digest
+            self.remote=remote
         }
     }
 
@@ -127,12 +139,14 @@ public enum OptionalModelPackage: String, CaseIterable, Sendable {
         try manager.createDirectory(at:staging,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
         defer { try? manager.removeItem(at:staging) }
         let model=staging.appendingPathComponent("model",isDirectory:true)
-        let base=URL(string:"https://huggingface.co/\(repository)/resolve/\(revision)")!
+        let base=URL(string:isVocalExtension
+            ? "https://github.com/\(repository)/releases/download/\(revision)"
+            : "https://huggingface.co/\(repository)/resolve/\(revision)")!
         let total=Double(assets.reduce(0) { $0+$1.bytes })
         var received=0
         for asset in assets {
             try Task.checkCancellation()
-            let file=try await fetch(base.appendingPathComponent(asset.path),asset,received)
+            let file=try await fetch(base.appendingPathComponent(asset.remote ?? asset.path),asset,received)
             defer { try? manager.removeItem(at:file) }
             try Task.checkCancellation()
             guard try Self.verify(file,asset:asset) else {
@@ -257,4 +271,21 @@ private final class TransferProgress: NSObject, URLSessionDownloadDelegate, Send
     }
 
     func urlSession(_ session:URLSession,downloadTask:URLSessionDownloadTask,didFinishDownloadingTo location:URL) {}
+}
+
+extension OptionalModelPackage {
+    static let vocalEmotionLargeAssets: [Asset] = [
+        Asset("EmotionLarge.mlmodelc/analytics/coremldata.bin", 243, "6373e7c609020109fc95d6df92f08952730bc604ebb425cccfbbcb8bcd68548b", remote: "EmotionLarge-analytics-coremldata.bin"),
+        Asset("EmotionLarge.mlmodelc/coremldata.bin", 435, "e8e026b375ae1f3fe13c01358b3b93a8308d1b5dadf8adf661c124c3827c5e7b", remote: "EmotionLarge-coremldata.bin"),
+        Asset("EmotionLarge.mlmodelc/model.mil", 192849, "f9269c1e1f56062dcf650c39da2e03de60efa86d968ea37301cb2f6c34549735", remote: "EmotionLarge-model.mil"),
+        Asset("EmotionLarge.mlmodelc/weights/weight.bin", 194406208, "30fd1a6067199c75063db0851d30b271b1985a68439843e239c993908e09aca2", remote: "EmotionLarge-weights-weight.bin"),
+        Asset("EmotionLarge-LICENSE.txt", 5835, "12036488c8384dd340e6b3c521eee2adbd59f3c69802419f4ca7c8065ba7b20a", remote: "EmotionLarge-LICENSE.txt"),
+    ]
+    static let vocalEmotionSuperbAssets: [Asset] = [
+        Asset("Wav2VecSuperb.mlmodelc/analytics/coremldata.bin", 243, "fb4c543fa08c2db5512210e4d3407b110c1f67526eb4e4dfbf248e260ca80f68", remote: "Wav2VecSuperb-analytics-coremldata.bin"),
+        Asset("Wav2VecSuperb.mlmodelc/coremldata.bin", 435, "0d1de24bae3eaf1ea8d058bea824d83504e1860707c8ad28daad9fbb2ffefb65", remote: "Wav2VecSuperb-coremldata.bin"),
+        Asset("Wav2VecSuperb.mlmodelc/model.mil", 176800, "3f5ffd234c5c030a8d9c1cf7dcee14fc84c9ec1ea35368610a0f90e64a794f44", remote: "Wav2VecSuperb-model.mil"),
+        Asset("Wav2VecSuperb.mlmodelc/weights/weight.bin", 122055732, "82349c7bd635101dc4df3719892000d93c8f7ec1bb0863648146abe06e4eda5c", remote: "Wav2VecSuperb-weights-weight.bin"),
+        Asset("Wav2VecSuperb-LICENSE.txt", 11747, "94e82bdfe7c904a0f76d2a61c378c4026914211872e2e96e685b513711e2990f", remote: "Wav2VecSuperb-LICENSE.txt"),
+    ]
 }

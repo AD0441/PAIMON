@@ -1,0 +1,32 @@
+[
+  {
+    "path": "Wav2VecSuperb.mlmodelc/analytics/coremldata.bin",
+    "bytes": 243,
+    "sha256": "fb4c543fa08c2db5512210e4d3407b110c1f67526eb4e4dfbf248e260ca80f68",
+    "remote": "Wav2VecSuperb-analytics-coremldata.bin"
+  },
+  {
+    "path": "Wav2VecSuperb.mlmodelc/coremldata.bin",
+    "bytes": 435,
+    "sha256": "0d1de24bae3eaf1ea8d058bea824d83504e1860707c8ad28daad9fbb2ffefb65",
+    "remote": "Wav2VecSuperb-coremldata.bin"
+  },
+  {
+    "path": "Wav2VecSuperb.mlmodelc/model.mil",
+    "bytes": 176800,
+    "sha256": "3f5ffd234c5c030a8d9c1cf7dcee14fc84c9ec1ea35368610a0f90e64a794f44",
+    "remote": "Wav2VecSuperb-model.mil"
+  },
+  {
+    "path": "Wav2VecSuperb.mlmodelc/weights/weight.bin",
+    "bytes": 122055732,
+    "sha256": "82349c7bd635101dc4df3719892000d93c8f7ec1bb0863648146abe06e4eda5c",
+    "remote": "Wav2VecSuperb-weights-weight.bin"
+  },
+  {
+    "path": "Wav2VecSuperb-LICENSE.txt",
+    "bytes": 11747,
+    "sha256": "94e82bdfe7c904a0f76d2a61c378c4026914211872e2e96e685b513711e2990f",
+    "remote": "Wav2VecSuperb-LICENSE.txt"
+  }
+]

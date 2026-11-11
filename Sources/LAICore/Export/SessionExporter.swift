@@ -2,6 +2,7 @@ import Foundation
 public enum ExportFormat: String, CaseIterable, Sendable { case txt, markdown="md", pdf, json }
 public struct ExportOptions: Sendable {
     public var transcript=true
+    public var originalTranscript=false
     public var evidence=true
     public var bookmarks=true
     public var kinds:Set<FindingKind>=Set(FindingKind.allCases)
@@ -11,6 +12,13 @@ public actor SessionExporter {
     private struct EvidencePage:Codable { var findings:[Finding]; var referenceOffset:Int }
     private let store:SessionStore
     public init(store:SessionStore) { self.store=store }
+    private func transcriptVariant(_ segment:TranscriptSegment,original:Bool) -> TranscriptSegment {
+        guard original else { return segment }
+        var value=segment
+        value.text=segment.originalText ?? segment.text
+        value.originalText=nil
+        return value
+    }
     public func export(session:Session,to url:URL,format:ExportFormat,options:ExportOptions) async throws {
         let revision=try await store.transcriptRevision(session:session.id)
         if !options.kinds.isEmpty,try await store.summaryNeedsRefresh(session:session.id) {
@@ -78,12 +86,12 @@ public actor SessionExporter {
                 }
             }
             if options.transcript {
-                try writer.startTranscript()
+                try writer.startTranscript(original:options.originalTranscript)
                 var cursor:Int64=0
                 while true {
                     let rows=try await store.segments(session:session.id,after:cursor,limit:60)
                     if rows.isEmpty { break }
-                    try writer.transcript(rows.map(\.1)); cursor=rows.last!.0
+                    try writer.transcript(rows.map { transcriptVariant($0.1,original:options.originalTranscript) }); cursor=rows.last!.0
                 }
             }
             writer.close()
@@ -94,7 +102,7 @@ public actor SessionExporter {
             if format == .json {
                 try write("{\"schemaVersion\":1,\"session\":")
                 // Deliberately omit settings containing local executable/model paths.
-                let metadata:[String:Any]=["id":session.id.uuidString,"title":session.title,"created":ISO8601DateFormatter().string(from:session.created),"duration":session.duration,"status":session.status,"template":session.template.rawValue]
+                let metadata:[String:Any]=["id":session.id.uuidString,"title":session.title,"created":ISO8601DateFormatter().string(from:session.created),"duration":session.duration,"status":session.status,"template":session.template.rawValue,"transcriptVariant":options.originalTranscript ? "original":"current"]
                 try handle.write(contentsOf:JSONSerialization.data(withJSONObject:metadata,options:[.sortedKeys]))
                 try write(",\"findings\":[")
                 var first=true
@@ -153,13 +161,17 @@ public actor SessionExporter {
                 }
             }
             if format == .json { try write("],\"transcript\":[") }
-            else if options.transcript { try write(format == .markdown ? "\n## Transcripción completa\n\n":"\nTranscripción completa\n\n") }
+            else if options.transcript {
+                let title=options.originalTranscript ? "Transcripción original sin correcciones":"Transcripción completa"
+                try write(format == .markdown ? "\n## \(title)\n\n":"\n\(title)\n\n")
+            }
             if options.transcript {
                 var cursor:Int64=0; var first=true
                 while true {
                     let rows=try await store.segments(session:session.id,after:cursor,limit:200)
                     if rows.isEmpty { break }
-                    for (seq,segment) in rows {
+                    for (seq,value) in rows {
+                        let segment=transcriptVariant(value,original:options.originalTranscript)
                         if format == .json { if !first { try write(",") }; try handle.write(contentsOf:encoder.encode(segment)); first=false }
                         else { try write("[\(timestamp(segment.start)) – \(timestamp(segment.end))] \(segment.source.title)\n\(segment.text)\n\n") }
                         cursor=seq

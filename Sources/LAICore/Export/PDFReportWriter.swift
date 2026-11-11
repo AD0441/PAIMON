@@ -168,7 +168,7 @@ final class PDFReportWriter {
             try paragraph(styled(segment.text,size:10),after:12)
         }
     }
-    func startTranscript() throws { newPage(); try heading("Transcripción completa") }
+    func startTranscript(original:Bool=false) throws { newPage(); try heading(original ? "Transcripción original sin correcciones":"Transcripción completa") }
     func bookmarks(_ bookmarks:[SessionBookmark],start:Bool) throws {
         if start { newPage(); try heading("Marcadores y notas") }
         for bookmark in bookmarks {

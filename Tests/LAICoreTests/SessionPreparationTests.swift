@@ -260,7 +260,8 @@ func optionalModelInstallationVerifiesFilesBeforeSelectingThem(_ package:Optiona
     let destination=root.appendingPathComponent("installed")
     let asset=OptionalModelPackage.Asset("speaker.mlmodelc/weights.bin",3,"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
     let fetch:@Sendable (URL,OptionalModelPackage.Asset,Int) async throws -> URL = { url,_,_ in
-        #expect(url.host=="huggingface.co")
+        let hostedByPaimon = package == .vocalEmotionLarge || package == .vocalEmotionSuperb
+        #expect(url.host == (hostedByPaimon ? "github.com" : "huggingface.co"))
         #expect(url.path.hasSuffix("/speaker.mlmodelc/weights.bin"))
         let temporary=root.appendingPathComponent("download")
         try Data((corrupt ? "bad":"abc").utf8).write(to:temporary)

@@ -1,0 +1,50 @@
+[
+  {
+    "case": "speech",
+    "maxProbabilityError": 0.004617214202880859,
+    "cosineToOriginal": 0.9999297261238098,
+    "originalClass": 4,
+    "coreMLClass": 4,
+    "finite": true
+  },
+  {
+    "case": "speech2",
+    "maxProbabilityError": 0.0048697590827941895,
+    "cosineToOriginal": 0.9999428987503052,
+    "originalClass": 4,
+    "coreMLClass": 4,
+    "finite": true
+  },
+  {
+    "case": "quiet",
+    "maxProbabilityError": 0.0023005492985248566,
+    "cosineToOriginal": 0.9999457001686096,
+    "originalClass": 7,
+    "coreMLClass": 7,
+    "finite": true
+  },
+  {
+    "case": "silence",
+    "maxProbabilityError": 0.004285454750061035,
+    "cosineToOriginal": 0.9998995065689087,
+    "originalClass": 6,
+    "coreMLClass": 6,
+    "finite": true
+  },
+  {
+    "case": "noise",
+    "maxProbabilityError": 0.01987135410308838,
+    "cosineToOriginal": 0.999900221824646,
+    "originalClass": 6,
+    "coreMLClass": 6,
+    "finite": true
+  },
+  {
+    "case": "short",
+    "maxProbabilityError": 0.001104891300201416,
+    "cosineToOriginal": 0.9996240139007568,
+    "originalClass": 3,
+    "coreMLClass": 3,
+    "finite": true
+  }
+]

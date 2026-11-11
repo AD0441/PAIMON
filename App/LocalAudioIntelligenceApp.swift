@@ -10,13 +10,14 @@ struct PaimonApp: App {
         // This code is absent from the distributed build. All review state,
         // including credentials, is separate from the user's installation.
         let args=CommandLine.arguments
+        let reviewID=Bundle.main.bundleIdentifier ?? "local.audio.intelligence.review"
         guard let index=args.firstIndex(of:"--review-directory"),args.count>index+1,
-              let preferences=UserDefaults(suiteName:"local.audio.intelligence.review.preferences") else {
+              let preferences=UserDefaults(suiteName:reviewID+".preferences") else {
             fatalError("La instancia de revisión requiere --review-directory.")
         }
         let directory=URL(fileURLWithPath:args[index+1],isDirectory:true)
         var settings=AppSettings.load(from:preferences); settings.googleEnabled=false; settings.save(to:preferences)
-        do { return AppModel(store:try SessionStore(directory:directory),preferences:preferences,googleClient:GoogleAIClient(keychainService:"local.audio.intelligence.review.google-ai")) }
+        do { return AppModel(store:try SessionStore(directory:directory),preferences:preferences,googleClient:GoogleAIClient(keychainService:reviewID+".google-ai")) }
         catch { fatalError("No se pudo abrir el almacenamiento aislado: \(error)") }
         #else
         return AppModel()

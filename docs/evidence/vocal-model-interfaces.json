@@ -1,0 +1,48 @@
+{
+  "EmotionLarge": {
+    "logits": {
+      "shape": [
+        1,
+        9
+      ],
+      "dataType": "Float32"
+    },
+    "probs": {
+      "shape": [
+        1,
+        9
+      ],
+      "dataType": "Float32"
+    },
+    "embedding": {
+      "shape": [
+        1,
+        1024
+      ],
+      "dataType": "Float32"
+    }
+  },
+  "Wav2VecSuperb": {
+    "logits": {
+      "shape": [
+        1,
+        4
+      ],
+      "dataType": "Float32"
+    },
+    "probs": {
+      "shape": [
+        1,
+        4
+      ],
+      "dataType": "Float32"
+    },
+    "embedding": {
+      "shape": [
+        1,
+        256
+      ],
+      "dataType": "Float32"
+    }
+  }
+}

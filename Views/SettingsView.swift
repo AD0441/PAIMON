@@ -104,21 +104,58 @@ struct SettingsView:View {
                     VocalSoundSettings(model: model)
                 }
                 Section("Emociones de voz · experimental") {
-                    Text("emotion2vec+ Base estima emociones a partir del audio y se ejecuta en este Mac. Descarga verificada de aproximadamente 94 MB.")
-                        .font(.caption).foregroundStyle(.secondary)
+                    Picker("Modelo vocal", selection: Binding(
+                        get: { model.settings.vocalEmotionModel ?? .base },
+                        set: { model.settings.vocalEmotionModel = $0 }
+                    )) {
+                        ForEach(VocalEmotionModel.allCases, id: \.self) { Text($0.title).tag($0) }
+                    }
+                    .disabled(model.vocalEmotionWorking)
                     Toggle("Activar emociones de voz", isOn: Binding(
-                        get: { model.settings.vocalEmotionEnabled == true && model.installedModels.contains(.vocalEmotion) },
+                        get: { model.settings.vocalEmotionEnabled == true && model.installedModels.contains((model.settings.vocalEmotionModel ?? .base).package) },
                         set: { enabled in
                             model.settings.vocalEmotionEnabled = enabled
                             if enabled { model.settings.vocalAnalysisEnabled = true }
                         }
                     ))
                     .toggleStyle(.checkbox)
-                    .disabled(!model.installedModels.contains(.vocalEmotion))
+                    .disabled(!model.installedModels.contains((model.settings.vocalEmotionModel ?? .base).package) || model.vocalEmotionWorking)
                     .accessibilityIdentifier("enableVocalEmotion")
-                    modelActions(.vocalEmotion, size: "El modelo se activa al completar la descarga.")
-                    Link("emotion2vec+ Base · autores y licencia", destination: URL(string: "https://huggingface.co/happyface-studio/emotion2vec-plus-base-coreml")!)
-                        .font(.caption)
+                    Text("Solo se carga el modelo elegido. Las etiquetas son estimaciones experimentales, no una evaluación de la persona.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    ForEach(VocalEmotionModel.allCases, id: \.self) { choice in
+                        VStack(alignment: .leading, spacing: 7) {
+                            Text(choice.title).fontWeight(.semibold)
+                            Text(model.ui(choice.detail)).font(.caption).foregroundStyle(.secondary)
+                            Text(ByteCountFormatter.string(fromByteCount: Int64(choice.package.installedBytes), countStyle: .file))
+                                .font(.caption).foregroundStyle(.secondary)
+                            modelActions(choice.package, size: "El modelo se activa al completar la descarga.")
+                            if model.installedModels.contains(choice.package) {
+                                Button(model.ui((model.settings.vocalEmotionModel ?? .base) == choice ? "Modelo seleccionado" : "Seleccionar modelo")) {
+                                    model.settings.vocalEmotionModel = choice
+                                    model.settings.vocalEmotionEnabled = true
+                                    model.settings.vocalAnalysisEnabled = true
+                                }
+                                .disabled(model.vocalEmotionWorking || (model.settings.vocalEmotionModel ?? .base) == choice)
+                            }
+                        }.padding(.vertical, 5)
+                    }
+                    Toggle("Explorar similitud vocal con embeddings", isOn: Binding(
+                        get: { model.settings.vocalEmbeddingsEnabled == true },
+                        set: { model.settings.vocalEmbeddingsEnabled = $0 }
+                    ))
+                    .disabled((model.settings.vocalEmotionModel ?? .base).embeddingDimension == nil || model.vocalEmotionWorking)
+                    Text("Los embeddings describen patrones de voz. Permiten comparar fragmentos y señalar cambios; no son probabilidades de emoción. Esta opción requiere Large o SUPERB ER.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    HStack {
+                        Text("Umbral de cambio expresivo")
+                        Slider(value: Binding(
+                            get: { model.settings.vocalChangeThreshold ?? 0.2 },
+                            set: { model.settings.vocalChangeThreshold = $0 }
+                        ), in: 0.05...1, step: 0.05)
+                        Text((model.settings.vocalChangeThreshold ?? 0.2).formatted(.number.precision(.fractionLength(2)))).monospacedDigit()
+                    }
+                    .disabled(model.vocalEmotionWorking)
                 }
                 Section("Diarización · instalación opcional") {
                     Text("Separa las voces de una sesión para que puedas asignarles nombres.")
@@ -212,7 +249,7 @@ struct SettingsView:View {
         } else if model.installedModels.contains(package) {
             Label("Modelos instalados · disponibles sin Internet",systemImage:"checkmark.circle")
             Button("Borrar modelos",role:.destructive) { model.removeModel(package) }
-                .disabled(model.installingModel != nil || model.summaryWorking || (package == .vocalEmotion && model.vocalEmotionWorking))
+                .disabled(model.installingModel != nil || model.summaryWorking || (package.isVocalEmotion && model.vocalEmotionWorking))
                 .accessibilityIdentifier("removeModel-\(package.rawValue)")
         } else {
             Button("Descargar modelos") { model.downloadModel(package) }

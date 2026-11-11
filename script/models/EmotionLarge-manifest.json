@@ -1,0 +1,32 @@
+[
+  {
+    "path": "EmotionLarge.mlmodelc/analytics/coremldata.bin",
+    "bytes": 243,
+    "sha256": "6373e7c609020109fc95d6df92f08952730bc604ebb425cccfbbcb8bcd68548b",
+    "remote": "EmotionLarge-analytics-coremldata.bin"
+  },
+  {
+    "path": "EmotionLarge.mlmodelc/coremldata.bin",
+    "bytes": 435,
+    "sha256": "e8e026b375ae1f3fe13c01358b3b93a8308d1b5dadf8adf661c124c3827c5e7b",
+    "remote": "EmotionLarge-coremldata.bin"
+  },
+  {
+    "path": "EmotionLarge.mlmodelc/model.mil",
+    "bytes": 192849,
+    "sha256": "f9269c1e1f56062dcf650c39da2e03de60efa86d968ea37301cb2f6c34549735",
+    "remote": "EmotionLarge-model.mil"
+  },
+  {
+    "path": "EmotionLarge.mlmodelc/weights/weight.bin",
+    "bytes": 194406208,
+    "sha256": "30fd1a6067199c75063db0851d30b271b1985a68439843e239c993908e09aca2",
+    "remote": "EmotionLarge-weights-weight.bin"
+  },
+  {
+    "path": "EmotionLarge-LICENSE.txt",
+    "bytes": 5835,
+    "sha256": "12036488c8384dd340e6b3c521eee2adbd59f3c69802419f4ca7c8065ba7b20a",
+    "remote": "EmotionLarge-LICENSE.txt"
+  }
+]

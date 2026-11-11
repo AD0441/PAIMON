@@ -33,6 +33,9 @@ public actor SessionStore {
         CREATE TABLE IF NOT EXISTS summary_metrics(id TEXT PRIMARY KEY,session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,created REAL NOT NULL,data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS summary_metrics_session ON summary_metrics(session,created);
         CREATE TABLE IF NOT EXISTS session_review(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE, transcript_revision INTEGER NOT NULL DEFAULT 0, audio_bookmark TEXT);
+        CREATE TABLE IF NOT EXISTS transcript_review_suggestions(id TEXT PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, batch TEXT NOT NULL, data TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS transcript_review_session ON transcript_review_suggestions(session,batch);
+        CREATE TABLE IF NOT EXISTS transcript_review_completed(session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, batch TEXT NOT NULL, PRIMARY KEY(session,batch));
         CREATE TABLE IF NOT EXISTS summary_final_jobs(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE,created REAL NOT NULL);
         CREATE TABLE IF NOT EXISTS bookmarks(id TEXT PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, time REAL NOT NULL, data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS bookmarks_session_time ON bookmarks(session,time,id);
@@ -177,7 +180,8 @@ public actor SessionStore {
         try write("INSERT INTO session_review(session,audio_bookmark) VALUES(?,?) ON CONFLICT(session) DO UPDATE SET audio_bookmark=excluded.audio_bookmark",[session.uuidString,bookmark.base64EncodedString()])
     }
     @discardableResult
-    public func correctSegment(session:UUID,id:String,text:String) throws -> TranscriptSegment {
+    public func correctSegment(session:UUID,id:String,text:String, expectedText:String? = nil,
+                               accepting review:TranscriptReviewSuggestion? = nil) throws -> TranscriptSegment {
         let corrected=text.trimmingCharacters(in:.whitespacesAndNewlines)
         guard !corrected.isEmpty else { throw LAIError.message("Escribe el texto del fragmento antes de guardar.") }
         guard sqlite3_exec(db,"BEGIN IMMEDIATE",nil,nil,nil)==SQLITE_OK else { throw failure() }
@@ -189,6 +193,19 @@ public actor SessionStore {
             defer { sqlite3_finalize(row) }
             guard sqlite3_step(row)==SQLITE_ROW else { throw LAIError.message("El fragmento ya no está disponible.") }
             var segment=try decode(TranscriptSegment.self,row)
+            if let expectedText, segment.text != expectedText {
+                throw LAIError.message("La transcripción cambió. Revisa de nuevo antes de aceptar.")
+            }
+            if let review {
+                let check=try statement("SELECT data FROM transcript_review_suggestions WHERE id=? AND session=?",values:[review.id,session.uuidString])
+                defer { sqlite3_finalize(check) }
+                guard sqlite3_step(check)==SQLITE_ROW,
+                      try decode(TranscriptReviewSuggestion.self,check).state == .pending else {
+                    throw LAIError.message("La sugerencia ya no está pendiente.")
+                }
+                try write("UPDATE transcript_review_suggestions SET data=? WHERE id=? AND session=?",
+                          [try encode(review),review.id,session.uuidString])
+            }
             if segment.text != corrected {
                 let original=segment.originalText ?? segment.text
                 segment.originalText=corrected==original ? nil:original
@@ -202,6 +219,84 @@ public actor SessionStore {
             sqlite3_exec(db,"ROLLBACK",nil,nil,nil)
             throw error
         }
+    }
+    public func reviewNeighbors(session:UUID, sequence:Int64, source:AudioSource) throws -> [TranscriptSegment] {
+        var result:[TranscriptSegment]=[]
+        for ascending in [false,true] {
+            let comparison=ascending ? ">" : "<"
+            let order=ascending ? "ASC" : "DESC"
+            let query=try statement("SELECT data FROM segments WHERE session=? AND seq \(comparison) ? AND json_extract(data,'$.source')=? ORDER BY seq \(order) LIMIT 2",
+                                   values:[session.uuidString,String(sequence),source.rawValue])
+            defer { sqlite3_finalize(query) }
+            var values:[TranscriptSegment]=[]
+            while sqlite3_step(query)==SQLITE_ROW { values.append(try decode(TranscriptSegment.self,query)) }
+            result += ascending ? values:values.reversed()
+        }
+        return result
+    }
+    public func reviewWasCompleted(session:UUID,batch:String) throws -> Bool {
+        let query=try statement("SELECT 1 FROM transcript_review_completed WHERE session=? AND batch=?",values:[session.uuidString,batch])
+        defer { sqlite3_finalize(query) }
+        return sqlite3_step(query)==SQLITE_ROW
+    }
+    public func reviewSuggestions(session:UUID,limit:Int=50,offset:Int=0) throws -> [TranscriptReviewSuggestion] {
+        let query=try statement("SELECT data FROM transcript_review_suggestions WHERE session=? ORDER BY json_extract(data,'$.start'),id LIMIT ? OFFSET ?",
+                               values:[session.uuidString,String(max(1,min(limit,100))),String(max(0,offset))])
+        defer { sqlite3_finalize(query) }
+        var values:[TranscriptReviewSuggestion]=[]
+        while sqlite3_step(query)==SQLITE_ROW { values.append(try decode(TranscriptReviewSuggestion.self,query)) }
+        return values
+    }
+    public func saveReviewBatch(_ suggestions:[TranscriptReviewSuggestion],session:UUID,batch:String,
+                               segment:TranscriptSegment,expectedRevision:Int64,expectedContext:SessionContext? = nil) throws {
+        guard sqlite3_exec(db,"BEGIN IMMEDIATE",nil,nil,nil)==SQLITE_OK else { throw failure() }
+        do {
+            guard let record=try self.session(id:session),!["recording","paused","importing"].contains(record.status),
+                  try transcriptRevision(session:session)==expectedRevision, record.context==expectedContext,
+                  let current=try segmentByID(session:session,id:segment.id),current.text==segment.text else {
+                throw LAIError.message("La transcripción cambió. Revisa de nuevo antes de aceptar.")
+            }
+            for suggestion in suggestions {
+                guard suggestion.sessionID==session,suggestion.segmentID==segment.id,suggestion.sourceText==segment.text,
+                      suggestion.batch==batch,suggestion.state == .pending else { throw LAIError.message("Sugerencia no válida.") }
+                try write("INSERT OR IGNORE INTO transcript_review_suggestions(id,session,batch,data) VALUES(?,?,?,?)",
+                          [suggestion.id,session.uuidString,batch,try encode(suggestion)])
+            }
+            try write("INSERT OR IGNORE INTO transcript_review_completed(session,batch) VALUES(?,?)",[session.uuidString,batch])
+            guard sqlite3_exec(db,"COMMIT",nil,nil,nil)==SQLITE_OK else { throw failure() }
+        } catch { sqlite3_exec(db,"ROLLBACK",nil,nil,nil); throw error }
+    }
+    public func rejectReview(id:String,session:UUID) throws {
+        let query=try statement("SELECT data FROM transcript_review_suggestions WHERE id=? AND session=?",values:[id,session.uuidString])
+        defer { sqlite3_finalize(query) }
+        guard sqlite3_step(query)==SQLITE_ROW else { return }
+        var review=try decode(TranscriptReviewSuggestion.self,query)
+        guard review.state == .pending else { return }
+        review.state = .rejected
+        try write("UPDATE transcript_review_suggestions SET data=? WHERE id=? AND session=?",[try encode(review),id,session.uuidString])
+    }
+    public func acceptReview(id:String,session:UUID) throws -> TranscriptSegment {
+        let query=try statement("SELECT data FROM transcript_review_suggestions WHERE id=? AND session=?",values:[id,session.uuidString])
+        defer { sqlite3_finalize(query) }
+        guard sqlite3_step(query)==SQLITE_ROW else { throw LAIError.message("La sugerencia ya no está disponible.") }
+        var review=try decode(TranscriptReviewSuggestion.self,query)
+        guard review.state == .pending,review.original != review.replacement else {
+            throw LAIError.message("Esta propuesta requiere revisar el audio y corregir manualmente.")
+        }
+        let siblings=try statement("SELECT data FROM transcript_review_suggestions WHERE session=? AND batch=? AND json_extract(data,'$.state')='accepted'",
+                                  values:[session.uuidString,review.batch])
+        defer { sqlite3_finalize(siblings) }
+        var previous:[TranscriptReviewSuggestion]=[]
+        while sqlite3_step(siblings)==SQLITE_ROW { previous.append(try decode(TranscriptReviewSuggestion.self,siblings)) }
+        let expected=try TranscriptReviewer.applying(previous,to:review.sourceText)
+        let corrected=try TranscriptReviewer.applying(previous+[review],to:review.sourceText)
+        review.state = .accepted
+        return try correctSegment(session:session,id:review.segmentID,text:corrected,expectedText:expected,accepting:review)
+    }
+    private func segmentByID(session:UUID,id:String) throws -> TranscriptSegment? {
+        let query=try statement("SELECT data FROM segments WHERE session=? AND id=?",values:[session.uuidString,id])
+        defer { sqlite3_finalize(query) }
+        return sqlite3_step(query)==SQLITE_ROW ? try decode(TranscriptSegment.self,query):nil
     }
     public func summaryNeedsRefresh(session:UUID) throws -> Bool {
         guard let snapshot=try latestSummary(session:session) else { return false }

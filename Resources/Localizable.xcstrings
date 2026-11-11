@@ -2218,7 +2218,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Play excerpt"
+            "value": "Listen to segment"
           }
         }
       }
@@ -2311,123 +2311,123 @@
         }
       }
     },
-    "Transcripción lista" : {
+    "Transcripción lista": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Transcript ready"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript ready"
           }
         }
       }
     },
-    "Guardando transcripción" : {
+    "Guardando transcripción": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saving transcript"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving transcript"
           }
         }
       }
     },
-    "Resumen pendiente de generación." : {
+    "Resumen pendiente de generación.": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Summary pending."
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary pending."
           }
         }
       }
     },
-    "Comprobando recursos de voz" : {
+    "Comprobando recursos de voz": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checking speech resources"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking speech resources"
           }
         }
       }
     },
-    "Preparando reconocimiento" : {
+    "Preparando reconocimiento": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparing speech recognition"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing speech recognition"
           }
         }
       }
     },
-    "Preparando micrófono" : {
+    "Preparando micrófono": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparing microphone"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing microphone"
           }
         }
       }
     },
-    "Preparando audio del sistema" : {
+    "Preparando audio del sistema": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparing system audio"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing system audio"
           }
         }
       }
     },
-    "Abrir Ajustes del Sistema" : {
+    "Abrir Ajustes del Sistema": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open System Settings"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings"
           }
         }
       }
     },
-    "Si macOS solicita permiso, autorízalo en Privacidad y seguridad." : {
+    "Si macOS solicita permiso, autorízalo en Privacidad y seguridad.": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "If macOS requests access, allow it in Privacy & Security."
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If macOS requests access, allow it in Privacy & Security."
           }
         }
       }
     },
-    "Resumen en cola" : {
+    "Resumen en cola": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Summary queued"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary queued"
           }
         }
       }
     },
-    "Copiar transcripción completa" : {
+    "Copiar transcripción completa": {
       "extractionState": "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copy full transcript"
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy full transcript"
           }
         }
       }
@@ -5266,6 +5266,633 @@
           "stringUnit": {
             "state": "translated",
             "value": "Key removed from Keychain."
+          }
+        }
+      }
+    },
+    "Revisión inteligente": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart transcript review"
+          }
+        }
+      }
+    },
+    "Revisar transcripción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review transcript"
+          }
+        }
+      }
+    },
+    "Ortografía y puntuación": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spelling and punctuation"
+          }
+        }
+      }
+    },
+    "Contexto y terminología": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Context and terminology"
+          }
+        }
+      }
+    },
+    "Revisión completa": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete review"
+          }
+        }
+      }
+    },
+    "Ortografía": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spelling"
+          }
+        }
+      }
+    },
+    "Puntuación": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Punctuation"
+          }
+        }
+      }
+    },
+    "Nombre propio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proper name"
+          }
+        }
+      }
+    },
+    "Terminología técnica": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technical terminology"
+          }
+        }
+      }
+    },
+    "Error contextual probable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Possible contextual error"
+          }
+        }
+      }
+    },
+    "Revisión acústica necesaria": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio verification needed"
+          }
+        }
+      }
+    },
+    "Apple Intelligence propone correcciones usando el contexto y el glosario. El original se conserva. Revisa cada propuesta antes de aceptarla.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence suggests corrections using context and your glossary. The original is preserved. Check each suggestion before accepting."
+          }
+        }
+      }
+    },
+    "Modo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        }
+      }
+    },
+    "Fragmentos revisados: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segments reviewed: %lld"
+          }
+        }
+      }
+    },
+    "Aceptar propuestas de bajo riesgo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accept low-risk suggestions"
+          }
+        }
+      }
+    },
+    "La revisión se pausa durante la captura, otros resúmenes o la presión de memoria.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review pauses during capture, other summaries or memory pressure."
+          }
+        }
+      }
+    },
+    "Revisión terminada. No se aplicaron cambios automáticamente.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review complete. No changes were applied automatically."
+          }
+        }
+      }
+    },
+    "No hay sugerencias en esta página.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No suggestions on this page."
+          }
+        }
+      }
+    },
+    "Comprueba el audio antes de corregir.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the audio before correcting."
+          }
+        }
+      }
+    },
+    "Aceptar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accept"
+          }
+        }
+      }
+    },
+    "Rechazar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reject"
+          }
+        }
+      }
+    },
+    "Ver transcripción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show transcript"
+          }
+        }
+      }
+    },
+    "Pendiente": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending"
+          }
+        }
+      }
+    },
+    "Aceptada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accepted"
+          }
+        }
+      }
+    },
+    "Rechazada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejected"
+          }
+        }
+      }
+    },
+    "Exportar texto original sin correcciones": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export original text without corrections"
+          }
+        }
+      }
+    },
+    "Modelo vocal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice model"
+          }
+        }
+      }
+    },
+    "Modelo seleccionado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selected model"
+          }
+        }
+      }
+    },
+    "Seleccionar modelo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select model"
+          }
+        }
+      }
+    },
+    "Solo se carga el modelo elegido. Las etiquetas son estimaciones experimentales, no una evaluación de la persona.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only the selected model is loaded. Labels are experimental estimates, not an assessment of a person."
+          }
+        }
+      }
+    },
+    "Modelo actual de 94 MB. Nueve salidas; sin embeddings accesibles en esta conversión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Existing 94 MB model. Nine outputs; this conversion does not expose embeddings."
+          }
+        }
+      }
+    },
+    "Modelo ampliado. Nueve salidas y representación vocal de 1024 componentes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Larger model. Nine outputs and a 1024-component voice representation."
+          }
+        }
+      }
+    },
+    "Cuatro categorías: neutral, alegría, enojo y tristeza. Entrenado con audio en inglés; uso en español experimental.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Four categories: neutral, happy, angry and sad. Trained on English audio; Spanish use is experimental."
+          }
+        }
+      }
+    },
+    "Explorar similitud vocal con embeddings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explore voice similarity with embeddings"
+          }
+        }
+      }
+    },
+    "Los embeddings describen patrones de voz. Permiten comparar fragmentos y señalar cambios; no son probabilidades de emoción. Esta opción requiere Large o SUPERB ER.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Embeddings describe voice patterns. They compare segments and highlight changes; they are not emotion probabilities. This option requires Large or SUPERB ER."
+          }
+        }
+      }
+    },
+    "Umbral de cambio expresivo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expression change threshold"
+          }
+        }
+      }
+    },
+    "Exploración de representaciones · experimental": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Representation explorer · experimental"
+          }
+        }
+      }
+    },
+    "Un embedding es un vector que describe patrones acústicos de un intervalo. La similitud coseno compara esos patrones: 1 significa vectores iguales. No mide certeza ni intensidad de una emoción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An embedding is a vector describing acoustic patterns in an interval. Cosine similarity compares these patterns: 1 means identical vectors. It does not measure emotional certainty or intensity."
+          }
+        }
+      }
+    },
+    "%@ · %lld componentes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld components"
+          }
+        }
+      }
+    },
+    "Estos vectores solo permanecen durante el análisis. No se guardan con la sesión.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These vectors are kept only during analysis. They are not saved with the session."
+          }
+        }
+      }
+    },
+    "Fragmentos con patrones vocales parecidos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segments with similar voice patterns"
+          }
+        }
+      }
+    },
+    "No hay otros intervalos comparables.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No other comparable intervals."
+          }
+        }
+      }
+    },
+    "Similitud: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Similarity: %@"
+          }
+        }
+      }
+    },
+    "Selecciona un intervalo con voz en el gráfico para comparar sus patrones.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select a voiced interval in the chart to compare its patterns."
+          }
+        }
+      }
+    },
+    "Cambios entre intervalos analizados": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes between analyzed intervals"
+          }
+        }
+      }
+    },
+    "Distancia coseno = 1 − similitud. El umbral configurable es exploratorio; un cambio puede deberse al hablante, el ruido, el micrófono o la expresión vocal.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cosine distance = 1 − similarity. The configurable threshold is exploratory; a change may be due to the speaker, noise, microphone or vocal expression."
+          }
+        }
+      }
+    },
+    "Sin cambios por encima del umbral en esta muestra.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No changes above the threshold in this sample."
+          }
+        }
+      }
+    },
+    "Cambio de hablante": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker change"
+          }
+        }
+      }
+    },
+    "Cambio con el mismo hablante": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change within the same speaker"
+          }
+        }
+      }
+    },
+    "Hablante sin determinar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker undetermined"
+          }
+        }
+      }
+    },
+    "Compara la polaridad del texto con las etiquetas del modelo vocal seleccionado. Las estimaciones vocales son experimentales.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare text polarity with the selected voice model's labels. Voice estimates are experimental."
+          }
+        }
+      }
+    },
+    "Descarga o activa el modelo seleccionado en Ajustes → Modelos → Emociones de voz.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download or enable the selected model in Settings → Models → Voice emotions."
+          }
+        }
+      }
+    },
+    "La revisión inteligente requiere Apple Intelligence disponible en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart transcript review requires Apple Intelligence available on this Mac."
+          }
+        }
+      }
+    },
+    "La transcripción cambió. Revisa de nuevo antes de aceptar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The transcript changed. Review it again before accepting."
+          }
+        }
+      }
+    },
+    "Termina el procesamiento antes de aplicar correcciones.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish processing before applying corrections."
+          }
+        }
+      }
+    },
+    "El fragmento supera el espacio del modelo local.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The segment exceeds the local model's context."
+          }
+        }
+      }
+    },
+    "Solo las propuestas mostradas de puntuación o mayúsculas que conservan las palabras.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only the shown punctuation or capitalization suggestions that preserve the words."
           }
         }
       }
