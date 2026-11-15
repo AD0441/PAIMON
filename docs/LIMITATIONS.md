@@ -1,4 +1,4 @@
-# Limitaciones pendientes · PAIMON 0.7.0 candidata
+# Limitaciones pendientes · PAIMON 0.14.0
 
 - Se compila para macOS 26.0+, pero este equipo ejecuta macOS 27.3. Hace falta repetir las pruebas en macOS 26 y una sesión de varias horas antes de considerar una distribución estable.
 - El idioma de interfaz español/inglés no traduce transcripciones ni informes guardados. Mensajes de frameworks y cuadros de macOS pueden seguir el idioma del sistema.
@@ -25,3 +25,14 @@
 - Los términos frecuentes representan una muestra acotada de la vista, no un índice semántico de toda la sesión. La vista ejecutiva muestra una selección de los hallazgos de la página; copiar y exportar conservan el registro completo.
 
 - La revisión aislada encontró una espera del servicio nativo al preparar una importación. Las repeticiones posteriores finalizaron tras mejorar cancelación y caché de metadatos; falta un ensayo prolongado de fallos del servicio. La extracción también puede omitir datos presentes, incluidos responsables: revisa siempre la evidencia.
+
+## Discurso y voz durante la captura · 0.14.0
+
+- Discurso usa Apple Foundation Models y requiere Apple Intelligence disponible para el idioma seleccionado. No tiene fallback remoto ni a MLX. El modelo puede omitir elementos o vincularlos incorrectamente aunque las citas existan; el análisis no prueba la validez de un argumento.
+- Los cambios de postura se admiten solo con una expresión explícita de un único estado, una propuesta vinculada y coincidencia de términos. Se omiten negaciones, condicionales, expresiones ambiguas y referencias sin términos comunes. Este criterio conservador no cubre todas las maneras de hablar ni resuelve pronombres de forma completa.
+- La actualización consulta hasta doce hallazgos previos relevantes por lote. Un vínculo lejano puede quedar fuera del contexto. Las vistas son listas de temas y relaciones con evidencias, no diagramas de nodos. El contador de referencias agrupa hallazgos, no menciones lingüísticas exhaustivas.
+- Participación depende de los turnos atribuidos por diarización. Se unen solapes de la misma voz y fuente; los porcentajes se calculan por fuente, con posible solape entre personas. No equivale a presencia en la reunión ni a importancia de sus aportes.
+- Vocal en vivo toma tres segundos por fuente cada intervalo. No cubre todo el audio ni reutiliza automáticamente esos resultados en el gráfico Mixto de análisis completo. Sin Guardar audio no puede escucharse ni repetirse una muestra descartada.
+- Las emociones usan Core ML en CPU según la configuración medida previamente. No se afirma uso del ANE. El modelo se libera tras cada muestra; en Large el coste de carga puede ser relevante. Las etiquetas son experimentales y no miden estados psicológicos reales.
+- La compuerta ocupada omite esa inferencia vocal sin acumularla. Con Parakeet se conservan solo métricas de señal en vivo y se pospone Discurso hasta terminar. Bajo presión de memoria o calor se reduce trabajo opcional.
+- Al detener se descarta la ventana vocal aún incompleta o en proceso. La transcripción confirmada y los resultados derivados guardados permanecen. Falta un ensayo prolongado con ambas fuentes, modelos opcionales y macOS 26.

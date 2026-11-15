@@ -3,7 +3,7 @@ import AVFoundation
 import CoreML
 import Foundation
 
-public enum VocalEmotion: Int, CaseIterable, Sendable {
+public enum VocalEmotion: Int, CaseIterable, Codable, Sendable {
     case anger = 0, disgust, fear, joy, neutral
     case sadness = 6, surprise
 
@@ -136,7 +136,7 @@ public enum VocalEmotionAnalysis {
         return VocalEmotionReport(points: points, sampled: sampled, model: choice, artifactIdentifier: choice.identifier)
     }
 
-    private static func classify(_ pcm: AVAudioPCMBuffer, model: MLModel, choice: VocalEmotionModel,
+    static func classify(_ pcm: AVAudioPCMBuffer, model: MLModel, choice: VocalEmotionModel,
                                  embeddings: Bool) throws -> ((emotion: VocalEmotion, confidence: Double)?, [Float]?) {
         let count = Int(pcm.frameLength)
         guard count >= 8_000, let samples = pcm.floatChannelData?[0] else { return (nil, nil) }

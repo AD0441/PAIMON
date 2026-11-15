@@ -36,6 +36,10 @@ public struct AppSettings: Codable, Sendable {
     public var outputDeviceUID = ""
     public var saveAudio = false
     public var enhanceImportedAudio:Bool?
+    public var discourseEnabled: Bool?
+    public var discourseInterval: Double?
+    public var vocalLiveEnabled: Bool?
+    public var vocalLiveInterval: Double?
     public var vocalAnalysisEnabled: Bool?
     public var vocalEmotionEnabled: Bool?
     public var vocalEmotionModel: VocalEmotionModel?

@@ -168,6 +168,25 @@ final class PDFReportWriter {
             try paragraph(styled(segment.text,size:10),after:12)
         }
     }
+    func discourse(_ findings:[DiscourseFinding],first:Bool,includeEvidence:Bool) throws {
+        if first { newPage(); try heading("Análisis de discurso") }
+        for finding in findings {
+            ensure(65)
+            try paragraph(styled(finding.kind.title+" · "+timestamp(finding.start),size:10,bold:true),after:4)
+            try paragraph(styled(finding.text,size:11),after:5)
+            if includeEvidence {
+                for citation in finding.evidence { try paragraph(styled("["+timestamp(citation.start)+"] «"+citation.quote+"»",size:9,color:0.35),after:5) }
+            }
+        }
+    }
+    func participation(_ speakers:[SpeakerParticipation]) throws {
+        if speakers.isEmpty { return }
+        try heading("Participación")
+        for speaker in speakers {
+            let name=speaker.name ?? "Hablante "+String(speaker.number)
+            try paragraph(styled(name+" · "+speaker.source.title+" · "+timestamp(speaker.seconds)+" · "+String(speaker.turns)+" turnos",size:10),after:5)
+        }
+    }
     func startTranscript(original:Bool=false) throws { newPage(); try heading(original ? "Transcripción original sin correcciones":"Transcripción completa") }
     func bookmarks(_ bookmarks:[SessionBookmark],start:Bool) throws {
         if start { newPage(); try heading("Marcadores y notas") }

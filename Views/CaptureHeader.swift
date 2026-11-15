@@ -35,6 +35,10 @@ struct CaptureHeader:View {
                     templateControl
                 }
             }.font(.callout)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 18) { analysisControls }
+                VStack(alignment: .leading, spacing: 8) { analysisControls }
+            }.font(.caption)
             if model.state == .preparing && model.capturePreparation.mayNeedPermission {
                 HStack(spacing:8) {
                     Text("Si macOS solicita permiso, autorízalo en Privacidad y seguridad.")
@@ -76,6 +80,25 @@ struct CaptureHeader:View {
             .onAppear(perform:refreshApplications)
             .onReceive(NSWorkspace.shared.notificationCenter.publisher(for:NSWorkspace.didLaunchApplicationNotification)) { _ in refreshApplications() }
             .onReceive(NSWorkspace.shared.notificationCenter.publisher(for:NSWorkspace.didTerminateApplicationNotification)) { _ in refreshApplications() }
+    }
+    @ViewBuilder private var analysisControls: some View {
+        if model.active {
+            if model.current?.settings.saveAudio == true { Label("Guardando audio", systemImage: "externaldrive.badge.checkmark") }
+            if model.current?.importedFileName == nil, model.current?.settings.vocalLiveEnabled == true { Label("Análisis vocal en vivo", systemImage: "waveform") }
+            if model.current?.settings.discourseEnabled == true {
+                if model.state == .importing { Label("Discurso al finalizar", systemImage: "text.bubble") }
+                else { Label("Discurso por bloques", systemImage: "text.bubble") }
+            }
+        } else {
+            Toggle("Guardar audio", isOn: $model.settings.saveAudio).toggleStyle(.checkbox)
+                .help("Conserva el sonido para escucharlo o repetir el análisis después.")
+            Toggle("Vocal en vivo", isOn: Binding(get: { model.settings.vocalLiveEnabled == true }, set: {
+                model.settings.vocalLiveEnabled = $0
+                if $0 { model.settings.vocalAnalysisEnabled = true }
+            })).toggleStyle(.checkbox)
+            Toggle("Discurso automático", isOn: Binding(get: { model.settings.discourseEnabled == true },
+                set: { model.settings.discourseEnabled = $0 })).toggleStyle(.checkbox)
+        }
     }
     private var sourceControls:some View {
         HStack(spacing:12) {

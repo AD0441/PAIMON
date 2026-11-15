@@ -40,6 +40,12 @@ public actor SessionStore {
         CREATE TABLE IF NOT EXISTS bookmarks(id TEXT PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, time REAL NOT NULL, data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS bookmarks_session_time ON bookmarks(session,time,id);
         CREATE INDEX IF NOT EXISTS segments_session_time ON segments(session,start);
+        CREATE TABLE IF NOT EXISTS discourse_jobs(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE, created REAL NOT NULL);
+        CREATE TABLE IF NOT EXISTS discourse_state(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE, data TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS discourse_findings(session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, id TEXT NOT NULL, kind TEXT NOT NULL, topic TEXT NOT NULL, start REAL NOT NULL, data TEXT NOT NULL, PRIMARY KEY(session,id));
+        CREATE INDEX IF NOT EXISTS discourse_page ON discourse_findings(session,kind,start,id);
+        CREATE TABLE IF NOT EXISTS live_vocal(session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, id TEXT NOT NULL, start REAL NOT NULL, data TEXT NOT NULL, PRIMARY KEY(session,id));
+        CREATE INDEX IF NOT EXISTS live_vocal_time ON live_vocal(session,start);
         CREATE VIRTUAL TABLE IF NOT EXISTS transcript_search USING fts5(text, tokenize='unicode61 remove_diacritics 2', prefix='2 3');
         INSERT INTO transcript_search(transcript_search,rank) VALUES('secure-delete',1);
         CREATE TRIGGER IF NOT EXISTS segment_search_insert AFTER INSERT ON segments BEGIN
@@ -649,5 +655,186 @@ public actor SessionStore {
         guard status==SQLITE_ROW || status==SQLITE_DONE else { throw failure() }
         if status==SQLITE_DONE { try write("VACUUM",[]) }
         guard sqlite3_wal_checkpoint_v2(db,nil,SQLITE_CHECKPOINT_TRUNCATE,nil,nil)==SQLITE_OK else { throw failure() }
+    }
+}
+
+
+extension SessionStore {
+    public func lastTranscriptRow(session:UUID) throws -> Int64 {
+        let row=try statement("SELECT COALESCE(MAX(seq),0) FROM segments WHERE session=?",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row)==SQLITE_ROW else { throw failure() }
+        return sqlite3_column_int64(row,0)
+    }
+    public func discourseState(session:UUID) throws -> DiscourseState? {
+        let row=try statement("SELECT data FROM discourse_state WHERE session=?",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        return sqlite3_step(row)==SQLITE_ROW ? try decode(DiscourseState.self,row):nil
+    }
+    public func discourseFindings(session:UUID,kinds:[DiscourseKind]=[],limit:Int=120,offset:Int=0,newest:Bool=false,topic:String?=nil) throws -> [DiscourseFinding] {
+        let filter=(kinds.isEmpty ? "" : " AND kind IN ("+Array(repeating:"?",count:kinds.count).joined(separator:",")+")") + (topic==nil ? "":" AND topic=?")
+        let order=newest ? "DESC":"ASC"
+        let row=try statement("SELECT data FROM discourse_findings WHERE session=?"+filter+" ORDER BY start \(order),id LIMIT ? OFFSET ?",
+                             values:[session.uuidString]+kinds.map(\.rawValue)+(topic.map{[$0]} ?? [])+[String(max(1,min(200,limit))),String(max(0,offset))])
+        defer { sqlite3_finalize(row) }
+        var result:[DiscourseFinding]=[]
+        while sqlite3_step(row)==SQLITE_ROW { result.append(try decode(DiscourseFinding.self,row)) }
+        return result
+    }
+    public func discourseTopics(session:UUID,limit:Int=100,offset:Int=0) throws -> [DiscourseTopic] {
+        let row=try statement("""
+            SELECT topic,MIN(json_extract(data,'$.topic')),MAX(json_extract(data,'$.parentTopic')),
+                   MIN(start),MAX(start),COUNT(*) FROM discourse_findings
+            WHERE session=? AND topic<>'' GROUP BY topic ORDER BY MIN(start) LIMIT ? OFFSET ?
+            """,values:[session.uuidString,String(max(1,min(100,limit))),String(max(0,offset))])
+        defer { sqlite3_finalize(row) }
+        var result:[DiscourseTopic]=[]
+        while sqlite3_step(row)==SQLITE_ROW {
+            func string(_ column:Int32)->String { sqlite3_column_text(row,column).map{String(cString:$0)} ?? "" }
+            result.append(.init(id:string(0),title:string(1),parent:string(2),
+                first:sqlite3_column_double(row,3),last:sqlite3_column_double(row,4),mentions:Int(sqlite3_column_int(row,5))))
+        }
+        return result
+    }
+    public func commitDiscourse(_ findings:[DiscourseFinding],session:Session,stamp:String,revision:Int64,
+                                through:Int64,final:Bool,rejected:Int) throws {
+        guard sqlite3_exec(db,"BEGIN IMMEDIATE",nil,nil,nil)==SQLITE_OK else { throw failure() }
+        do {
+            guard let record=try self.session(id:session.id),record.context==session.context,
+                  try transcriptRevision(session:session.id)==revision else {
+                throw LAIError.message("La transcripción o el contexto cambió. Actualiza el análisis.")
+            }
+            let previous=try discourseState(session:session.id)
+            if previous?.stamp != stamp { try write("DELETE FROM discourse_findings WHERE session=?",[session.id.uuidString]) }
+            var state=previous?.stamp==stamp ? previous! : DiscourseState(stamp:stamp,through:0,final:false,rejected:0,updated:Date())
+            for finding in findings {
+                guard !finding.evidence.isEmpty, finding.evidence.allSatisfy({ evidence in
+                    guard let segment=try? segmentByID(session:session.id,id:evidence.segmentID) else { return false }
+                    return segment.text.range(of:evidence.quote,options:.literal) != nil && segment.start==evidence.start && segment.end==evidence.end
+                }) else { throw LAIError.message("El análisis contiene una cita que ya no coincide.") }
+                let topic=finding.topic.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:Locale(identifier:"es")).trimmingCharacters(in:.whitespacesAndNewlines)
+                try write("INSERT OR REPLACE INTO discourse_findings(session,id,kind,topic,start,data) VALUES(?,?,?,?,?,?)",
+                          [session.id.uuidString,finding.id,finding.kind.rawValue,topic,String(finding.start),try encode(finding)])
+            }
+            state.through=max(state.through,through)
+            let latest=try lastTranscriptRow(session:session.id)
+            state.final=final && !["recording","paused","importing"].contains(record.status) && state.through >= latest
+            state.rejected+=rejected
+            state.updated=Date()
+            try write("INSERT OR REPLACE INTO discourse_state(session,data) VALUES(?,?)",[session.id.uuidString,try encode(state)])
+            guard sqlite3_exec(db,"COMMIT",nil,nil,nil)==SQLITE_OK else { throw failure() }
+        } catch { sqlite3_exec(db,"ROLLBACK",nil,nil,nil); throw error }
+    }
+    public func participation(session:UUID) throws -> [SpeakerParticipation] {
+        let row=try statement("""
+            SELECT t.source,s.id,s.name,s.number,t.start,t.end FROM speaker_turns t
+            JOIN session_speakers s ON s.session=t.session AND s.id=t.speaker
+            WHERE t.session=? ORDER BY t.source,s.id,t.start,t.end
+            """,values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        var result:[SpeakerParticipation]=[]
+        var current:SpeakerParticipation?
+        var lastEnd = -Double.infinity
+        var turnSeconds=0.0
+        while sqlite3_step(row)==SQLITE_ROW {
+            guard let sourceText=sqlite3_column_text(row,0),let source=AudioSource(rawValue:String(cString:sourceText)),
+                  let identifier=sqlite3_column_text(row,1) else { continue }
+            let id=source.rawValue+":"+String(cString:identifier)
+            let start=sqlite3_column_double(row,4),end=sqlite3_column_double(row,5)
+            guard start.isFinite,end.isFinite,start>=0,end>start else { continue }
+            if current?.id != id {
+                if var value=current { value.longestTurn=max(value.longestTurn,turnSeconds); result.append(value) }
+                current=SpeakerParticipation(id:id,name:sqlite3_column_text(row,2).map{String(cString:$0)},
+                    number:Int(sqlite3_column_int(row,3)),source:source,seconds:0,turns:0,longestTurn:0)
+                lastEnd = -.infinity; turnSeconds=0
+            }
+            if start > lastEnd+0.25 {
+                let longest=max(current?.longestTurn ?? 0,turnSeconds)
+                current?.longestTurn=longest
+                current?.turns += 1; turnSeconds=0
+            }
+            let added=max(0,end-max(start,lastEnd))
+            current?.seconds += added; turnSeconds += added
+            lastEnd=max(lastEnd,end)
+        }
+        if var value=current { value.longestTurn=max(value.longestTurn,turnSeconds); result.append(value) }
+        return result
+    }
+}
+
+
+extension SessionStore {
+    public func saveLiveVocal(_ result:LiveVocalResult) throws {
+        guard try session(id:result.sessionID) != nil,result.start.isFinite,result.end.isFinite,
+              result.end>result.start,result.level.isFinite,result.quietPercent.isFinite else {
+            throw LAIError.message("El resultado vocal no tiene una sesión válida.")
+        }
+        try write("INSERT OR REPLACE INTO live_vocal(session,id,start,data) VALUES(?,?,?,?)",
+                  [result.sessionID.uuidString,result.id,String(result.start),try encode(result)])
+    }
+    public func liveVocalResults(session:UUID,limit:Int=120,offset:Int=0) throws -> [LiveVocalResult] {
+        let row=try statement("SELECT data FROM live_vocal WHERE session=? ORDER BY start DESC,id LIMIT ? OFFSET ?",
+                             values:[session.uuidString,String(max(1,min(200,limit))),String(max(0,offset))])
+        defer { sqlite3_finalize(row) }
+        var result:[LiveVocalResult]=[]
+        while sqlite3_step(row)==SQLITE_ROW { result.append(try decode(LiveVocalResult.self,row)) }
+        return result
+    }
+}
+
+
+extension SessionStore {
+    public func requestFinalDiscourse(session:UUID) throws {
+        try write("INSERT OR IGNORE INTO discourse_jobs(session,created) SELECT id,? FROM sessions WHERE id=?",
+                  [String(Date().timeIntervalSince1970),session.uuidString])
+    }
+    public func pendingDiscourseSession() throws -> UUID? {
+        let row=try statement("SELECT j.session FROM discourse_jobs j JOIN sessions s ON s.id=j.session WHERE json_extract(s.data,'$.status') NOT IN ('recording','paused','importing') ORDER BY j.created LIMIT 1")
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row)==SQLITE_ROW,let value=sqlite3_column_text(row,0) else { return nil }
+        return UUID(uuidString:String(cString:value))
+    }
+    public func clearDiscourseJob(session:UUID) throws {
+        try write("DELETE FROM discourse_jobs WHERE session=?",[session.uuidString])
+    }
+}
+
+
+extension SessionStore {
+    public func discourseRelated(session:UUID,target:String) throws -> [DiscourseFinding] {
+        let row=try statement("SELECT data FROM discourse_findings WHERE session=? AND json_extract(data,'$.target')=? ORDER BY start LIMIT 40",values:[session.uuidString,target])
+        defer { sqlite3_finalize(row) }
+        var result:[DiscourseFinding]=[]
+        while sqlite3_step(row)==SQLITE_ROW { result.append(try decode(DiscourseFinding.self,row)) }
+        return result
+    }
+    public func discourseFinding(session:UUID,id:String) throws -> DiscourseFinding? {
+        let row=try statement("SELECT data FROM discourse_findings WHERE session=? AND id=?",values:[session.uuidString,id])
+        defer { sqlite3_finalize(row) }
+        return sqlite3_step(row)==SQLITE_ROW ? try decode(DiscourseFinding.self,row):nil
+    }
+}
+
+
+extension SessionStore {
+    public func transcriptEvidence(session:UUID,source:AudioSource,start:Double,end:Double) throws -> TranscriptSegment? {
+        let row=try statement("SELECT data FROM segments WHERE session=? AND json_extract(data,'$.source')=? AND start<? AND CAST(json_extract(data,'$.end') AS REAL)>? ORDER BY ABS(start-?) LIMIT 1",
+                             values:[session.uuidString,source.rawValue,String(end),String(start),String(start)])
+        defer { sqlite3_finalize(row) }
+        return sqlite3_step(row)==SQLITE_ROW ? try decode(TranscriptSegment.self,row):nil
+    }
+}
+
+
+extension SessionStore {
+    public func discourseContext(session:UUID,terms:[String]) throws -> [DiscourseFinding] {
+        let terms=Array(terms.prefix(6))
+        let score=terms.isEmpty ? "length(id)*0" : terms.map { _ in "CASE WHEN lai_contains(json_extract(data,'$.text'),?) THEN 1 ELSE 0 END" }.joined(separator:"+")
+        let row=try statement("SELECT data FROM discourse_findings WHERE session=? AND kind IN ('topic','proposal','question') ORDER BY ("+score+") DESC,start DESC LIMIT 12",
+                             values:[session.uuidString]+terms)
+        defer { sqlite3_finalize(row) }
+        var result:[DiscourseFinding]=[]
+        while sqlite3_step(row)==SQLITE_ROW { result.append(try decode(DiscourseFinding.self,row)) }
+        return result
     }
 }

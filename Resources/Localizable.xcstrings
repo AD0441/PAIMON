@@ -5896,6 +5896,1072 @@
           }
         }
       }
+    },
+    "Discurso": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse"
+          }
+        }
+      }
+    },
+    "Análisis de discurso": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse analysis"
+          }
+        }
+      }
+    },
+    "Mapa de temas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Topic map"
+          }
+        }
+      }
+    },
+    "Mapa de argumentos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Argument map"
+          }
+        }
+      }
+    },
+    "Evolución de posturas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position evolution"
+          }
+        }
+      }
+    },
+    "Participación": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Participation"
+          }
+        }
+      }
+    },
+    "Recursos discursivos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse resources"
+          }
+        }
+      }
+    },
+    "Preguntas y respuestas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questions and answers"
+          }
+        }
+      }
+    },
+    "Tema": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Topic"
+          }
+        }
+      }
+    },
+    "Propuesta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proposal"
+          }
+        }
+      }
+    },
+    "Argumento": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Argument"
+          }
+        }
+      }
+    },
+    "Objeción": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objection"
+          }
+        }
+      }
+    },
+    "Pregunta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Question"
+          }
+        }
+      }
+    },
+    "Respuesta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Answer"
+          }
+        }
+      }
+    },
+    "Evolución de postura": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position evolution"
+          }
+        }
+      }
+    },
+    "Definición": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definition"
+          }
+        }
+      }
+    },
+    "Analogía": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analogy"
+          }
+        }
+      }
+    },
+    "Ejemplo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Example"
+          }
+        }
+      }
+    },
+    "Generalización": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generalization"
+          }
+        }
+      }
+    },
+    "Expresión de duda": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expression of uncertainty"
+          }
+        }
+      }
+    },
+    "Expresión de certeza": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expression of certainty"
+          }
+        }
+      }
+    },
+    "Sin vínculo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No link"
+          }
+        }
+      }
+    },
+    "Fundamenta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supports"
+          }
+        }
+      }
+    },
+    "Objeta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Objects to"
+          }
+        }
+      }
+    },
+    "Responde": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Answers"
+          }
+        }
+      }
+    },
+    "Mantiene": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintains"
+          }
+        }
+      }
+    },
+    "Modifica": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifies"
+          }
+        }
+      }
+    },
+    "Acepta": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accepts"
+          }
+        }
+      }
+    },
+    "Descarta explícitamente": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explicitly abandons"
+          }
+        }
+      }
+    },
+    "Interpretaciones del texto con citas verificables. Durante la sesión son provisionales; el silencio no implica aceptación ni abandono.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text interpretations with verifiable quotations. Results are provisional during a session; silence does not imply acceptance or abandonment."
+          }
+        }
+      }
+    },
+    "Analizar discurso": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze discourse"
+          }
+        }
+      }
+    },
+    "Explorar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explore"
+          }
+        }
+      }
+    },
+    "Quitar filtro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear filter"
+          }
+        }
+      }
+    },
+    "El texto o el contexto cambió. Actualiza el análisis antes de exportarlo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The text or context changed. Update the analysis before exporting."
+          }
+        }
+      }
+    },
+    "Análisis final del texto disponible": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final analysis of the available text"
+          }
+        }
+      }
+    },
+    "Análisis provisional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provisional analysis"
+          }
+        }
+      }
+    },
+    "Se omitieron interpretaciones sin respaldo suficiente.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interpretations without sufficient support were omitted."
+          }
+        }
+      }
+    },
+    "Analiza la transcripción para explorar sus temas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze the transcript to explore its topics."
+          }
+        }
+      }
+    },
+    "%@ – %@ · %lld referencias": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ – %@ · %lld references"
+          }
+        }
+      }
+    },
+    "No hay elementos con citas en esta página.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No cited items on this page."
+          }
+        }
+      }
+    },
+    "Tiempo atribuido por diarización. Los porcentajes se calculan dentro de cada fuente; los intervalos contiguos se agrupan en turnos.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time attributed by diarization. Shares are calculated within each source; adjacent intervals are grouped into turns."
+          }
+        }
+      }
+    },
+    "No hay hablantes atribuidos. Activa Separar voces antes de capturar o importar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No speakers have been attributed. Enable Separate voices before capture or import."
+          }
+        }
+      }
+    },
+    "Hablante": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speaker"
+          }
+        }
+      }
+    },
+    "%@ · %lld turnos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld turns"
+          }
+        }
+      }
+    },
+    "Promedio por turno": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Average per turn"
+          }
+        }
+      }
+    },
+    "Relaciones y evolución": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relations and evolution"
+          }
+        }
+      }
+    },
+    "Sin respuesta o vínculo explícito encontrado en este análisis.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No explicit answer or link found in this analysis."
+          }
+        }
+      }
+    },
+    "Análisis vocal de la captura": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capture voice analysis"
+          }
+        }
+      }
+    },
+    "Ventanas de tres segundos, tomadas de forma espaciada. Son muestras de la sesión, no una evaluación continua de las personas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Three-second windows sampled at intervals. These are session samples, not a continuous assessment of people."
+          }
+        }
+      }
+    },
+    "Fuente de las muestras": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sample source"
+          }
+        }
+      }
+    },
+    "Esperando una ventana de audio disponible…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for an available audio window…"
+          }
+        }
+      }
+    },
+    "Nivel en dBFS. Haz clic para fijar una muestra.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level in dBFS. Click to pin a sample."
+          }
+        }
+      }
+    },
+    "Nivel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level"
+          }
+        }
+      }
+    },
+    "Nivel bajo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low level"
+          }
+        }
+      }
+    },
+    "Inferencia opcional pospuesta para priorizar otras tareas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional inference deferred to prioritize other tasks."
+          }
+        }
+      }
+    },
+    "Estimación vocal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice estimate"
+          }
+        }
+      }
+    },
+    "Puntuación del modelo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model score"
+          }
+        }
+      }
+    },
+    "Distancia respecto de la muestra anterior": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance from the previous sample"
+          }
+        }
+      }
+    },
+    "La distancia compara patrones vocales; no es una probabilidad de emoción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distance compares voice patterns; it is not an emotion probability."
+          }
+        }
+      }
+    },
+    "Muestras anteriores": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Earlier samples"
+          }
+        }
+      }
+    },
+    "Se guardan mediciones y etiquetas. La grabación solo se conserva si activaste Guardar audio.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measurements and labels are saved. The recording is kept only if Save audio was enabled."
+          }
+        }
+      }
+    },
+    "Guardando audio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving audio"
+          }
+        }
+      }
+    },
+    "Análisis vocal en vivo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live voice analysis"
+          }
+        }
+      }
+    },
+    "Discurso por bloques": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse in batches"
+          }
+        }
+      }
+    },
+    "Guardar audio": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save audio"
+          }
+        }
+      }
+    },
+    "Conserva el sonido para escucharlo o repetir el análisis después.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep sound to listen to it or repeat the analysis later."
+          }
+        }
+      }
+    },
+    "Vocal en vivo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live voice"
+          }
+        }
+      }
+    },
+    "Discurso automático": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic discourse"
+          }
+        }
+      }
+    },
+    "Análisis durante la captura": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysis during capture"
+          }
+        }
+      }
+    },
+    "Intervalo vocal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice interval"
+          }
+        }
+      }
+    },
+    "Cada 15 segundos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 15 seconds"
+          }
+        }
+      }
+    },
+    "Cada 30 segundos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 30 seconds"
+          }
+        }
+      }
+    },
+    "Cada minuto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every minute"
+          }
+        }
+      }
+    },
+    "Analiza ventanas de tres segundos sin guardar el audio. Las etiquetas y mediciones sí se conservan. El modelo vocal elegido se usa si está activado; los sonidos se limitan a tu selección.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze three-second windows without saving audio. Labels and measurements are saved. The chosen voice model is used if enabled; sounds are limited to your selection."
+          }
+        }
+      }
+    },
+    "Con presión de memoria, cola ocupada o Parakeet activo se posponen las inferencias vocales. La transcripción tiene prioridad.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voice inference is deferred under memory pressure, when the queue is busy, or while Parakeet is active. Transcription takes priority."
+          }
+        }
+      }
+    },
+    "Discurso automático durante la captura": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic discourse during capture"
+          }
+        }
+      }
+    },
+    "Intervalo de discurso": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse interval"
+          }
+        }
+      }
+    },
+    "Cada 2 minutos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 2 minutes"
+          }
+        }
+      }
+    },
+    "Cada 5 minutos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 5 minutes"
+          }
+        }
+      }
+    },
+    "Cada 10 minutos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 10 minutes"
+          }
+        }
+      }
+    },
+    "Temas, argumentos, evolución y recursos del lenguaje se actualizan por bloques. La participación usa la diarización. Los resultados se consolidan al terminar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Topics, arguments, evolution and language resources update in batches. Participation uses diarization. Results are consolidated at the end."
+          }
+        }
+      }
+    },
+    "Discurso y participación": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse and participation"
+          }
+        }
+      }
+    },
+    "Analizando discurso…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyzing discourse…"
+          }
+        }
+      }
+    },
+    "Consolidando el discurso…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consolidating discourse…"
+          }
+        }
+      }
+    },
+    "Análisis de discurso finalizado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse analysis complete."
+          }
+        }
+      }
+    },
+    "Análisis provisional actualizado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provisional analysis updated."
+          }
+        }
+      }
+    },
+    "Análisis de discurso pausado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse analysis paused."
+          }
+        }
+      }
+    },
+    "El discurso se pospone con Parakeet para priorizar la transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse is deferred with Parakeet to prioritize transcription."
+          }
+        }
+      }
+    },
+    "Las inferencias vocales en vivo se posponen con Parakeet para priorizar la transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live voice inference is deferred with Parakeet to prioritize transcription."
+          }
+        }
+      }
+    },
+    "El análisis de discurso requiere Apple Intelligence disponible.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse analysis requires available Apple Intelligence."
+          }
+        }
+      }
+    },
+    "El modelo no devolvió citas válidas. Puedes reintentar el análisis.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The model returned no valid quotations. You can retry the analysis."
+          }
+        }
+      }
+    },
+    "La transcripción o el contexto cambió. Actualiza el análisis.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The transcript or context changed. Update the analysis."
+          }
+        }
+      }
+    },
+    "El análisis contiene una cita que ya no coincide.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The analysis contains a quotation that no longer matches."
+          }
+        }
+      }
+    },
+    "Actualiza el análisis de discurso antes de exportarlo.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update discourse analysis before exporting."
+          }
+        }
+      }
+    },
+    "El análisis de discurso cambió durante la exportación. Reintenta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse analysis changed during export. Try again."
+          }
+        }
+      }
+    },
+    "El resultado vocal no tiene una sesión válida.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The voice result has no valid session."
+          }
+        }
+      }
+    },
+    "Discurso al finalizar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discourse after import"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

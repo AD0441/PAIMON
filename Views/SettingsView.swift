@@ -157,6 +157,32 @@ struct SettingsView:View {
                     }
                     .disabled(model.vocalEmotionWorking)
                 }
+                Section("Análisis durante la captura") {
+                    Toggle("Análisis vocal en vivo", isOn: Binding(get: { model.settings.vocalLiveEnabled == true }, set: {
+                        model.settings.vocalLiveEnabled = $0
+                        if $0 { model.settings.vocalAnalysisEnabled = true }
+                    }))
+                    Picker("Intervalo vocal", selection: Binding(get: { model.settings.vocalLiveInterval ?? 30 },
+                        set: { model.settings.vocalLiveInterval = $0 })) {
+                        Text("Cada 15 segundos").tag(15.0)
+                        Text("Cada 30 segundos").tag(30.0)
+                        Text("Cada minuto").tag(60.0)
+                    }
+                    Text("Analiza ventanas de tres segundos sin guardar el audio. Las etiquetas y mediciones sí se conservan. El modelo vocal elegido se usa si está activado; los sonidos se limitan a tu selección.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Text("Con presión de memoria, cola ocupada o Parakeet activo se posponen las inferencias vocales. La transcripción tiene prioridad.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Toggle("Discurso automático durante la captura", isOn: Binding(
+                        get: { model.settings.discourseEnabled == true }, set: { model.settings.discourseEnabled = $0 }))
+                    Picker("Intervalo de discurso", selection: Binding(get: { model.settings.discourseInterval ?? 300 },
+                        set: { model.settings.discourseInterval = $0 })) {
+                        Text("Cada 2 minutos").tag(120.0)
+                        Text("Cada 5 minutos").tag(300.0)
+                        Text("Cada 10 minutos").tag(600.0)
+                    }
+                    Text("Temas, argumentos, evolución y recursos del lenguaje se actualizan por bloques. La participación usa la diarización. Los resultados se consolidan al terminar.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
                 Section("Diarización · instalación opcional") {
                     Text("Separa las voces de una sesión para que puedas asignarles nombres.")
                         .font(.caption).foregroundStyle(.secondary)

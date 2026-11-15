@@ -68,3 +68,7 @@ Sin nuevas dependencias externas: catálogo nativo `Resources/Localizable.xcstri
 PAIMON 0.13.0 permite seleccionar emotion2vec+ Base, Large o Wav2Vec2 Base SUPERB ER. Los dos últimos son conversiones Core ML con clasificación y embeddings en una inferencia. Sus descargas fijan tamaños y SHA-256 e incluyen las licencias originales. No añaden dependencias a SwiftPM ni requieren Python al ejecutar la app. [Procedencia, interfaces, tamaños y preparación de desarrollo](VOCAL-MODELS.md).
 
 La revisión de transcripciones utiliza Apple Foundation Models, el tokenizador del framework y la persistencia SQLite existente. No instala otro modelo ni contacta proveedores externos. [Revisión y trazabilidad](TRANSCRIPT-REVIEW.md).
+
+## Discurso y voz durante captura · 0.14.0
+
+No se añade una dependencia externa: Discurso usa Foundation Models y el muestreo vocal reutiliza Accelerate, AVFAudio, SoundAnalysis y los paquetes Core ML ya gestionados por PAIMON. El modelo propio se ejecuta con CPU-only; Speech y Foundation Models gestionan sus aceleradores sin promesa de ANE por operación. Sin modelo emocional opcional se conservan las mediciones y las categorías seleccionadas del clasificador de Apple. Descargar pesos sigue siendo una acción explícita del usuario. [Controles y alcance](DISCOURSE-LIVE.md).

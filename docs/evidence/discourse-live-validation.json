@@ -1,0 +1,96 @@
+{
+  "version": "0.14.0",
+  "build": 30,
+  "validationDates": [
+    "2026-11-14",
+    "2026-11-15"
+  ],
+  "environment": {
+    "cpu": "Apple M1",
+    "memoryBytes": 8589934592,
+    "macOS": "27.3",
+    "xcode": "27.2",
+    "xcodeBuild": "27B52",
+    "architecture": "arm64",
+    "minimumTarget": "macOS 26.0"
+  },
+  "suiteWithNewNativeIntegrations": {
+    "registered": 146,
+    "executed": 137,
+    "skipped": 9,
+    "failed": 0,
+    "coreSummaryCount": 133,
+    "appSummaryCount": 13,
+    "enabled": [
+      "PAIMON_TEST_DISCOURSE",
+      "PAIMON_TEST_LIVE_VOCAL"
+    ],
+    "skippedTests": [
+      "assistantAnswersAndAbstainsWithTheLocalAppleModel()",
+      "nativeParakeetImportProducesRealSpanishText()",
+      "nativeAudioImportProducesRealSpanishText(_:)",
+      "intelligentReviewCallsTheNativeModelAndCheckpointsItsValidatedResults()",
+      "emotion2vecProcessesTheSpanishAudioFixtureThroughCoreML()",
+      "managedVocalDownloadsVerifyAndInstallThePublishedPackages()",
+      "appleSoundAnalysisRecognizesLaughterAndApplauseAndSkipsSpeech()",
+      "additionalVocalModelsRunThroughCoreMLWithRealEmbeddings()",
+      "nativeTaggingDistinguishesConcernAndDisagreement()"
+    ]
+  },
+  "finalDefaultSuite": {
+    "registered": 146,
+    "executed": 135,
+    "skipped": 11,
+    "failed": 0
+  },
+  "ui": {
+    "isolated": true,
+    "privateSessionsUsed": false,
+    "fixture": "spanish-synthetic.aiff",
+    "realTranscription": true,
+    "realSummary": true,
+    "automaticFinalDiscourse": true,
+    "finalTranscriptControlsVisible": true,
+    "discourseCitationNavigation": true,
+    "settingsToggles": true,
+    "exportDiscourseSelection": true
+  },
+  "instruments": {
+    "template": "Time Profiler",
+    "durationSeconds": 10,
+    "scope": "Isolated review app waiting for AVAudioFile open. Not an inference, capture or energy benchmark."
+  },
+  "notValidatedThisRound": [
+    "Complete live system+microphone capture with the optional vocal models",
+    "Long meeting soak",
+    "Emotion accuracy on real people",
+    "macOS 26 runtime"
+  ],
+  "privacy": {
+    "newModelDownloads": false,
+    "rawAudioSavedByDefault": false,
+    "liveVectorsPersisted": false
+  },
+  "finalNativeIntegrations": {
+    "discourse": {
+      "passed": true,
+      "seconds": 14.127
+    },
+    "vocal": {
+      "passed": true,
+      "seconds": 0.771
+    }
+  },
+  "packages": {
+    "actual": {
+      "version": "0.14.0",
+      "build": "30",
+      "sha256": "e609346350ada8d4375707f7aa5a7153c1cdc923402014f5f67c59251bc7c13f"
+    },
+    "anterior": {
+      "version": "0.13.0",
+      "build": "29",
+      "sha256": "65a4d68d9251c8fa4977fe009d0ecc270273d08d80ccb12071a05d8cb62ed291"
+    }
+  }
+}

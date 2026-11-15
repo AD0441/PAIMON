@@ -13,6 +13,7 @@ struct ExportSheet:View {
             if options.transcript {
                 Toggle("Exportar texto original sin correcciones",isOn:$options.originalTranscript)
             }
+            Toggle("Discurso y participación",isOn:$options.discourse)
             Toggle("Marcadores y notas",isOn:$options.bookmarks)
             Toggle("Anexo de evidencias",isOn:$options.evidence).disabled(format == .json)
             Text(model.ui(format == .json ? "JSON conserva las citas y referencias estructuradas.":"Las citas van en un anexo. PDF y Markdown incluyen enlaces desde el resumen.")).font(.caption).foregroundStyle(.secondary)

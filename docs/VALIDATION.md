@@ -410,3 +410,31 @@ PAIMON_TEST_APPLE_REVIEW=1 ./script/test.sh
 PAIMON_TEST_VOCAL_DOWNLOADS=1 ./script/test.sh \
   --filter managedVocalDownloadsVerifyAndInstallThePublishedPackages
 ~~~
+
+## Discurso incremental y voz durante la captura · PAIMON 0.14.0 (30)
+
+Validación del 14–15 de noviembre de 2026 en **Apple M1, 8 GB, macOS 27.3 y Xcode 27.2**. Release arm64 compiló e instaló con firma ad hoc estricta válida. No se afirma validación en macOS 26 ni una reunión de varias horas.
+
+La batería contiene **146 pruebas registradas**. En la ejecución con las dos integraciones nuevas activadas se ejecutaron **137 sin fallos** y se omitieron **9 integraciones opcionales** de otros módulos. La ejecución final predeterminada ejecutó 135 sin fallos y omitió 11 integraciones opcionales. Las dos nuevas integraciones se comprobaron además por separado sobre el código final. Las omisiones no cuentan como pruebas aprobadas. [Registro resumido verificable](evidence/discourse-live-validation.json).
+
+- Apple Foundation Models procesó dos bloques sintéticos: primero la propuesta y su razón; después la aprobación. Se verificaron la relación de aceptación, citas exactas, estado provisional/final y repetición sin duplicados.
+- Sound Analysis procesó ventanas PCM reales de Tests/Fixtures/spanish-synthetic.aiff y detectó habla. El modelo Base instalado se ejecutó con Core ML CPU-only. No se descargaron recursos nuevos ni se usó audio privado.
+- Las pruebas numéricas comprobaron tiempos por fuente, unión de solapes y turnos sin sumar pausas al habla. Se comprobaron citas inexistentes, estados ambiguos o condicionales, contexto modificado, cursor incremental, exportación de discurso en TXT/Markdown/PDF/JSON y eliminación con la sesión.
+- La ruta vocal comprobó ventanas acotadas, separación de fuentes, discontinuidades, inferencia omitida con compuerta ocupada, suspensión, cierre y persistencia de métricas sin audio.
+
+En una **instancia aislada de Release** se importó la muestra española, se obtuvo transcripción definitiva y resumen real y se observó la generación automática final de Discurso. Se comprobaron la pestaña, mapa de temas, filtro de argumentos, despliegue de cita y salto a transcripción, interruptores e intervalos de Ajustes, controles junto a Iniciar y selección Discurso y participación en Exportar. Se corrigió una referencia interna mostrada como subtema y la identidad visual de filas parciales para que no sobrevivan como parciales después de importar. La última importación mostró los controles de escuchar y corregir sobre el texto definitivo, sin reiniciar la app.
+
+Una prueba de apertura de la muestra desde Escritorio quedó esperando en AVAudioFile → open. Se continuó con una copia idéntica en el directorio temporal de revisión, sin ampliar permisos de carpetas. El modo --review ahora crea datos y preferencias independientes por ejecución, usa una copia temporal de la muestra y deja intactas instancias de revisión anteriores.
+
+Se capturó un perfil **Time Profiler de Instruments de 10 s** de la instancia aislada. Fue durante una espera de apertura, por lo que **no mide el coste de inferencia ni de captura**. En la revisión se observó el indicador de huella del cliente alrededor de 80 MB al terminar Discurso; esta cifra no incluye por separado los servicios de IA del sistema y no es un máximo de memoria ni una garantía para sesiones prolongadas.
+
+No se volvió a ejecutar en esta ronda la captura real con ambas fuentes, una prueba acústica de diarización, la calidad emocional con personas reales ni las nueve integraciones opcionales indicadas en el registro. La ruta de captura se comprobó anteriormente; sus cambios de entrega al análisis vocal se cubren aquí por pruebas del muestreo y la cola, sin afirmar un ensayo completo de reunión.
+
+~~~bash
+./script/test.sh
+PAIMON_TEST_DISCOURSE=1 PAIMON_TEST_LIVE_VOCAL=1 ./script/test.sh
+./script/build_and_run.sh --review
+./script/build_and_run.sh --install
+~~~
+
+El proyecto mantiene solo Versiones/PAIMON-actual.zip (0.14.0, 30) y Versiones/PAIMON-anterior.zip (0.13.0, 29), además del enlace a /Applications/PAIMON.app. Los archivos fuente, pruebas, documentación y registros de validación se conservan.

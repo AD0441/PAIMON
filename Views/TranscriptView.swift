@@ -71,7 +71,9 @@ struct TranscriptView:View {
                             ContentUnavailableView(model.ui(model.active ? "Escuchando…":"Listo para escuchar"),systemImage:"waveform",description:Text(model.ui(model.active ? "El texto aparecerá al reconocer voz.":"Reproduce audio, elige una fuente y pulsa Iniciar."))).frame(maxWidth:.infinity,minHeight:300)
                         }
                         ForEach(model.segments) { segment in segmentView(segment).id(segment.id) }
-                        ForEach(model.partials.values.sorted{$0.start<$1.start}) { segment in segmentView(segment).opacity(0.6) }
+                        ForEach(model.partials.values.sorted{$0.start<$1.start}) { segment in
+                            segmentView(segment).opacity(0.6).id("partial-" + segment.id)
+                        }
                         Color.clear.frame(height:1).id("end")
                     }.padding(20)
                 }

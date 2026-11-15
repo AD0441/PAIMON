@@ -87,6 +87,7 @@ struct VocalAnalysisView: View {
                     Text("Mide cambios audibles de intensidad, altura y pausas. Las mediciones describen la señal grabada.")
                         .font(.caption).foregroundStyle(.secondary)
                 }
+                LiveVocalView(model: model)
                 if paused {
                     Text(model.ui(model.active ? "Termina la captura o importación para analizar." : "El análisis se pausa mientras hay presión de memoria."))
                         .font(.caption).foregroundStyle(.secondary)

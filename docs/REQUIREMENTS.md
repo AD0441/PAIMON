@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
-- **Versión del documento:** 1.2 · **Fecha:** 10 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.9.0 (24).
+- **Versión del documento:** 1.3 · **Fecha:** 14 de noviembre de 2026.
+- **Base revisada:** PAIMON 0.14.0 (30); los estados históricos de la matriz conservan su evidencia original.
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -211,3 +211,19 @@ La detección automática multilingüe de **ASR-02 sigue siendo un P0 parcial de
 | E7 | [Mediciones y sus límites](PERFORMANCE.md), [entorno](evidence/performance-environment.json) e [índice de evidencias](evidence/README.md). |
 
 Antes de publicar otra versión: revisar los P0 pendientes, ejecutar los casos afectados, actualizar evidencia y limitaciones, y mantener sincronizados este documento y el README. No se crea una versión binaria nueva por editar esta lista. No registrar conversaciones, claves ni pantallas privadas como material público.
+
+## 17. Discurso y voz en captura · 0.14.0
+
+| Código | Estado | Criterio y alcance |
+| --- | --- | --- |
+| DIS-01 | I | Seis vistas de temas, argumentos, evolución, participación, recursos y preguntas/respuestas. Citas literales y vínculos navegables. |
+| DIS-02 | I | Actualización local por bloques configurable, cursor SQLite y recuperación de consolidación final. Requiere Apple Intelligence; sin fallback remoto. |
+| DIS-03 | V | Rechazar citas inventadas, estados implícitos o ambiguos, cambios de texto/contexto durante la escritura y exportaciones obsoletas. Pruebas sintéticas de persistencia y exportación. |
+| PAR-01 | V | Unir solapes por voz/fuente, agrupar turnos sin contar pausas como habla. Prueba numérica con diarización conocida. Precisión de diarización real es otra medición. |
+| VOC-01 | I | Muestrear PCM temporal con sonidos, emoción del modelo elegido y comparación de embeddings. Cola acotada e inferencia opcional sin espera. |
+| VOC-02 | V | Conservar métricas sin audio, separar fuentes, detectar discontinuidades, suspender/reanudar sin perder muestras por comprobaciones repetidas, eliminar derivados con sesión. |
+| PRV-05 | I | Guardar audio visible junto a Iniciar; apagado por defecto e independiente del análisis. Ningún PCM nuevo en SQLite. |
+| DIS-04 | N | Medir cobertura de temas, relaciones y evolución con conversaciones reales largas en español/inglés y revisión humana. |
+| VOC-03 | N | Ensayo prolongado en macOS 26 con ambas fuentes y modelos opcionales, medir pérdidas, memoria y energía. |
+
+Detalles, controles y pruebas: [DISCOURSE-LIVE.md](DISCOURSE-LIVE.md).

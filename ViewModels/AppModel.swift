@@ -9,6 +9,13 @@ final class AppModel {
     @ObservationIgnored private let preferences:UserDefaults
     @ObservationIgnored private let summaryEngineOverride:(@MainActor (Session?) -> any SummarizationEngine)?
     @ObservationIgnored private let pressureRetryInterval:Duration
+    var discourseWorking=false
+    var discourseStatus=""
+    var discourseRevision=UUID()
+    var liveVocalRevision=UUID()
+    var liveVocalStatus=""
+    @ObservationIgnored private var discourseTask:Task<Void,Never>?
+    private var lastDiscourse=0.0
     var settings:AppSettings { didSet { settings.save(to:preferences) } }
     var state:CaptureState = .idle {
         didSet {
@@ -209,6 +216,8 @@ final class AppModel {
     func memoryPressureChanged(_ value:Bool) {
         guard pressure != value else { return }
         pressure=value
+        Task { await pipeline?.setOptionalAnalysisPaused(value) }
+        if value { discourseTask?.cancel() }
         if value {
             pressureRecoveryTask?.cancel()
             pressureRecoveryTask=nil
@@ -227,6 +236,7 @@ final class AppModel {
         guard !Task.isCancelled else { return }
         pressureRecoveryTask=nil
         resumePendingSummaries()
+        resumePendingDiscourse()
     }
     private func resumePendingSummaries() {
         guard summaryRecoveryRequested,finalRecoveryTask==nil,pressureRecoveryTask==nil,
@@ -237,6 +247,7 @@ final class AppModel {
             defer {
                 self.finalRecoveryTask=nil
                 self.resumePendingSummaries()
+                self.resumePendingDiscourse()
             }
             await self.summaryTask?.value
             do {
@@ -324,7 +335,7 @@ final class AppModel {
             guard try await store?.updateExistingSession(session)==true else { return }
             selectedRecord=session
             if current?.id==session.id { current=session }
-            await refreshSessions(); summaryStatus="Contexto guardado. Pulsa Actualizar resumen para aplicarlo."
+            await refreshSessions(); discourseRevision=UUID(); summaryStatus="Contexto guardado. Pulsa Actualizar resumen para aplicarlo."
         } catch { message=error.localizedDescription }
     }
     func refreshProcessingProgress() async {
@@ -564,6 +575,7 @@ final class AppModel {
     }
     func start() async {
         guard canStartAudio,let pipeline else { return }
+        discourseTask?.cancel()
         importedPlayback.stop()
         capturePreparation = .checkingVoice
         state = .preparing; message=nil; findings=[]; findingPage=0; moreFindings=false; displayBuffer=LiveDisplayBuffer(); segments=[]; partials=[:]; bookmarks=[]; bookmarkPage=0; moreBookmarks=false
@@ -572,7 +584,8 @@ final class AppModel {
                 await self?.showCapturePreparation(stage)
             }
             current=session; selected=session.id; sessions.insert(session,at:0)
-            started=ProcessInfo.processInfo.systemUptime; elapsed=0; reportDuration=0; lastSummary=0; state = .recording
+            started=ProcessInfo.processInfo.systemUptime; elapsed=0; reportDuration=0; lastSummary=0; lastDiscourse=0; liveVocalStatus=""; state = .recording
+            await pipeline.setOptionalAnalysisPaused(pressure)
             eventTask=Task { [weak self] in
                 for await event in events {
                     guard let self else { break }
@@ -590,6 +603,10 @@ final class AppModel {
                         if self.state == .recording { self.displayBuffer.activity(source,level:level,active:active); self.scheduleDisplayFlush() }
                     case .speakersUpdated(let id):
                         if self.selected==id { self.refreshSpeakers() }
+                    case .liveVocal(let result):
+                        if self.selected==result.sessionID { self.liveVocalRevision=UUID() }
+                    case .vocalState(let id,let text):
+                        if self.selected==id { self.liveVocalStatus=text }
                     case .warning(let text): self.message=text
                     case .failure(let text): self.message=text; Task { await self.stop() }
                     }
@@ -691,8 +708,10 @@ final class AppModel {
                 message=error.localizedDescription
             }
         }
+        if session.settings.discourseEnabled == true { try? await store?.requestFinalDiscourse(session:session.id) }
         await refreshProcessingProgress()
         state = .idle
+        resumePendingDiscourse()
     }
     func waitForSummaryRecovery() async {
         await pressureRecoveryTask?.value
@@ -721,7 +740,11 @@ final class AppModel {
     private func tick() async {
         elapsed=ProcessInfo.processInfo.systemUptime-started
         if Int(elapsed)%30==0 { reportDuration=elapsed }
-        if Int(elapsed)%5==0 { metrics=ResourceMetrics.current(); try? await pipeline?.checkpoint() }
+        if Int(elapsed)%5==0 {
+            metrics=ResourceMetrics.current()
+            try? await pipeline?.checkpoint()
+            await pipeline?.setOptionalAnalysisPaused(pressure || (settings.energySaving && metrics.thermal>=2))
+        }
         if Int(elapsed)%5==0,let id=current?.id {
             await refreshProcessingProgress()
             let cursor=try? await store?.latestSummary(session:id)?.throughRow
@@ -730,6 +753,58 @@ final class AppModel {
             if state == .recording,!summaryWorking,SummarySchedule.shouldUpdate(pending:pending,secondsSinceUpdate:elapsed-lastSummary,interval:settings.summaryInterval,underPressure:pressure || (settings.energySaving && metrics.thermal>=2)) {
                 lastSummary=elapsed; summaryTask=Task { await updateSummary(final:false) }
             }
+        }
+        if state == .recording,current?.settings.discourseEnabled == true,!summaryWorking,!discourseWorking,!pressure,
+           !(settings.energySaving && metrics.thermal>=2),
+           elapsed-lastDiscourse >= max(60,current?.settings.discourseInterval ?? 300) {
+            lastDiscourse=elapsed
+            analyzeDiscourse(final:false,for:current)
+        }
+    }
+    func analyzeDiscourse(final:Bool?=nil,for override:Session?=nil) {
+        guard !discourseWorking,!summaryWorking,!pressure,
+              ![CaptureState.importing,.preparing,.stopping].contains(state),
+              let session=override ?? selectedSession,let store else { return }
+        discourseWorking=true; discourseStatus="Analizando discurso…"
+        let finalize=final ?? !(active && current?.id==session.id)
+        discourseTask=Task { [weak self] in
+            guard let self else { return }
+            defer { self.discourseWorking=false; self.discourseTask=nil; self.discourseRevision=UUID() }
+            do {
+                if self.active,await self.pipeline?.heavyTranscriber == true {
+                    self.discourseStatus="El discurso se pospone con Parakeet para priorizar la transcripción."
+                    return
+                }
+                try await DiscourseAnalyzer.analyze(session:session,store:store,final:finalize)
+                if finalize { try await store.clearDiscourseJob(session:session.id) }
+                self.discourseStatus=finalize ? "Análisis de discurso finalizado.":"Análisis provisional actualizado."
+            } catch is CancellationError { self.discourseStatus="Análisis de discurso pausado." }
+            catch { self.discourseStatus=error.localizedDescription }
+        }
+    }
+    func cancelDiscourse() {
+        discourseTask?.cancel()
+        if let id=selected { Task { try? await store?.clearDiscourseJob(session:id) } }
+    }
+    private func resumePendingDiscourse() {
+        guard !active,!summaryWorking,!pressure,!discourseWorking,discourseTask==nil,
+              finalRecoveryTask==nil,pressureRecoveryTask==nil,let store,DiscourseAnalyzer.unavailableReason==nil else { return }
+        discourseWorking=true
+        discourseTask=Task { [weak self] in
+            guard let self else { return }
+            defer { self.discourseWorking=false; self.discourseTask=nil; self.discourseRevision=UUID() }
+            do {
+                while let id=try await store.pendingDiscourseSession() {
+                    try Task.checkCancellation()
+                    guard !self.active,!self.pressure,let session=try await store.session(id:id) else { break }
+                    self.discourseStatus="Consolidando el discurso…"
+                    try await DiscourseAnalyzer.analyze(session:session,store:store,final:true)
+                    try await store.clearDiscourseJob(session:id)
+                    self.discourseStatus="Análisis de discurso finalizado."
+                    self.discourseRevision=UUID()
+                }
+            } catch is CancellationError { self.discourseStatus="Análisis de discurso pausado." }
+            catch { self.discourseStatus=error.localizedDescription }
         }
     }
     func pauseOrResume() async {
@@ -743,9 +818,12 @@ final class AppModel {
     }
     func stop() async {
         guard [.recording,.paused].contains(state) else { return }
+        let stoppingDiscourse=discourseTask
+        stoppingDiscourse?.cancel()
         state = .stopping; clockTask?.cancel(); clockTask=nil
         do {
             if let value=try await pipeline?.stop() { current=value; reportDuration=value.duration }
+            await stoppingDiscourse?.value
             await eventTask?.value; eventTask=nil
             displayTask?.cancel(); displayTask=nil; displayBuffer=LiveDisplayBuffer(); partials=[:]; voice=[:]
             await refreshSessions()
@@ -777,6 +855,7 @@ final class AppModel {
             if !summaryWorking {
                 progressTask?.cancel(); progressTask=nil; googleRetryStatus=nil
                 resumePendingSummaries()
+                resumePendingDiscourse()
             }
         }
         do {

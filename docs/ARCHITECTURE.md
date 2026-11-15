@@ -1,4 +1,4 @@
-# Arquitectura y privacidad · PAIMON 0.6.0
+# Arquitectura y privacidad · PAIMON 0.14.0
 
 El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** y el lema **Transformando sonido en conocimiento.** El nombre visible, el ejecutable y el bundle `.app` usan PAIMON. Se conserva `local.audio.intelligence` como identidad de preferencias y permisos, así como la carpeta de datos anterior para evitar migraciones innecesarias. La marca vigente se conserva en `Resources/Brand` mediante fuentes SVG/PNG reproducibles; los iconos anteriores quedan en el historial de Git. El ICNS generado se carga mediante los mecanismos nativos de macOS. No intervienen modelos ni recursos remotos en la identidad visual.
 
@@ -80,3 +80,13 @@ AppModel admite almacén, preferencias, cliente de credenciales y motor de resum
 Paleta e idioma de interfaz son campos opcionales compatibles con ajustes anteriores. El catálogo nativo cambia los controles SwiftUI; no modifica el idioma de reconocimiento ni el texto persistido. Los tokens de selección impiden que resultados antiguos sustituyan otra sesión. Disponibilidad del motor y estado del informe son propiedades distintas.
 
 La caché Speech conserva únicamente metadatos positivos de recursos por 60 s; no contiene audio, texto ni objetos de modelos. El resumen v4 añade una regresión léxica para una advertencia de aprobación inventada observada durante revisión; no sustituye la revisión humana.
+
+## Discurso y análisis vocal durante la captura · 0.14.0
+
+DiscourseAnalyzer usa generación estructurada nativa, fuentes F1–F8 y posiciones de salida U1–U10 separadas de las referencias previas P1–P12. Los dominios enumerados evitan referencias libres; los identificadores de salida se derivan de su posición, sin pedir al modelo otro campo redundante. Cada hallazgo necesita una cita literal. Se rechazan vínculos sin objetivo y estados ambiguos. La cita explícita fija el estado y su rótulo; no se reutiliza una interpretación contradictoria. En 26.4+ se cuenta prompt, instrucciones y esquema contra contextSize; antes se aplica una cota conservadora. Cada lote usa una sesión nueva y la compuerta común de inferencia.
+
+SQLite conserva discourse_findings, discourse_state y una cola de trabajos finales. El cursor, los hallazgos y la revisión de texto/contexto se comprueban en una transacción. Las correcciones invalidan la caché; los resultados previos no se exportan como actuales. Las vistas y exportaciones consultan páginas. Participación une intervalos por hablante/fuente sin contar dos veces el solape ni sumar pausas al tiempo hablado.
+
+RecordingPipeline entrega PCM también a una cola opcional bufferingNewest(12), consumida por LiveVocalSession sin esperar la inferencia en el consumidor de transcripción. LiveVocalSampler mantiene hasta tres segundos a 16 kHz por fuente y detecta discontinuidades. La inferencia vocal usa performIfIdle: nunca añade una espera detrás de otra generación. Core ML CPU-only y SoundAnalysis se ejecutan sucesivamente; el modelo propio se libera antes del clasificador de sonidos. Cancelación, presión y pausa invalidan la ventana pendiente. Solo se retiene el último embedding por fuente para calcular una distancia.
+
+live_vocal almacena tiempos, métricas, etiquetas, identificador del modelo y distancia; no PCM ni embeddings. Todas las tablas nuevas dependen de la sesión con ON DELETE CASCADE y conservan el mecanismo existente de eliminación/compactación SQLite. Guardar audio sigue siendo una decisión independiente, apagada por defecto. La cola final de Discurso se recupera cuando terminan los resúmenes y hay recursos; una generación rechazada conserva el cursor para un reintento explícito.

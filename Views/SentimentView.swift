@@ -5,13 +5,14 @@ import SwiftUI
 struct SessionAnalysisPane: View {
     var model: AppModel
     @State private var selected: Tab = .summary
-    private enum Tab: Hashable { case summary, sentiment, assistant }
+    private enum Tab: Hashable { case summary, sentiment, discourse, assistant }
 
     var body: some View {
         VStack(spacing: 0) {
             Picker("Sección del informe", selection: $selected) {
                 Text("Resumen").tag(Tab.summary)
                 Text("Sentimientos").tag(Tab.sentiment)
+                Text("Discurso").tag(Tab.discourse)
                 Text("Asistente").tag(Tab.assistant)
             }
             .pickerStyle(.segmented)
@@ -30,6 +31,7 @@ struct SessionAnalysisPane: View {
                     .opacity(selected == .assistant ? 1 : 0)
                     .allowsHitTesting(selected == .assistant)
                     .accessibilityHidden(selected != .assistant)
+                if selected == .discourse { DiscourseView(model: model).id(model.selected) }
                 if selected == .sentiment {
                     SentimentModes(model: model).id(model.selected)
                 }

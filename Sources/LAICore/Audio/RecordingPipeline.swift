@@ -29,6 +29,11 @@ public actor RecordingPipeline {
     private var archive:AudioArchive?
     private var diarizationTask:Task<Void,Never>?
     private var diarizationInput:AsyncStream<AudioChunk>.Continuation?
+    private var liveTask:Task<Void,Never>?
+    private var liveInput:AsyncStream<AudioChunk>.Continuation?
+    private var liveSession:LiveVocalSession?
+    private var optionalPaused=false
+    public private(set) var heavyTranscriber=false
     public init(store:SessionStore) { self.store=store }
     public func start(title:String,settings:AppSettings,context:SessionContext?=nil,preparation:(@Sendable (CapturePreparation) async -> Void)?=nil) async throws -> (Session,AsyncStream<PipelineEvent>) {
         guard session==nil else { throw LAIError.message("Ya hay una sesión activa") }
@@ -38,6 +43,7 @@ public actor RecordingPipeline {
         else if await AppleSpeechEngine.availability(locale:settings.locale)==nil { selected=AppleSpeechEngine() }
         else if settings.transcription == .automatic && FluidSpeechEngine.isAvailable(settings:settings) { selected=FluidSpeechEngine() }
         else { throw LAIError.message(await AppleSpeechEngine.availability(locale:settings.locale) ?? "Motor no disponible") }
+        heavyTranscriber=selected is FluidSpeechEngine
         var value=Session(title:title.isEmpty ? "Nueva sesión":title,settings:settings)
         value.context=context?.bounded
         let events=AsyncStream<PipelineEvent>.makeStream(bufferingPolicy:.bufferingOldest(256))
@@ -87,6 +93,25 @@ public actor RecordingPipeline {
                 await diarizer.finish()
             }
         }
+        if settings.vocalLiveEnabled == true {
+            let live=LiveVocalSession(session:value.id,settings:settings,store:store,events:ui.continuation,
+                                      allowModels:!heavyTranscriber)
+            liveSession=live
+            await live.suspend(optionalPaused)
+            let queue=AsyncStream<AudioChunk>.makeStream(bufferingPolicy:.bufferingNewest(12))
+            liveInput=queue.continuation
+            liveTask=Task { @concurrent in
+                for await chunk in queue.stream {
+                    if Task.isCancelled { break }
+                    await live.append(chunk)
+                }
+                await live.close()
+            }
+            if heavyTranscriber {
+                ui.continuation.yield(.vocalState(value.id,"Las inferencias vocales en vivo se posponen con Parakeet para priorizar la transcripción."))
+            }
+        }
+        let vocalInput=liveInput
         let speakerInput=diarizationInput
         consumer=Task { @concurrent in
             var detectors:[AudioSource:VAD]=[:]; var lastMeter:[AudioSource:Double]=[:]
@@ -97,6 +122,7 @@ public actor RecordingPipeline {
                     if chunk.start-(lastMeter[chunk.source] ?? -1)>=0.1 { ui.continuation.yield(.activity(chunk.source,level,active)); lastMeter[chunk.source]=chunk.start }
                     try await audioArchive?.append(chunk)
                     try await selected.append(chunk)
+                    vocalInput?.yield(chunk)
                     if case .dropped? = speakerInput?.yield(chunk), !warnedSpeakerDrops {
                         warnedSpeakerDrops=true
                         ui.continuation.yield(.warning("La diarización se retrasó. Algunos fragmentos pueden quedar sin hablante."))
@@ -122,7 +148,12 @@ public actor RecordingPipeline {
             }
         }
     }
+    public func setOptionalAnalysisPaused(_ value:Bool) async {
+        optionalPaused=value
+        await liveSession?.suspend(value || session?.status=="paused")
+    }
     public func pause() async {
+        await liveSession?.suspend(true)
         // HAL teardown can wait on permissions or a device. Freeze the clock
         // at the user's action, before awaiting producer/capture shutdown.
         let duration=ProcessInfo.processInfo.systemUptime-epoch
@@ -134,6 +165,7 @@ public actor RecordingPipeline {
         guard let value=session else { return }
         try await capture.start(settings:value.settings,epoch:epoch); startProducer()
         var active=value; active.status="recording"; session=active; try await store.save(active)
+        await liveSession?.suspend(optionalPaused)
     }
     public func captureDiagnostics() async -> CaptureDiagnostics { await capture.captureDiagnostics() }
     public func checkpoint() async throws {
@@ -146,6 +178,10 @@ public actor RecordingPipeline {
         producer?.cancel(); await producer?.value; producer=nil
         for chunk in await capture.stop() { audioInput?.yield(chunk) }
         audioInput?.finish(); await consumer?.value; consumer=nil
+        liveInput?.finish(); liveInput=nil
+        liveTask?.cancel()
+        await liveSession?.close()
+        await liveTask?.value; liveTask=nil; liveSession=nil
         diarizationInput?.finish(); diarizationInput=nil
         var failure:(any Error)?
         do { try await engine?.finish() } catch { failure=error; await engine?.cancel() }

@@ -198,3 +198,11 @@ Pasaron 75 pruebas, incluida importación real con SpeechTranscriber de la muest
 ## Ventana y presentación · 0.5.1
 
 Las columnas se acotan al área disponible para evitar que su tamaño intrínseco desplace la cabecera y el pie fuera de la ventana. El divisor conserva su proporción sin almacenar contenido ni cargar modelos. Se comprobaron sesiones vacías y guardadas, cuatro tamaños de ventana y apertura/cierre del contexto. Esto valida el diseño observado; no equivale a una medición nueva de inferencia, CPU o memoria.
+
+## Discurso y muestreo vocal · 0.14.0
+
+Discurso conserva su cursor por lote y consulta hasta doce hallazgos previos relevantes; el esquema elimina identificadores y clasificaciones relacionales redundantes. Las citas y cambios explícitos se validan antes de guardar. La captura recibe solo trabajo opcional por una cola acotada: ventanas de tres segundos por fuente, con intervalo inicial de treinta segundos. Las inferencias vocales no esperan una compuerta ocupada ni acumulan análisis atrasados. Core ML y Sound Analysis corren sucesivamente; se libera el modelo propio entre muestras. Solo se retiene el último vector por fuente cuando hay embeddings.
+
+Con Parakeet activo se posponen Discurso y los modelos vocales para priorizar la transcripción. La presión de memoria o térmica reduce trabajo opcional. El audio archivado sigue escribiéndose por bloques solo si se activa Guardar audio.
+
+Se ejecutaron pruebas funcionales sobre el M1 de 8 GB y una revisión aislada de la interfaz. El perfil de Instruments de esta ronda capturó una espera de apertura de archivo y no permite estimar consumo de los modelos. Quedan pendientes latencia/pérdidas durante captura real con ambas fuentes, picos de memoria incluyendo servicios Apple y prueba prolongada con cada modelo vocal. [Alcance de validación](VALIDATION.md#discurso-incremental-y-voz-durante-la-captura--paimon-0140-30).

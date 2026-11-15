@@ -12,16 +12,19 @@ export SWIFTPM_MODULECACHE_OVERRIDE="${TMPDIR:-/tmp}/lai-swift-cache"
 DERIVED="${TMPDIR:-/tmp}/LocalAudioIntelligence-DerivedData"
 if [[ "$MODE" == "--review" ]]; then
   DERIVED="${TMPDIR:-/tmp}/PAIMON-Review-DerivedData"
-  BUILD_OPTIONS+=('PRODUCT_BUNDLE_IDENTIFIER=local.audio.intelligence.review' 'SWIFT_ACTIVE_COMPILATION_CONDITIONS=PAIMON_REVIEW')
+  REVIEW_ROOT=$(mktemp -d "${TMPDIR:-/tmp}/paimon-review.XXXXXX")
+  REVIEW_ID="local.audio.intelligence.$(basename "$REVIEW_ROOT" | tr '[:upper:]' '[:lower:]')"
+  BUILD_OPTIONS+=("PRODUCT_BUNDLE_IDENTIFIER=$REVIEW_ID" 'SWIFT_ACTIVE_COMPILATION_CONDITIONS=PAIMON_REVIEW')
 fi
 APP_BUNDLE="$DERIVED/Build/Products/$CONFIGURATION/$APP_NAME.app"
 cd "$ROOT_DIR"
 xcodebuild -project LocalAudioIntelligence.xcodeproj -scheme LocalAudioIntelligence -configuration "$CONFIGURATION" -derivedDataPath "$DERIVED" -destination 'platform=macOS,arch=arm64' -jobs 2 "${BUILD_OPTIONS[@]}" build
 case "$MODE" in
   --review)
-    REVIEW_BUNDLE="${TMPDIR:-/tmp}/PAIMON Review.app"
-    pkill -x "PAIMON Review" >/dev/null 2>&1 || true
-    /bin/rm -rf -- "$REVIEW_BUNDLE"
+    # Each review has its own data, preferences and identity. Leave earlier
+    # review instances untouched; they may contain the user's own recordings.
+    REVIEW_BUNDLE="$REVIEW_ROOT/PAIMON Review.app"
+    /bin/cp "$ROOT_DIR/Tests/Fixtures/spanish-synthetic.aiff" "$REVIEW_ROOT/spanish-synthetic.aiff"
     /usr/bin/ditto --norsrc "$APP_BUNDLE" "$REVIEW_BUNDLE"
     /bin/mv "$REVIEW_BUNDLE/Contents/MacOS/PAIMON" "$REVIEW_BUNDLE/Contents/MacOS/PAIMON Review"
     for KEY in CFBundleName CFBundleDisplayName CFBundleExecutable; do
@@ -29,7 +32,7 @@ case "$MODE" in
     done
     /usr/bin/codesign --force --sign - --options runtime --entitlements Resources/LocalAudioIntelligence.entitlements "$REVIEW_BUNDLE"
     /usr/bin/codesign --verify --deep --strict "$REVIEW_BUNDLE"
-    /usr/bin/open -n "$REVIEW_BUNDLE" --args --review-directory "${TMPDIR:-/tmp}/PAIMON-Review-Data" --review-audio "$ROOT_DIR/Tests/Fixtures/spanish-synthetic.aiff"
+    /usr/bin/open -n "$REVIEW_BUNDLE" --args --review-directory "$REVIEW_ROOT/Review-Data" --review-audio "$REVIEW_ROOT/spanish-synthetic.aiff"
     printf 'Instancia aislada: %s\n' "$REVIEW_BUNDLE"
     ;;
   --build-only) printf '%s\n' "$APP_BUNDLE" ;;

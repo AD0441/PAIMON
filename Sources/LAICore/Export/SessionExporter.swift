@@ -5,6 +5,7 @@ public struct ExportOptions: Sendable {
     public var originalTranscript=false
     public var evidence=true
     public var bookmarks=true
+    public var discourse=false
     public var kinds:Set<FindingKind>=Set(FindingKind.allCases)
     public init() {}
 }
@@ -21,6 +22,13 @@ public actor SessionExporter {
     }
     public func export(session:Session,to url:URL,format:ExportFormat,options:ExportOptions) async throws {
         let revision=try await store.transcriptRevision(session:session.id)
+        let discourseState=options.discourse ? try await store.discourseState(session:session.id):nil
+        if let discourseState {
+            let saved=try await store.session(id:session.id) ?? session
+            guard discourseState.stamp==DiscourseAnalyzer.stamp(session:saved,revision:revision) else {
+                throw LAIError.message("Actualiza el análisis de discurso antes de exportarlo.")
+            }
+        }
         if !options.kinds.isEmpty,try await store.summaryNeedsRefresh(session:session.id) {
             throw LAIError.message("Actualiza el resumen para incluir las correcciones.")
         }
@@ -93,6 +101,16 @@ public actor SessionExporter {
                     if rows.isEmpty { break }
                     try writer.transcript(rows.map { transcriptVariant($0.1,original:options.originalTranscript) }); cursor=rows.last!.0
                 }
+            }
+            if options.discourse {
+                var offset=0
+                repeat {
+                    let page=try await store.discourseFindings(session:session.id,limit:100,offset:offset)
+                    try writer.discourse(page,first:offset==0,includeEvidence:options.evidence)
+                    offset += page.count
+                    if page.count<100 { break }
+                } while true
+                try writer.participation(try await store.participation(session:session.id))
             }
             writer.close()
         } else {
@@ -178,11 +196,53 @@ public actor SessionExporter {
                     }
                 }
             }
-            if format == .json { try write("]}") }
+            if format == .json {
+                try write("]")
+                if options.discourse {
+                    try write(",\"discourse\":{\"state\":")
+                    try handle.write(contentsOf:encoder.encode(discourseState))
+                    try write(",\"items\":[")
+                    var offset=0; var first=true
+                    while true {
+                        let page=try await store.discourseFindings(session:session.id,limit:100,offset:offset)
+                        for finding in page {
+                            if !first { try write(",") }; first=false
+                            try handle.write(contentsOf:encoder.encode(finding))
+                        }
+                        offset += page.count
+                        if page.count<100 { break }
+                    }
+                    try write("],\"participation\":")
+                    try handle.write(contentsOf:encoder.encode(try await store.participation(session:session.id)))
+                    try write("}")
+                }
+                try write("}")
+            } else if options.discourse {
+                try write(format == .markdown ? "\n## Análisis de discurso\n\n":"\nAnálisis de discurso\n\n")
+                var offset=0
+                while true {
+                    let page=try await store.discourseFindings(session:session.id,limit:100,offset:offset)
+                    for finding in page {
+                        let heading=finding.kind.title+" · "+timestamp(finding.start)
+                        try write((format == .markdown ? "**"+heading+"**":heading)+"\n"+finding.text+"\n")
+                        if options.evidence { for citation in finding.evidence { try write("["+timestamp(citation.start)+"] «"+citation.quote+"»\n") } }
+                        try write("\n")
+                    }
+                    offset += page.count
+                    if page.count<100 { break }
+                }
+                try write(format == .markdown ? "\n## Participación\n\n":"\nParticipación\n\n")
+                for speaker in try await store.participation(session:session.id) {
+                    try write((speaker.name ?? "Hablante "+String(speaker.number))+" · "+speaker.source.title+" · "+timestamp(speaker.seconds)+" · "+String(speaker.turns)+" turnos\n")
+                }
+            }
             try handle.synchronize()
         }
         guard revision == (try await store.transcriptRevision(session:session.id)) else {
             throw LAIError.message("La transcripción cambió durante la exportación. Intenta de nuevo.")
+        }
+        if options.discourse, (try await store.discourseState(session:session.id))?.updated != discourseState?.updated {
+            throw LAIError.message("El análisis de discurso cambió durante la exportación. Reintenta.")
         }
         if FileManager.default.fileExists(atPath:url.path) { _=try FileManager.default.replaceItemAt(url,withItemAt:temp) }
         else { try FileManager.default.moveItem(at:temp,to:url) }

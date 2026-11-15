@@ -17,6 +17,13 @@ public actor InferenceGate {
         do { try Task.checkCancellation(); let value=try await operation(); release(); return value }
         catch { release(); throw error }
     }
+    /// Optional live work is skipped instead of waiting behind transcription-related tasks.
+    public func performIfIdle<T:Sendable>(_ operation:@Sendable () async throws -> T) async throws -> T? {
+        guard !busy,waiters.isEmpty else { return nil }
+        busy=true
+        do { try Task.checkCancellation(); let value=try await operation(); release(); return value }
+        catch { release(); throw error }
+    }
     private func cancel(_ id:UUID) {
         guard let index=waiters.firstIndex(where:{$0.id==id}) else { return }
         waiters.remove(at:index).continuation.resume(throwing:CancellationError())
