@@ -3,7 +3,7 @@ import Foundation
 import SoundAnalysis
 import Synchronization
 
-public enum VocalSoundKind: Hashable, Sendable {
+public enum VocalSoundKind: Hashable, Codable, Sendable {
     case laughter, applause
     case other(String)
 
@@ -13,6 +13,13 @@ public enum VocalSoundKind: Hashable, Sendable {
         case "applause", "clapping": self = .applause
         default: self = .other(identifier)
         }
+    }
+
+    public init(from decoder: any Decoder) throws {
+        self.init(identifier: try decoder.singleValueContainer().decode(String.self))
+    }
+    public func encode(to encoder: any Encoder) throws {
+        var value = encoder.singleValueContainer(); try value.encode(rawValue)
     }
 
     public var rawValue: String {
@@ -34,7 +41,7 @@ public enum VocalSoundKind: Hashable, Sendable {
     }
 }
 
-public struct VocalSoundEvent: Identifiable, Sendable {
+public struct VocalSoundEvent: Codable, Identifiable, Sendable {
     public var id: String { "\(kind.rawValue)-\(audioStart)" }
     public let kind: VocalSoundKind
     public let start: Double
@@ -43,7 +50,7 @@ public struct VocalSoundEvent: Identifiable, Sendable {
     public var audioEnd: Double
 }
 
-public struct VocalSoundReport: Sendable {
+public struct VocalSoundReport: Codable, Sendable {
     public let events: [VocalSoundEvent]
     public let limited: Bool
 }

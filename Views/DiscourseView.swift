@@ -53,7 +53,7 @@ struct DiscourseView: View {
                         Button("Cancelar") { model.cancelDiscourse() }
                     } else {
                         Button("Analizar discurso") { model.analyzeDiscourse() }
-                            .disabled(model.selected == nil || model.pressure || model.summaryWorking || [.importing,.preparing,.stopping].contains(model.state) || DiscourseAnalyzer.unavailableReason != nil)
+                            .disabled(model.selected == nil || model.pressure || model.waitingForMemoryRecovery || model.summaryWorking || [.importing,.preparing,.stopping].contains(model.state) || DiscourseAnalyzer.unavailableReason != nil)
                     }
                     Spacer()
                 }
@@ -150,9 +150,14 @@ struct DiscourseView: View {
             let saved = try await store.session(id: session.id) ?? session
             let cached = try await store.discourseState(session: session.id)
             let revision = try await store.transcriptRevision(session: session.id)
-            let items = try await store.discourseFindings(session: session.id, kinds: section.kinds, limit: 80, offset: page * 80, topic: topic)
-            let map = try await store.discourseTopics(session: session.id, limit: 80, offset: page * 80)
-            let participation = try await store.participation(session: session.id)
+            var items: [DiscourseFinding] = []
+            var map: [DiscourseTopic] = []
+            var participation: [SpeakerParticipation] = []
+            switch section {
+            case .topics: map = try await store.discourseTopics(session: session.id, limit: 80, offset: page * 80)
+            case .participation: participation = try await store.participation(session: session.id)
+            default: items = try await store.discourseFindings(session: session.id, kinds: section.kinds, limit: 80, offset: page * 80, topic: topic)
+            }
             try Task.checkCancellation()
             guard model.selected == session.id else { return }
             state = cached; findings = items; topics = map; speakers = participation
@@ -200,7 +205,7 @@ private struct DiscourseRow: View {
                         ForEach(related) { DiscourseRow(model: model, finding: $0, nested: true) }
                     }
                 }.font(.caption)
-                .task(id: expanded) {
+                .task(id: String(expanded)+model.discourseRevision.uuidString) {
                     guard expanded, let session = model.selected else { return }
                     related = (try? await model.store?.discourseRelated(session: session, target: finding.id)) ?? []
                 }
@@ -208,6 +213,7 @@ private struct DiscourseRow: View {
             Divider()
         }
         .task(id: finding.target) {
+            target=nil
             guard let id = finding.target, let session = model.selected else { return }
             target = try? await model.store?.discourseFinding(session: session, id: id)
         }

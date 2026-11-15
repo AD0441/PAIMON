@@ -15,3 +15,10 @@ public struct ResourceMetrics: Sendable {
         return .init(residentMB:result==KERN_SUCCESS ? Double(info.resident_size)/1048576:0,footprintMB:vmResult==KERN_SUCCESS ? Double(vm.phys_footprint)/1048576:0,cpuSeconds:cpu,thermal:ProcessInfo.processInfo.thermalState.rawValue)
     }
 }
+
+public enum MemoryPressureLevel: String, Sendable {
+    case normal, warning, critical
+    public var title: String {
+        switch self { case .normal: "Normal"; case .warning: "Advertencia"; case .critical: "Crítica" }
+    }
+}

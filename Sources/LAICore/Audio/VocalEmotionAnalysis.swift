@@ -20,7 +20,7 @@ public enum VocalEmotion: Int, CaseIterable, Codable, Sendable {
     }
 }
 
-public struct VocalEmotionPoint: Identifiable, Sendable {
+public struct VocalEmotionPoint: Codable, Identifiable, Sendable {
     public var id: Double { start }
     public let start: Double
     public let end: Double
@@ -31,7 +31,7 @@ public struct VocalEmotionPoint: Identifiable, Sendable {
     public var embedding: [Float]? = nil
 }
 
-public struct VocalEmotionReport: Sendable {
+public struct VocalEmotionReport: Codable, Sendable {
     public let points: [VocalEmotionPoint]
     public let sampled: Bool
     public var model: VocalEmotionModel = .base

@@ -69,7 +69,16 @@ struct SettingsView:View {
                     Button("Abrir almacenamiento local") { model.revealStorage() }
                 }
                 Section("Rendimiento") {
-                    Toggle("Posponer resúmenes con presión de recursos",isOn:$model.settings.energySaving)
+                    Toggle("Reducir trabajo con temperatura elevada",isOn:$model.settings.energySaving)
+                    LabeledContent("Presión informada por macOS",value:model.ui(model.memoryPressureLevel.title))
+                    Picker("Reanudar tras normalizarse la memoria",selection:Binding(
+                        get:{model.settings.memoryRecoverySeconds ?? 15},set:{model.settings.memoryRecoverySeconds=$0})) {
+                        Text("5 segundos").tag(5.0)
+                        Text("15 segundos · recomendado").tag(15.0)
+                        Text("30 segundos").tag(30.0)
+                    }
+                    Text("El umbral lo fija macOS. PAIMON respeta los avisos y siempre protege ante presión crítica. Este ajuste cambia la espera de recuperación; avisos repetidos la amplían hasta dos minutos.")
+                        .font(.caption).foregroundStyle(.secondary)
                     Text("300 fragmentos, 120 hallazgos por página y una generación de resumen a la vez. Los finales pendientes se recuperan cuando baja la presión o al volver a abrir PAIMON.").font(.caption).foregroundStyle(.secondary)
                     Text("Los tiempos, errores y recursos del resumen se registran solo en SQLite local; no incluyen texto ni audio.").font(.caption).foregroundStyle(.secondary)
                 }

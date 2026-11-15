@@ -90,12 +90,12 @@ final class PDFReportWriter {
         ensure(72); y -= 7
         try paragraph(styled(text,size:14,bold:true),after:10)
     }
-    func report(_ report:SessionReport,includeEvidence:Bool,includeHeader:Bool=true,includeEvidenceAnnex:Bool=true) throws {
+    func report(_ report:SessionReport,includeEvidence:Bool,includeHeader:Bool=true,includeEvidenceAnnex:Bool=true,includeEmptyState:Bool=true) throws {
         if includeHeader {
             try paragraph(styled(report.title,size:23,bold:true),after:7)
             try paragraph(styled(report.metadata,size:10,color:0.4),after:18)
         }
-        if report.sections.isEmpty { try paragraph(styled("El resumen todavía no está disponible.")) }
+        if report.sections.isEmpty && includeEmptyState { try paragraph(styled("El resumen todavía no está disponible.")) }
         for section in report.sections {
             try heading(section.kind.title)
             if section.kind == .tasks { try tasks(section.items,includeEvidence:includeEvidence) }
@@ -167,6 +167,10 @@ final class PDFReportWriter {
             try paragraph(styled("\(timestamp(segment.start)) - \(timestamp(segment.end)) · \(segment.source.title)",size:9,bold:true,color:0.4),after:4)
             try paragraph(styled(segment.text,size:10),after:12)
         }
+    }
+    func analysis(title: String, rows: [String], first: Bool = true) throws {
+        if first { newPage(); try heading(title) }
+        for row in rows { try paragraph(styled(row,size:10),after:6) }
     }
     func discourse(_ findings:[DiscourseFinding],first:Bool,includeEvidence:Bool) throws {
         if first { newPage(); try heading("Análisis de discurso") }

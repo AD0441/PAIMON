@@ -33,6 +33,9 @@ public actor SessionStore {
         CREATE TABLE IF NOT EXISTS summary_metrics(id TEXT PRIMARY KEY,session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,created REAL NOT NULL,data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS summary_metrics_session ON summary_metrics(session,created);
         CREATE TABLE IF NOT EXISTS session_review(session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE, transcript_revision INTEGER NOT NULL DEFAULT 0, audio_bookmark TEXT);
+        CREATE TABLE IF NOT EXISTS assistant_turns(seq INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT NOT NULL UNIQUE, session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, data TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS assistant_turns_session ON assistant_turns(session,seq);
+        CREATE TABLE IF NOT EXISTS vocal_analysis(session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, source TEXT NOT NULL, updated REAL NOT NULL, data TEXT NOT NULL, PRIMARY KEY(session,source));
         CREATE TABLE IF NOT EXISTS transcript_review_suggestions(id TEXT PRIMARY KEY, session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, batch TEXT NOT NULL, data TEXT NOT NULL);
         CREATE INDEX IF NOT EXISTS transcript_review_session ON transcript_review_suggestions(session,batch);
         CREATE TABLE IF NOT EXISTS transcript_review_completed(session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE, batch TEXT NOT NULL, PRIMARY KEY(session,batch));
@@ -183,8 +186,14 @@ public actor SessionStore {
         return Data(base64Encoded:String(cString:value))
     }
     public func saveAudioBookmark(_ bookmark:Data,session:UUID) throws {
-        try write("INSERT INTO session_review(session,audio_bookmark) VALUES(?,?) ON CONFLICT(session) DO UPDATE SET audio_bookmark=excluded.audio_bookmark",[session.uuidString,bookmark.base64EncodedString()])
+        try write("BEGIN IMMEDIATE",[])
+        do {
+            try write("DELETE FROM vocal_analysis WHERE session=?",[session.uuidString])
+            try write("INSERT INTO session_review(session,audio_bookmark) VALUES(?,?) ON CONFLICT(session) DO UPDATE SET audio_bookmark=excluded.audio_bookmark",[session.uuidString,bookmark.base64EncodedString()])
+            try write("COMMIT",[])
+        } catch { try? write("ROLLBACK",[]); throw error }
     }
+
     @discardableResult
     public func correctSegment(session:UUID,id:String,text:String, expectedText:String? = nil,
                                accepting review:TranscriptReviewSuggestion? = nil) throws -> TranscriptSegment {
@@ -345,6 +354,13 @@ public actor SessionStore {
         let speakers=SHA256.hash(data:Data(String(cString:names).utf8)).description
         return SentimentStamp(rows:Int(sqlite3_column_int64(row,0)),lastRow:sqlite3_column_int64(row,1),
                               revision:try transcriptRevision(session:session),speakers:speakers)
+    }
+    public func sentimentNeedsRefresh(session: UUID) throws -> Bool {
+        let row=try statement("SELECT version,stamp FROM transcript_sentiment WHERE session=?",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row)==SQLITE_ROW else { return false }
+        if Int(sqlite3_column_int(row,0)) != TranscriptSentiment.version { return true }
+        return try decode(SentimentStamp.self,row,1) != sentimentStamp(session:session)
     }
     public func cachedSentiment(session: UUID) throws -> TranscriptSentiment? {
         let row=try statement("SELECT stamp,data FROM transcript_sentiment WHERE session=? AND version=?",
@@ -836,5 +852,94 @@ extension SessionStore {
         var result:[DiscourseFinding]=[]
         while sqlite3_step(row)==SQLITE_ROW { result.append(try decode(DiscourseFinding.self,row)) }
         return result
+    }
+}
+
+extension SessionStore {
+    public func saveAssistantTurn(_ turn: AssistantTurn) throws {
+        try Task.checkCancellation()
+        guard try session(id: turn.sessionID) != nil,
+              try transcriptRevision(session: turn.sessionID) == turn.transcriptRevision,
+              (1...500).contains(turn.question.count), (turn.reply.text?.count ?? 0) <= 2400,
+              turn.reply.evidence.count <= 4,
+              turn.reply.text == nil || !turn.reply.evidence.isEmpty,
+              turn.reply.evidence.allSatisfy({ evidence in
+                  guard let segment = try? segmentByID(session: turn.sessionID, id: evidence.segmentID) else { return false }
+                  return segment.text.range(of: evidence.quote, options: .literal) != nil && !evidence.quote.isEmpty
+                    && evidence.start == segment.start && evidence.end == segment.end
+              }) else { throw LAIError.message("La transcripción cambió o la respuesta no tiene citas válidas.") }
+        try write("INSERT OR IGNORE INTO assistant_turns(id,session,data) VALUES(?,?,?)",
+                  [turn.id.uuidString, turn.sessionID.uuidString, try encode(turn)])
+    }
+    public func assistantTurns(session: UUID, limit: Int = 50, offset: Int = 0, newest: Bool = false) throws -> [AssistantTurn] {
+        let row = try statement("SELECT data FROM assistant_turns WHERE session=? ORDER BY seq "+(newest ? "DESC":"ASC")+" LIMIT ? OFFSET ?",
+            values: [session.uuidString, String(max(1,min(100,limit))), String(max(0,offset))])
+        defer { sqlite3_finalize(row) }
+        var result: [AssistantTurn] = []
+        while sqlite3_step(row) == SQLITE_ROW { result.append(try decode(AssistantTurn.self,row)) }
+        return newest ? result.reversed() : result
+    }
+    public func assistantExportStamp(session: UUID) throws -> String {
+        let row = try statement("SELECT COUNT(*),COALESCE(MAX(seq),0) FROM assistant_turns WHERE session=?",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row) == SQLITE_ROW else { throw failure() }
+        return "\(sqlite3_column_int64(row,0))-\(sqlite3_column_int64(row,1))"
+    }
+    public func sentimentForExport(session: UUID) throws -> SavedSentiment? {
+        let row = try statement("SELECT version,stamp,data FROM transcript_sentiment WHERE session=?", values: [session.uuidString])
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row) == SQLITE_ROW else { return nil }
+        return SavedSentiment(version:Int(sqlite3_column_int(row,0)),
+            matchesCurrentTranscript:try decode(SentimentStamp.self,row,1) == sentimentStamp(session:session),
+            report:try decode(TranscriptSentiment.self,row,2))
+    }
+    public func savedVocalAnalysis(session: UUID) throws -> [SavedVocalAnalysis] {
+        let row = try statement("SELECT data FROM vocal_analysis WHERE session=? ORDER BY source",values:[session.uuidString])
+        defer { sqlite3_finalize(row) }
+        var result: [SavedVocalAnalysis] = []
+        while sqlite3_step(row) == SQLITE_ROW { result.append(try decode(SavedVocalAnalysis.self,row)) }
+        return result
+    }
+    private func savedVocalAnalysis(session: UUID, source: AudioSource) throws -> SavedVocalAnalysis? {
+        let row=try statement("SELECT data FROM vocal_analysis WHERE session=? AND source=?",values:[session.uuidString,source.rawValue])
+        defer { sqlite3_finalize(row) }
+        return sqlite3_step(row)==SQLITE_ROW ? try decode(SavedVocalAnalysis.self,row):nil
+    }
+    public func saveVocalAnalysis(session: UUID, source: AudioSource, measurements: [VocalPoint]? = nil,
+        emotions: VocalEmotionReport? = nil, sounds: VocalSoundReport? = nil, soundIdentifiers: [String]? = nil) throws {
+        try Task.checkCancellation()
+        guard try self.session(id: session) != nil else { throw LAIError.message("La sesión ya no existe.") }
+        var value = try savedVocalAnalysis(session:session,source:source)
+            ?? SavedVocalAnalysis(source:source,updated:Date())
+        if let measurements { value.measurements = measurements }
+        if var emotions {
+            var previous: VocalEmotionPoint?
+            value.distances = emotions.points.compactMap { point in
+                defer { previous = point.embedding == nil ? nil : point }
+                guard let previous, let a = previous.embedding, let b = point.embedding,
+                      let similarity = VocalEmbeddingAnalysis.cosine(a,b) else { return nil }
+                return VocalDistance(from:previous.start,to:point.start,distance:1-similarity)
+            }
+            emotions = VocalEmotionReport(points:emotions.points.map { point in var point=point; point.embedding=nil; return point },
+                sampled:emotions.sampled,model:emotions.model,artifactIdentifier:emotions.artifactIdentifier)
+            value.emotions = emotions
+        }
+        if let sounds { value.sounds=sounds; value.soundIdentifiers=soundIdentifiers }
+        value.updated=Date()
+        try write("INSERT OR REPLACE INTO vocal_analysis(session,source,updated,data) VALUES(?,?,?,?)",
+            [session.uuidString,source.rawValue,String(value.updated.timeIntervalSince1970),try encode(value)])
+    }
+    public func analysisExportStamp(session: UUID) throws -> String {
+        let row=try statement("""
+            SELECT (SELECT version||':'||stamp||':'||data FROM transcript_sentiment WHERE session=?),
+                   (SELECT COALESCE(MAX(rowid),0) FROM vocal_analysis WHERE session=?),
+                   (SELECT COUNT(*) FROM live_vocal WHERE session=?),
+                   (SELECT MAX(rowid) FROM live_vocal WHERE session=?)
+            """,values:Array(repeating:session.uuidString,count:4))
+        defer { sqlite3_finalize(row) }
+        guard sqlite3_step(row) == SQLITE_ROW else { throw failure() }
+        let parts=(0..<4).map { sqlite3_column_text(row,Int32($0)).map{String(cString:$0)} ?? "" }
+        let current=try sentimentStamp(session:session)
+        return TranscriptReviewer.fingerprint(parts + [String(current.rows),String(current.lastRow),String(current.revision),current.speakers])
     }
 }

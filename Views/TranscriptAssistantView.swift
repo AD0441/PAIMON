@@ -5,20 +5,15 @@ struct TranscriptAssistantView: View {
     var model: AppModel
     let visible: Bool
     @State private var question = ""
-    @State private var turns: [Turn] = []
+    @State private var turns: [AssistantTurn] = []
+    @State private var revision: Int64 = 0
     @State private var pending: String?
     @State private var job: Task<Void, Never>?
     @State private var request = UUID()
     @State private var problem: String?
     @State private var unavailable: String?
 
-    private struct Turn: Identifiable {
-        let id = UUID()
-        let question: String
-        let reply: TranscriptAssistantReply
-    }
-
-    private var paused: Bool { model.active || model.pressure }
+    private var paused: Bool { model.active || model.pressure || model.waitingForMemoryRecovery }
     private var canAsk: Bool {
         model.selectedSession != nil && model.store != nil && !paused && unavailable == nil &&
             pending == nil && !question.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -33,12 +28,14 @@ struct TranscriptAssistantView: View {
             }
             .padding(16)
             Divider()
+            Text("Las consultas se guardan en esta sesión, en el Mac. Exportar incluye el historial completo; aquí se muestran las últimas 12.")
+                .font(.caption).foregroundStyle(.secondary).padding(.horizontal,16).padding(.top,8)
             conversation
             Divider()
             composer
         }
         .task(id: visible) {
-            if visible { unavailable = TranscriptAssistant.availability() }
+            if visible { unavailable = TranscriptAssistant.availability(); await reload() }
         }
         .onChange(of: visible) { _, value in
             if !value { cancel(restore: true) }
@@ -48,8 +45,8 @@ struct TranscriptAssistantView: View {
         }
         .onChange(of: model.sentimentRevision) {
             cancel(restore: true)
-            turns.removeAll()
             problem = nil
+            Task { await reload() }
         }
         .onDisappear { cancel(restore: false) }
     }
@@ -71,6 +68,9 @@ struct TranscriptAssistantView: View {
                     }
                     ForEach(turns) { turn in
                         VStack(alignment: .leading, spacing: 8) {
+                            if turn.transcriptRevision != revision {
+                                Text("Respuesta anterior a una corrección del texto. Revisa sus citas.").font(.caption).foregroundStyle(.secondary)
+                            }
                             Text(turn.question).font(.callout.weight(.semibold)).textSelection(.enabled)
                             if let answer = turn.reply.text {
                                 Text(answer).textSelection(.enabled)
@@ -165,7 +165,7 @@ struct TranscriptAssistantView: View {
     private func ask() {
         guard canAsk, let session = model.selectedSession, let store = model.store else { return }
         let input = question.trimmingCharacters(in: .whitespacesAndNewlines)
-        let previous = turns.last(where: { !$0.reply.evidence.isEmpty })
+        let previous = turns.last(where: { !$0.reply.evidence.isEmpty && $0.transcriptRevision == revision })
         let token = UUID()
         request = token
         problem = nil
@@ -173,10 +173,15 @@ struct TranscriptAssistantView: View {
         question = ""
         job = Task {
             do {
+                let revision = try await store.transcriptRevision(session:session.id)
                 let reply = try await TranscriptAssistant.ask(input, in: session, store: store,
                     previousQuestion: previous?.question, previousEvidence: previous?.reply.evidence ?? [])
                 guard !Task.isCancelled, request == token, model.selected == session.id else { return }
-                turns.append(Turn(question: input, reply: reply))
+                let turn = AssistantTurn(sessionID:session.id,revision:revision,question:input,reply:reply)
+                try await store.saveAssistantTurn(turn)
+                guard !Task.isCancelled, request == token, model.selected == session.id else { return }
+                self.revision=revision
+                turns.append(turn)
                 if turns.count > 12 { turns.removeFirst() }
                 pending = nil
                 job = nil
@@ -189,6 +194,17 @@ struct TranscriptAssistantView: View {
                     "El modelo local no pudo responder. Intenta reformular la pregunta."
             }
         }
+    }
+
+    private func reload() async {
+        guard let id=model.selected,let store=model.store else { return }
+        let token=request
+        do {
+            let items=try await store.assistantTurns(session:id,limit:12,newest:true)
+            let current=try await store.transcriptRevision(session:id)
+            guard !Task.isCancelled,model.selected==id,request==token else { return }
+            turns=items; revision=current
+        } catch { problem=error.localizedDescription }
     }
 
     private func cancel(restore: Bool) {

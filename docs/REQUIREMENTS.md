@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
-- **Versión del documento:** 1.3 · **Fecha:** 14 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.14.0 (30); los estados históricos de la matriz conservan su evidencia original.
+- **Versión del documento:** 1.4 · **Fecha:** 15 de noviembre de 2026.
+- **Base revisada:** PAIMON 0.15.0 (31); los estados históricos de la matriz conservan su evidencia original.
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -227,3 +227,16 @@ Antes de publicar otra versión: revisar los P0 pendientes, ejecutar los casos a
 | VOC-03 | N | Ensayo prolongado en macOS 26 con ambas fuentes y modelos opcionales, medir pérdidas, memoria y energía. |
 
 Detalles, controles y pruebas: [DISCOURSE-LIVE.md](DISCOURSE-LIVE.md).
+
+## 18. Polaridad, exportación y memoria · 0.15.0
+
+| Código | Estado | Criterio / evidencia |
+| --- | --- | --- |
+| SEN-01 | V acotada | Hechos neutrales diferenciados de valoración positiva/negativa en 16 casos nativos es/en; no se inventa 0 ante ausencia o caso mixto. Pruebas de negación y serialización null/0. |
+| SEN-02 | V | Valor NaturalLanguage original y versión preservados para auditoría/exportación; un análisis anterior avisa que necesita actualizarse. |
+| EXP-04 | V datos | Selección independiente de sentimientos/voz, Discurso y Asistente en TXT/MD/PDF/JSON. Prueba con 137 turnos; verificación visual pendiente. |
+| AST-02 | V datos | Historial SQLite por sesión, revisión y citas vigentes al guardar; últimas doce en vista, exportación completa, borrado en cascada. No migra mensajes de versiones antiguas solo en memoria. |
+| MEM-04 | V inyectada | Niveles warning/critical diferenciados; normal inicia recuperación configurable y un aviso nuevo la cancela. No eleva el umbral del sistema. |
+| MEM-05 | N | Ensayo prolongado de memoria total y política de carga con otras apps, servicios Apple y modelos opcionales en M1 de 8 GB. |
+
+[Resultados y límites](POLARITY-EXPORT.md).

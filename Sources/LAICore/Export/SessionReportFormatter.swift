@@ -82,9 +82,9 @@ public enum SessionReportFormatter {
     public static func text(session:Session,findings:[Finding]) -> String {
         plainText(document(session:session,findings:findings))
     }
-    public static func plainText(_ report:SessionReport,includeEvidence:Bool=false,includeHeader:Bool=true,includeEvidenceAnnex:Bool=true) -> String {
+    public static func plainText(_ report:SessionReport,includeEvidence:Bool=false,includeHeader:Bool=true,includeEvidenceAnnex:Bool=true,includeEmptyState:Bool=true) -> String {
         var blocks=includeHeader ? [report.title,report.metadata]:[]
-        if report.sections.isEmpty { blocks.append("El resumen todavía no está disponible.") }
+        if report.sections.isEmpty && includeEmptyState { blocks.append("El resumen todavía no está disponible.") }
         for section in report.sections {
             var lines=[section.kind.title]
             if section.kind == .tasks { lines.append("Tarea | Responsable | Fecha") }
@@ -100,9 +100,9 @@ public enum SessionReportFormatter {
         }
         return blocks.joined(separator:"\n\n")+"\n"
     }
-    public static func markdown(_ report:SessionReport,includeEvidence:Bool=false,includeHeader:Bool=true,includeEvidenceAnnex:Bool=true) -> String {
+    public static func markdown(_ report:SessionReport,includeEvidence:Bool=false,includeHeader:Bool=true,includeEvidenceAnnex:Bool=true,includeEmptyState:Bool=true) -> String {
         var blocks=includeHeader ? ["# "+md(report.title),md(report.metadata)]:[]
-        if report.sections.isEmpty { blocks.append("El resumen todavía no está disponible.") }
+        if report.sections.isEmpty && includeEmptyState { blocks.append("El resumen todavía no está disponible.") }
         for section in report.sections {
             var lines=["## "+section.kind.title]
             if section.kind == .tasks { lines += ["| Tarea | Responsable | Fecha |","| --- | --- | --- |"] }
@@ -184,7 +184,7 @@ public enum SessionReportFormatter {
         if emphasis { value.addAttribute(.font,value:NSFont.boldSystemFont(ofSize:12),range:NSRange(location:(bullet as NSString).length,length:(emphasizedPrefix(in:text) as NSString).length)) }
         return value
     }
-    private static func md(_ text:String) -> String {
+    static func md(_ text:String) -> String {
         var value=text.replacingOccurrences(of:"\n",with:" ")
         for character in ["\\","`","*","_","[","]","<",">","|","#"] { value=value.replacingOccurrences(of:character,with:"\\"+character) }
         return value

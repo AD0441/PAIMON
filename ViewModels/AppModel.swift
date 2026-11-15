@@ -8,7 +8,7 @@ import LAICore
 final class AppModel {
     @ObservationIgnored private let preferences:UserDefaults
     @ObservationIgnored private let summaryEngineOverride:(@MainActor (Session?) -> any SummarizationEngine)?
-    @ObservationIgnored private let pressureRetryInterval:Duration
+    @ObservationIgnored private let pressureRetryInterval:Duration?
     var discourseWorking=false
     var discourseStatus=""
     var discourseRevision=UUID()
@@ -112,7 +112,8 @@ final class AppModel {
     var googleStatus="Google AI desactivado"
     var googleTesting=false
     var metrics=ResourceMetrics.current()
-    var pressure=false
+    var pressure:Bool { memoryPressureLevel != .normal }
+    private(set) var memoryPressureLevel:MemoryPressureLevel = .normal
     var showExport=false
     var store:SessionStore?
     private var pipeline:RecordingPipeline?
@@ -151,7 +152,7 @@ final class AppModel {
     var canEditTranscript:Bool { !active && !summaryWorking && finalRecoveryTask==nil }
     var waitingForMemoryRecovery:Bool { pressureRecoveryTask != nil }
     var canUpdateSummary:Bool {
-        selectedSession != nil && !summaryWorking && !pressure && finalRecoveryTask==nil &&
+        selectedSession != nil && !summaryWorking && !pressure && !waitingForMemoryRecovery && finalRecoveryTask==nil &&
         ![.preparing,.importing,.stopping].contains(state)
     }
     var statusTitle:String {
@@ -168,7 +169,7 @@ final class AppModel {
         case .failed: "Requiere atención"
         }
     }
-    init(store suppliedStore:SessionStore?=nil,preferences:UserDefaults = .standard,googleClient:GoogleAIClient=GoogleAIClient(),summaryEngine:(@MainActor (Session?) -> any SummarizationEngine)?=nil,pressureRetryInterval:Duration = .seconds(15)) {
+    init(store suppliedStore:SessionStore?=nil,preferences:UserDefaults = .standard,googleClient:GoogleAIClient=GoogleAIClient(),summaryEngine:(@MainActor (Session?) -> any SummarizationEngine)?=nil,pressureRetryInterval:Duration? = nil) {
         self.preferences=preferences; settings=AppSettings.load(from:preferences)
         self.googleClient=googleClient; summaryEngineOverride=summaryEngine
         self.pressureRetryInterval=pressureRetryInterval
@@ -188,8 +189,9 @@ final class AppModel {
         source.setEventHandler { @Sendable [weak self,weak source] in
             guard let events=source?.data else { return }
             MainActor.assumeIsolated {
-                if events.contains(.warning) || events.contains(.critical) { self?.memoryPressureChanged(true) }
-                else if events.contains(.normal) { self?.memoryPressureChanged(false) }
+                if events.contains(.critical) { self?.memoryPressureChanged(.critical) }
+                else if events.contains(.warning) { self?.memoryPressureChanged(.warning) }
+                else if events.contains(.normal) { self?.memoryPressureChanged(.normal) }
             }
         }
         source.resume(); memorySource=source
@@ -213,10 +215,13 @@ final class AppModel {
         }
     }
     private var mayIndexHistory:Bool { !pressure && !active }
-    func memoryPressureChanged(_ value:Bool) {
-        guard pressure != value else { return }
-        pressure=value
-        Task { await pipeline?.setOptionalAnalysisPaused(value) }
+    func memoryPressureChanged(_ level:MemoryPressureLevel) {
+        let wasUnderPressure=pressure
+        memoryPressureLevel=level
+        let value=pressure
+        guard wasUnderPressure != value else { return }
+        // Optional models stay paused during the quiet recovery period too.
+        Task { await pipeline?.setOptionalAnalysisPaused(true) }
         if value { discourseTask?.cancel() }
         if value {
             pressureRecoveryTask?.cancel()
@@ -225,7 +230,10 @@ final class AppModel {
             Task { await coordinator?.cancelAll() }
         } else {
             summaryRecoveryRequested = true
-            let interval=pressureRetryInterval * (1 << max(0,pressureInterruptions-1))
+            let requested=settings.memoryRecoverySeconds ?? 15
+            let seconds=requested.isFinite ? max(5,min(30,requested)):15
+            let base=pressureRetryInterval ?? .seconds(seconds)
+            let interval=min(Duration.seconds(120),base * (1 << max(0,pressureInterruptions-1)))
             pressureRecoveryTask=Task { @concurrent [weak self] in
                 do { try await Task.sleep(for:interval) } catch { return }
                 await self?.memoryPressureSettled()
@@ -235,6 +243,7 @@ final class AppModel {
     private func memoryPressureSettled() {
         guard !Task.isCancelled else { return }
         pressureRecoveryTask=nil
+        Task { await pipeline?.setOptionalAnalysisPaused(pressure || waitingForMemoryRecovery || (settings.energySaving && metrics.thermal>=2)) }
         resumePendingSummaries()
         resumePendingDiscourse()
     }
@@ -585,7 +594,7 @@ final class AppModel {
             }
             current=session; selected=session.id; sessions.insert(session,at:0)
             started=ProcessInfo.processInfo.systemUptime; elapsed=0; reportDuration=0; lastSummary=0; lastDiscourse=0; liveVocalStatus=""; state = .recording
-            await pipeline.setOptionalAnalysisPaused(pressure)
+            await pipeline.setOptionalAnalysisPaused(pressure || waitingForMemoryRecovery)
             eventTask=Task { [weak self] in
                 for await event in events {
                     guard let self else { break }
@@ -743,18 +752,18 @@ final class AppModel {
         if Int(elapsed)%5==0 {
             metrics=ResourceMetrics.current()
             try? await pipeline?.checkpoint()
-            await pipeline?.setOptionalAnalysisPaused(pressure || (settings.energySaving && metrics.thermal>=2))
+            await pipeline?.setOptionalAnalysisPaused(pressure || waitingForMemoryRecovery || (settings.energySaving && metrics.thermal>=2))
         }
         if Int(elapsed)%5==0,let id=current?.id {
             await refreshProcessingProgress()
             let cursor=try? await store?.latestSummary(session:id)?.throughRow
             let pending=(try? await store?.pendingContent(session:id,after:cursor ?? 0)) ?? .init()
             pendingSummarySegments=pending.segments
-            if state == .recording,!summaryWorking,SummarySchedule.shouldUpdate(pending:pending,secondsSinceUpdate:elapsed-lastSummary,interval:settings.summaryInterval,underPressure:pressure || (settings.energySaving && metrics.thermal>=2)) {
+            if state == .recording,!summaryWorking,SummarySchedule.shouldUpdate(pending:pending,secondsSinceUpdate:elapsed-lastSummary,interval:settings.summaryInterval,underPressure:pressure || waitingForMemoryRecovery || (settings.energySaving && metrics.thermal>=2)) {
                 lastSummary=elapsed; summaryTask=Task { await updateSummary(final:false) }
             }
         }
-        if state == .recording,current?.settings.discourseEnabled == true,!summaryWorking,!discourseWorking,!pressure,
+        if state == .recording,current?.settings.discourseEnabled == true,!summaryWorking,!discourseWorking,!pressure,!waitingForMemoryRecovery,
            !(settings.energySaving && metrics.thermal>=2),
            elapsed-lastDiscourse >= max(60,current?.settings.discourseInterval ?? 300) {
             lastDiscourse=elapsed
@@ -762,7 +771,7 @@ final class AppModel {
         }
     }
     func analyzeDiscourse(final:Bool?=nil,for override:Session?=nil) {
-        guard !discourseWorking,!summaryWorking,!pressure,
+        guard !discourseWorking,!summaryWorking,!pressure,!waitingForMemoryRecovery,
               ![CaptureState.importing,.preparing,.stopping].contains(state),
               let session=override ?? selectedSession,let store else { return }
         discourseWorking=true; discourseStatus="Analizando discurso…"
@@ -864,7 +873,7 @@ final class AppModel {
                 await refreshProcessingProgress()
             }
             try Task.checkCancellation()
-            guard !pressure else {
+            guard !pressure,!waitingForMemoryRecovery else {
                 if selected==session.id { summaryStatus=queuedSummaryStatus }
                 return
             }
@@ -879,7 +888,7 @@ final class AppModel {
         do {
             let reason=await engine.availability(locale:session.settings.locale)
             try Task.checkCancellation()
-            guard !pressure else { throw CancellationError() }
+            guard !pressure,!waitingForMemoryRecovery else { throw CancellationError() }
             if let reason {
                 if selected==session.id { summaryStatus=reason }
                 await engine.unload(); return

@@ -2,7 +2,7 @@ import Foundation
 import FoundationModels
 import NaturalLanguage
 
-public struct TranscriptAssistantReply: Sendable {
+public struct TranscriptAssistantReply: Codable, Sendable {
     public let text: String?
     public let evidence: [FindingEvidence]
     public let sampled: Bool

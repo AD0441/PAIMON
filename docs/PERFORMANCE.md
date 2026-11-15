@@ -206,3 +206,13 @@ Discurso conserva su cursor por lote y consulta hasta doce hallazgos previos rel
 Con Parakeet activo se posponen Discurso y los modelos vocales para priorizar la transcripción. La presión de memoria o térmica reduce trabajo opcional. El audio archivado sigue escribiéndose por bloques solo si se activa Guardar audio.
 
 Se ejecutaron pruebas funcionales sobre el M1 de 8 GB y una revisión aislada de la interfaz. El perfil de Instruments de esta ronda capturó una espera de apertura de archivo y no permite estimar consumo de los modelos. Quedan pendientes latencia/pérdidas durante captura real con ambas fuentes, picos de memoria incluyendo servicios Apple y prueba prolongada con cada modelo vocal. [Alcance de validación](VALIDATION.md#discurso-incremental-y-voz-durante-la-captura--paimon-0140-30).
+
+## Polaridad y recuperación de memoria · 0.15.0
+
+Se eliminó la creación de un NLTagger por fragmento: un objeto por tarea serial, con recursos temporales drenados y un ámbito que termina antes de usar Foundation Models. La comprobación con 100 fragmentos conservó exactamente los valores originales. Las cifras del microbenchmark serial están en el registro y no son un ensayo de memoria total ni de IA completa.
+
+El motor semántico agrupa polaridad/emociones/contexto en lotes de hasta tres. En 48 fragmentos cortos son 16 solicitudes, frente a una solicitud por fragmento para etiquetar emociones y otra adicional cuando había etiquetas de contexto. La nueva semántica tiene un coste generativo propio: **menos solicitudes no garantiza igual proporción de ahorro de tiempo o RAM**. La muestra está acotada, la compuerta sigue serializando y los errores repetidos detienen ese intento.
+
+Discurso consulta solo la sección visible, evitando dos consultas por recarga de la vista principal. El Asistente muestra doce turnos y exporta todos por páginas. Se evitan recorridos del resumen cuando no se seleccionó. Los datos vocales actualizan únicamente la fuente correspondiente y los recursos de audio se invalidan de forma atómica al cambiar el original.
+
+No se incrementó un supuesto límite en GB. macOS determina los avisos; PAIMON distingue warning/critical y mantiene protección. La espera tras volver a normal se configura a 5/15/30 s con backoff máximo de dos minutos. Las tareas opcionales respetan ese período para no recargar modelos durante oscilaciones. Falta medir carga prolongada incluyendo servicios Apple, GPU, compresión y swap antes de contemplar una política menos conservadora. [Detalle](POLARITY-EXPORT.md).

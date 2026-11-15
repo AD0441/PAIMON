@@ -23,6 +23,7 @@ public struct AppSettings: Codable, Sendable {
     public var summary: SummaryBackend = .apple
     public var locale = "es-ES"
     public var summaryInterval: Double = 300
+    public var memoryRecoverySeconds: Double?
     public var summaryTemplate:SummaryTemplate?
     public var colorPalette:AppPalette?
     public var interfaceLanguage:AppLanguage?

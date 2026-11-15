@@ -2,7 +2,7 @@
 
 ## Producto principal
 
-Swift/SwiftUI, AppKit, Core Audio, AVFoundation, Speech, FoundationModels, CoreText, CoreGraphics, CryptoKit, Security, URLSession y SQLite del sistema. Sin dependencias externas. Toolchain verificado: Xcode 27.1, SDK macOS 27 y Swift 6.4; destino de ejecución macOS 26.0+, arm64. Se necesita un SDK que declare las APIs nuevas, aunque se compruebe su disponibilidad en ejecución. No se requieren cuentas de pago ni claves API para ejecutar la aplicación localmente.
+Swift/SwiftUI, AppKit, Core Audio, AVFoundation, Speech, FoundationModels, CoreText, CoreGraphics, CryptoKit, Security, URLSession y SQLite del sistema. Sin dependencias externas. Toolchain de la compilación 31: Xcode 27.2, SDK macOS 27.2 y Swift 6.4; destino de ejecución macOS 26.0+, arm64. Se necesita un SDK que declare las APIs nuevas, aunque se compruebe su disponibilidad en ejecución. No se requieren cuentas de pago ni claves API para ejecutar la aplicación localmente.
 
 El modo predeterminado mantiene captura, transcripción y resumen en el Mac una vez preparados sus recursos. La opción de Google AI añade únicamente un cliente HTTPS nativo para resúmenes; no incorpora un SDK ni requiere instalar otro modelo local.
 
@@ -72,3 +72,7 @@ La revisión de transcripciones utiliza Apple Foundation Models, el tokenizador 
 ## Discurso y voz durante captura · 0.14.0
 
 No se añade una dependencia externa: Discurso usa Foundation Models y el muestreo vocal reutiliza Accelerate, AVFAudio, SoundAnalysis y los paquetes Core ML ya gestionados por PAIMON. El modelo propio se ejecuta con CPU-only; Speech y Foundation Models gestionan sus aceleradores sin promesa de ANE por operación. Sin modelo emocional opcional se conservan las mediciones y las categorías seleccionadas del clasificador de Apple. Descargar pesos sigue siendo una acción explícita del usuario. [Controles y alcance](DISCOURSE-LIVE.md).
+
+## Polaridad revisada y datos exportables · 0.15.0
+
+Sin dependencias externas nuevas. NaturalLanguage conserva sus valores originales como referencia; SystemLanguageModel.default genera la revisión semántica local con Foundation Models. No se descarga un modelo propio ni se usa una API externa para sentimientos. El modelo de Apple y sus aceleradores siguen gestionados por macOS. El historial del Asistente y los resultados vocales derivados se guardan en el SQLite existente. La actualización no puede recuperar mensajes que la versión anterior mantenía solo en memoria.

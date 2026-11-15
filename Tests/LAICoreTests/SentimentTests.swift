@@ -100,7 +100,7 @@ private func point(_ index: Int, score: Double?, time: Double? = nil, emotions: 
     session.status = "completed"
     try await store.save(session)
     let report = try await SentimentAnalyzer.analyze(session: session, store: store)
-    let model = SystemLanguageModel(useCase: .contentTagging)
+    let model = SystemLanguageModel.default
     #expect(report.tagging == (model.isAvailable ? .complete : .unavailable))
     #expect(report.points.isEmpty && report.tagged == 0)
 }
@@ -119,7 +119,7 @@ func nativeTaggingDistinguishesConcernAndDisagreement() async throws {
     try await store.append(.init(sessionID: session.id, source: .file, start: 5, end: 10,
                                 text: "No estoy de acuerdo con mover la reunión. Propongo que mantengamos el horario original."))
     let report = try await SentimentAnalyzer.analyze(session: session, store: store)
-    let model = SystemLanguageModel(useCase: .contentTagging)
+    let model = SystemLanguageModel.default
     if !model.isAvailable {
         #expect(report.tagging == .unavailable)
         #expect(report.tagged == 0)
@@ -137,14 +137,14 @@ func nativeTaggingDistinguishesConcernAndDisagreement() async throws {
 private struct DisabledSentimentTagger: SentimentTagging {
     let isAvailable: Bool
     func supportsLocale(_ locale: Locale) -> Bool { false }
-    func tags(for text: String) async throws -> (emotions: [String], context: [String]) {
+    func assess(_ texts: [String], locale: Locale) async throws -> [SentimentAssessment?] {
         Issue.record("El etiquetador no debió recibir texto")
-        return ([], [])
+        return []
     }
 }
 
 @Test(arguments: [false, true])
-func localScoresSurviveWhenEmotionTaggingCannotRun(_ isAvailable: Bool) async throws {
+func rawScoresRemainAuditableWhenLocalClassificationCannotRun(_ isAvailable: Bool) async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     defer { try? FileManager.default.removeItem(at: directory) }
     let store = try SessionStore(directory: directory)
@@ -158,7 +158,125 @@ func localScoresSurviveWhenEmotionTaggingCannotRun(_ isAvailable: Bool) async th
     #expect(report.tagging == (isAvailable ? .unsupported : .unavailable))
     #expect(report.tagged == 0)
     #expect(report.points.count == 1)
-    #expect(report.points.first?.score == TextPolarity.score(text, language: .english))
+    #expect(report.points.first?.score == nil)
+    #expect(report.points.first?.rawAppleScore == TextPolarity.score(text, language: .english))
     #expect(report.points.first?.emotions == [])
     #expect(try await store.cachedSentiment(session: session.id)?.tagging == report.tagging)
+}
+
+@Test func neutralIsZeroButMissingAndMixedAreNotInventedNeutrality() {
+    func assessment(_ polarity: TextSentimentClass) -> SentimentAssessment {
+        .init(polarity: polarity, strength: .clear, quote: nil, emotions: [], context: [])
+    }
+    #expect(assessment(.neutral).score == 0)
+    #expect(assessment(.uncertain).score == nil)
+    #expect(assessment(.mixed).score == nil)
+    #expect(assessment(.positive).score! > 0)
+    #expect(assessment(.negative).score! < 0)
+}
+
+@Test(.enabled(if: ProcessInfo.processInfo.environment["PAIMON_TEST_POLARITY"] == "1"), .timeLimit(.minutes(3)), arguments: ["es-ES", "en-US"])
+func nativeLocalPolaritySeparatesFactsFromExplicitEvaluations(_ locale: String) async throws {
+    let texts = locale.hasPrefix("es") ? ["La reunión empieza a las diez.", "La propuesta tiene tres etapas.",
+                 "Acordamos comprar dos micrófonos para el laboratorio.", "El plazo de entrega aumentó tres días.",
+                 "Me alegra mucho este excelente resultado.", "Estoy satisfecho con el trabajo del equipo.",
+                 "Estoy muy decepcionado, el resultado es pésimo.", "No estoy satisfecho con el resultado."] :
+                ["The meeting starts at ten.", "The proposal has three stages.",
+                 "We decided to buy two microphones for the laboratory.", "The delivery time increased by three days.",
+                 "I am very happy with this excellent result.", "I am satisfied with the team's work.",
+                 "I am disappointed; this result is terrible.", "I am not happy with this result."]
+    let output = try await LocalSentimentClassifier().assess(texts, locale: Locale(identifier: locale))
+    #expect(output.count == texts.count)
+    for index in 0..<4 {
+        #expect(output[index]?.polarity == .neutral && output[index]?.score == 0)
+        #expect(output[index]?.emotions.isEmpty == true)
+    }
+    for index in [4, 5] { #expect((output[index]?.score ?? -1) > 0) }
+    for index in [6, 7] { #expect((output[index]?.score ?? 1) < 0) }
+}
+
+private actor CountingSentimentTagger: SentimentTagging {
+    nonisolated var isAvailable: Bool { true }
+    nonisolated func supportsLocale(_ locale: Locale) -> Bool { true }
+    private(set) var calls=0
+    func assess(_ texts:[String],locale:Locale) async throws -> [SentimentAssessment?] {
+        calls += 1
+        return texts.map { _ in .init(polarity:.neutral,strength:.mild,quote:nil,emotions:[],context:[]) }
+    }
+}
+
+@Test func sentimentBatchesStayBoundedAndDoNotGenerateOncePerField() async throws {
+    let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:directory) }
+    let store=try SessionStore(directory:directory)
+    var session=Session(title:"Muestreo sintético",settings:AppSettings()); session.status="completed"
+    try await store.save(session)
+    for index in 0..<200 {
+        try await store.append(.init(sessionID:session.id,source:.file,start:Double(index*6),end:Double(index*6+5),text:"El informe tiene tres secciones."))
+    }
+    let tagger=CountingSentimentTagger()
+    let result=try await SentimentAnalyzer.analyze(session:session,store:store,tagger:tagger)
+    #expect(result.points.count==200)
+    #expect(result.tagged==48)
+    #expect(result.points.filter{$0.score==0}.count==48)
+    #expect(result.points.filter{$0.score==nil}.count==152)
+    #expect(await tagger.calls==16)
+}
+
+@Test func reusedNativeScorerPreservesScoresAcrossLanguagesWithoutSharedState() throws {
+    let inputs:[(String,NLLanguage)] = [("La reunión empieza a las diez.",.spanish),
+        ("I am very happy with the excellent result.",.english),
+        ("No estoy satisfecho con el resultado.",.spanish),("The proposal has three stages.",.english)]
+    let examples=Array(repeating:inputs,count:25).flatMap{$0}
+    let started=ProcessInfo.processInfo.systemUptime
+    let independent=examples.map{TextPolarity.score($0.0,language:$0.1)}
+    let independentSeconds=ProcessInfo.processInfo.systemUptime-started
+    let scorer=NativePolarityScorer()
+    let reusedStart=ProcessInfo.processInfo.systemUptime
+    let reused=examples.map{scorer.score($0.0,language:$0.1)}
+    let reusedSeconds=ProcessInfo.processInfo.systemUptime-reusedStart
+    #expect(independent==reused)
+    #expect(scorer.score("",language:.english)==nil)
+    #expect(scorer.score("Información",language:.undetermined)==nil)
+    if let path=ProcessInfo.processInfo.environment["PAIMON_POLARITY_SCORER_REPORT"] {
+        let report:[String:Any]=["synthetic":true,"excerpts":examples.count,"equivalentScores":independent==reused,
+            "independentTaggerSeconds":independentSeconds,"reusedTaggerSeconds":reusedSeconds,
+            "note":"Single serial microbenchmark, independent run first. Not an end-to-end memory, inference or battery benchmark."]
+        try JSONSerialization.data(withJSONObject:report,options:[.prettyPrinted,.sortedKeys]).write(to:URL(fileURLWithPath:path))
+    }
+}
+
+@Test func structuredPolarityEncodesUnknownAsNullAndNeutralAsAnActualZero() throws {
+    let missing=point(0,score:nil)
+    let neutral=point(1,score:0)
+    let values=try #require(JSONSerialization.jsonObject(with:JSONEncoder().encode([missing,neutral])) as? [[String:Any]])
+    #expect(values[0]["score"] is NSNull)
+    #expect(values[1]["score"] as? Double == 0)
+    #expect(try JSONDecoder().decode([SentimentPoint].self,from:JSONEncoder().encode([missing,neutral])).map(\.score)==[nil,0])
+}
+
+private actor FailingSentimentTagger: SentimentTagging {
+    nonisolated var isAvailable: Bool { true }
+    nonisolated func supportsLocale(_ locale: Locale) -> Bool { true }
+    private(set) var calls=0
+    func assess(_ texts:[String],locale:Locale) async throws -> [SentimentAssessment?] {
+        calls += 1; throw LAIError.message("Respuesta incompleta sintética")
+    }
+}
+
+@Test func repeatedModelFailuresStopWithoutInventingScoresOrRetryingEveryFragment() async throws {
+    let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at:directory) }
+    let store=try SessionStore(directory:directory)
+    var session=Session(title:"Fallo controlado",settings:AppSettings()); session.status="completed"
+    try await store.save(session)
+    for index in 0..<48 {
+        try await store.append(.init(sessionID:session.id,source:.file,start:Double(index*6),end:Double(index*6+5),text:"El informe tiene tres secciones."))
+    }
+    let tagger=FailingSentimentTagger()
+    let result=try await SentimentAnalyzer.analyze(session:session,store:store,tagger:tagger)
+    #expect(await tagger.calls==3)
+    #expect(result.tagging == .partial && result.tagged==0)
+    #expect(result.points.allSatisfy{$0.score==nil && $0.polarity==nil})
+    #expect(try await store.cachedSentiment(session:session.id)?.points.count==48)
 }

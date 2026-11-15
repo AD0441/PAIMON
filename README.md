@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.14.0" src="https://img.shields.io/badge/versión-0.14.0-58616B?style=flat-square">
+    <img alt="Versión 0.15.0" src="https://img.shields.io/badge/versión-0.15.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/download/v0.14.0/PAIMON-0.14.0.zip"><strong>Descargar PAIMON 0.14.0</strong></a> · <a href="#descargar-instalar-y-ejecutar">Instalación</a> · <a href="#qué-nos-diferencia">Funciones</a> · <a href="#compilar-desde-el-código-fuente">Código fuente</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/download/v0.15.0/PAIMON-0.15.0.zip"><strong>Descargar PAIMON 0.15.0</strong></a> · <a href="#descargar-instalar-y-ejecutar">Instalación</a> · <a href="#qué-nos-diferencia">Funciones</a> · <a href="#compilar-desde-el-código-fuente">Código fuente</a></p>
 </div>
 
 ## Qué nos diferencia
@@ -18,7 +18,7 @@ PAIMON captura lo que ya suena en el Mac o transcribe una grabación que ya tien
 | Vista | Qué puedes hacer |
 | --- | --- |
 | **Resumen local** | Reúne ideas, acuerdos, tareas y preguntas abiertas en un informe con citas. [Ver el resumen](#resumen-local) |
-| **Sentimientos** | Revisa el tono del texto, busca sonidos como risas o aplausos y compara texto y voz en una misma línea de tiempo. [Ver el análisis](#sentimientos-de-la-transcripción) |
+| **Sentimientos** | Explora una polaridad textual contextual, busca sonidos como risas o aplausos y compara texto y voz en una misma línea de tiempo. [Ver el análisis](#sentimientos-de-la-transcripción) |
 | **Revisión inteligente** | Revisa propuestas de corrección con contexto y glosario, y conserva el texto original. [Ver la revisión](#revisión-inteligente-de-transcripciones) |
 | **Discurso** | Explora temas, argumentos, posturas, participación y recursos del lenguaje con citas. [Ver Discurso](#análisis-de-discurso) |
 | **Asistente local** | Haz preguntas sobre lo conversado, sigue preguntando y abre el fragmento que respalda la respuesta. [Ver el Asistente](#asistente-local-de-la-transcripción) |
@@ -29,21 +29,21 @@ PAIMON captura lo que ya suena en el Mac o transcribe una grabación que ya tien
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga el ZIP de **PAIMON 0.14.0** en un **Mac con Apple Silicon y macOS 26 o posterior**. [Descargar ZIP](https://github.com/AD0441/PAIMON/releases/download/v0.14.0/PAIMON-0.14.0.zip).
-2. Descomprime el archivo y arrastra **PAIMON.app** a **Aplicaciones**. Si ya tienes PAIMON, ciérralo antes de reemplazar la app. El historial se conserva en el almacenamiento local.
-3. Abre PAIMON. En **Ajustes → Inteligencia**, elige español o inglés y pulsa **Comprobar disponibilidad**. Si faltan recursos de voz, ve a **Ajustes → Modelos** y pulsa **Autorizar descarga del idioma seleccionado**. Activa **Apple Intelligence** desde Ajustes del Sistema para usar el resumen de Apple, el Asistente y las etiquetas de emoción.
+1. Descarga el ZIP de **PAIMON 0.15.0** en un **Mac con Apple Silicon y macOS 26 o posterior**. [Descargar ZIP](https://github.com/AD0441/PAIMON/releases/download/v0.15.0/PAIMON-0.15.0.zip).
+2. Descomprime el archivo y arrastra **PAIMON.app** a **Aplicaciones**. Si ya tienes PAIMON, ciérralo antes de reemplazar la app. El historial se conserva en el almacenamiento local. Si actualizas desde 0.14 o anterior, copia antes las respuestas del Asistente que quieras conservar: esas versiones solo las mantenían en memoria.
+3. Abre PAIMON. En **Ajustes → Inteligencia**, elige español o inglés y pulsa **Comprobar disponibilidad**. Si faltan recursos de voz, ve a **Ajustes → Modelos** y pulsa **Autorizar descarga del idioma seleccionado**. Activa **Apple Intelligence** desde Ajustes del Sistema para usar el resumen de Apple, el Asistente, la nueva polaridad textual y las etiquetas de emoción.
 4. Pulsa **Importar audio** para empezar con una grabación, o selecciona **Todo el sistema** o una aplicación abierta y pulsa **Iniciar**. Para capturar, concede el permiso de audio del sistema en macOS. Si activas el micrófono, concede también su permiso.
 5. Pulsa **Detener** al terminar la captura y abre **Resumen**, **Sentimientos**, **Discurso** o **Asistente**. Para analizar el tono, pulsa **Analizar sentimientos**. Para consultar la sesión, escribe una pregunta y pulsa **Preguntar**.
 
-La descarga tiene firma ad hoc. La notarización y las pruebas de instalación en otros Mac siguen pendientes. La compilación 30 se verificó en un M1 de 8 GB con macOS 27.3. [Historial de versiones](https://github.com/AD0441/PAIMON/releases) · [Alcance de las pruebas](docs/VALIDATION.md#discurso-incremental-y-voz-durante-la-captura--paimon-0140-30).
+La descarga tiene firma ad hoc. La notarización y las pruebas de instalación en otros Mac siguen pendientes. La compilación 31 se compiló y comprobó en un M1 de 8 GB con macOS 27.3: 150 pruebas ejecutadas sin fallos. La revisión visual de los nuevos controles queda pendiente. [Historial de versiones](https://github.com/AD0441/PAIMON/releases) · [Alcance de las pruebas](docs/VALIDATION.md#polaridad-exportación-integral-y-memoria--paimon-0150-31).
 
 <details>
 <summary>Verificar la descarga con SHA-256</summary>
 
-Guarda el archivo de verificación en la misma carpeta que el ZIP y ejecuta el comando desde esa carpeta. [Descargar SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.14.0/PAIMON-0.14.0.zip.sha256).
+Guarda el archivo de verificación en la misma carpeta que el ZIP y ejecuta el comando desde esa carpeta. [Descargar SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.15.0/PAIMON-0.15.0.zip.sha256).
 
 ```bash
-shasum -a 256 -c PAIMON-0.14.0.zip.sha256
+shasum -a 256 -c PAIMON-0.15.0.zip.sha256
 ```
 
 </details>
@@ -71,15 +71,17 @@ Abre el icono de evidencia junto al hallazgo para revisar la cita y saltar al te
 
 </details>
 
-**Copia el informe con formato para Word o Pages**, o expórtalo en **TXT, Markdown, PDF o JSON**. Markdown y PDF conservan los encabezados y el énfasis. Puedes añadir un anexo de citas e incluir los marcadores y las notas. JSON conserva los hallazgos y sus referencias para usarlos en otras herramientas.
+**Copia el informe con formato para Word o Pages**, o expórtalo en **TXT, Markdown, PDF o JSON**. Markdown y PDF conservan los encabezados y el énfasis. En el diálogo de exportación puedes incluir **Sentimientos y datos vocales**, **Discurso y participación** y las **consultas, respuestas y citas del Asistente**. JSON usa el esquema 2 e incluye índices y puntajes originales, clases, intensidad, citas, tiempos, modelos, mediciones vocales e historial completo; los embeddings se representan por distancias, sin guardar los vectores completos. La exportación presenta datos existentes y no ejecuta análisis.
 
 ## Sentimientos de la transcripción
 
-Abre **Sentimientos** y pulsa **Analizar sentimientos**. El gráfico te permite localizar dónde cambió el tono del texto. Cada punto corresponde a un fragmento. **−1** es el extremo negativo, **0** es neutro y **+1** es el extremo positivo. Si muchos puntajes coinciden en un extremo, PAIMON muestra cuántos fragmentos recibieron ese valor.
+Abre **Sentimientos** y pulsa **Analizar sentimientos**. La polaridad local, generada con Apple Foundation Models, combina hasta 48 muestras distribuidas del texto con sus emociones y contexto. El índice va de **−1** (negativo) a **+1** (positivo): las frases factuales se representan como neutras (**0**); los extremos y valores intermedios (**±1/3, ±2/3**) son categorías ordinales, no probabilidades. Las muestras mixtas, inciertas o sin analizar no reciben un cero artificial. Las decisiones y los acuerdos sin juicio de valor quedan neutrales; las voces se analizan aparte.
 
 ![Gráfico de polaridad y etiquetas de emoción de seis fragmentos sintéticos](docs/images/paimon-sentiment.png)
 
-Las etiquetas de emoción describen expresiones del lenguaje. Por ejemplo, **preocupación** marca un pasaje que expresa inquietud. Pulsa una etiqueta o un punto para revisar su contexto. En los cambios destacados puedes comparar el puntaje anterior con el actual.
+*Esta captura conserva el análisis de una versión anterior y datos ilustrativos; no representa la nueva polaridad contextual.* Pulsa un punto para revisar la cita y su contexto. Las etiquetas de emoción describen expresiones del lenguaje; son estimaciones, no una lectura de cómo se siente una persona.
+
+La nueva polaridad requiere **Apple Intelligence disponible**. No requiere descargar un modelo adicional ni usar una API. Si Apple Intelligence no está disponible, no se inventan índices. Los resultados previos de NaturalLanguage se conservan para exportación y se identifican como tales; pulsa **Volver a analizar** para obtener la gráfica nueva. JSON también conserva el puntaje original de Apple para auditoría.
 
 ### Voz y vista Mixto
 
@@ -128,7 +130,7 @@ Abre **Asistente** y pregunta, por ejemplo, **«¿Quién enviará la cotización
 
 ![Dos respuestas del Asistente local con citas que abren el fragmento de los 42 segundos](docs/images/paimon-assistant.png)
 
-El Asistente usa Apple Intelligence en el Mac. En sesiones largas consulta una selección de pasajes relevantes. La conversación se mantiene en memoria mientras la sesión está seleccionada. Las consultas se pausan durante la captura, la importación o la presión de memoria.
+El Asistente usa Apple Intelligence en el Mac. En sesiones largas consulta una selección de pasajes relevantes. Las consultas y respuestas nuevas se guardan en SQLite junto con la sesión: la vista muestra las últimas doce, mientras que la exportación incluye el historial completo. Al eliminar la sesión se elimina también ese historial. Las doce consultas que versiones anteriores mantenían solo en memoria no se pueden recuperar. Si editas la transcripción, las respuestas anteriores quedan marcadas como previas a la edición. Las consultas se pausan durante la captura, la importación o la presión de memoria.
 
 ## Trabaja con tus sesiones
 
@@ -139,7 +141,7 @@ El Asistente usa Apple Intelligence en el Mac. En sesiones largas consulta una s
 
 ## Procesamiento local y opciones de configuración
 
-**Apple SpeechTranscriber** transcribe en español o inglés según el idioma que selecciones. El motor de **Apple Foundation Models** genera el resumen. Apple Intelligence también se usa para el Asistente y las etiquetas de emoción. La disponibilidad de la polaridad depende de los idiomas que ofrece NaturalLanguage en tu Mac.
+**Apple SpeechTranscriber** transcribe en español o inglés según el idioma que selecciones. El motor de **Apple Foundation Models** genera el resumen. Apple Intelligence también se usa para el Asistente y las etiquetas de emoción. La polaridad textual actual se estima con Apple Foundation Models cuando Apple Intelligence está disponible; los puntajes originales de NaturalLanguage se conservan como referencia histórica.
 
 En **Ajustes → Modelos** puedes preparar alternativas locales. **Parakeet Redux** transcribe audio multilingüe y **MLX con Qwen 1.5B** genera resúmenes. Las descargas se inician al solicitarlas y se pueden borrar desde la app. [Motores, tamaños y preparación](docs/DEPENDENCIES.md).
 
@@ -160,7 +162,7 @@ Abre `LocalAudioIntelligence.xcodeproj` y selecciona el esquema **LocalAudioInte
 ./script/test.sh                     # ejecutar las pruebas
 ```
 
-Se ejecutaron **137 pruebas sin fallos**; otras nueve integraciones opcionales se omitieron en esta ronda. Las pruebas de esta versión cubren el avance incremental del discurso, las citas, la participación, las exportaciones y la eliminación de resultados, además del análisis de ventanas PCM con Sound Analysis y Core ML. Las integraciones nativas se ejecutan sobre muestras sintéticas; no certifican la precisión con voces reales ni una sesión prolongada. [Resultados y cómo repetirlos](docs/VALIDATION.md#discurso-incremental-y-voz-durante-la-captura--paimon-0140-30).
+Las validaciones y sus límites se describen en el [registro de esta versión](docs/VALIDATION.md#polaridad-exportación-integral-y-memoria--paimon-0150-31). La polaridad contextual se contrastó con casos de español e inglés; esto no garantiza precisión general. Las inferencias de Apple requieren sus funciones disponibles en el Mac.
 
 - [Requisitos y estado](docs/REQUIREMENTS.md) · [Limitaciones](docs/LIMITATIONS.md)
 - [Arquitectura y privacidad](docs/ARCHITECTURE.md) · [Mediciones en Apple Silicon](docs/PERFORMANCE.md)

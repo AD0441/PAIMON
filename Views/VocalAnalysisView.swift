@@ -59,7 +59,7 @@ struct VocalAnalysisView: View {
         }
     }
 
-    private var paused: Bool { model.active || model.pressure }
+    private var paused: Bool { model.active || model.pressure || model.waitingForMemoryRecovery }
     private var emotionEnabled: Bool {
         model.settings.vocalEmotionEnabled == true && model.installedModels.contains((model.settings.vocalEmotionModel ?? .base).package)
     }
@@ -498,12 +498,16 @@ struct VocalAnalysisView: View {
                         }
                     }
                     guard !Task.isCancelled, generation == token, model.selected == session.id else { return }
+                    try await model.store?.saveVocalAnalysis(session:session.id,source:track.source,measurements:result)
+                    guard !Task.isCancelled, generation == token, model.selected == session.id else { return }
                     points = result
                     time = result.first?.start
                     if result.isEmpty { error = "No hay intervalos de audio disponibles para analizar." }
                 case .sounds:
                     let result = try await VocalSoundAnalysis.analyze(track: track, sessionDuration: session.duration,
                                                                      identifiers: model.vocalSoundIdentifiers)
+                    guard !Task.isCancelled, generation == token, model.selected == session.id else { return }
+                    try await model.store?.saveVocalAnalysis(session:session.id,source:track.source,sounds:result,soundIdentifiers:Array(model.vocalSoundIdentifiers).sorted())
                     guard !Task.isCancelled, generation == token, model.selected == session.id else { return }
                     shownEvents = 12
                     soundReport = result
@@ -514,6 +518,8 @@ struct VocalAnalysisView: View {
                         return
                     }
                     let voice = try await analyzeEmotion(track, duration: session.duration, token: token)
+                    guard !Task.isCancelled, generation == token, model.selected == session.id else { return }
+                    try await store.saveVocalAnalysis(session:session.id,source:track.source,emotions:voice)
                     guard !Task.isCancelled, generation == token, model.selected == session.id else { return }
                     emotionReport = voice
                     mixedTime = voice.points.first(where: { $0.emotion != nil })?.start ?? voice.points.first?.start

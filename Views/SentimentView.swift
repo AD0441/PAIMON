@@ -79,6 +79,7 @@ private struct SentimentView: View {
     @State private var report: TranscriptSentiment?
     @State private var progress: Double?
     @State private var error: String?
+    @State private var needsRefresh = false
     @State private var request = 0
     @State private var analyzeNext = false
     @State private var focused: Int?
@@ -90,7 +91,7 @@ private struct SentimentView: View {
         var paused: Bool
         var request: Int
     }
-    private var paused: Bool { model.active || model.pressure }
+    private var paused: Bool { model.active || model.pressure || model.waitingForMemoryRecovery }
     private var job: Job {
         Job(session: model.selectedSession?.id, revision: model.sentimentRevision, paused: paused, request: request)
     }
@@ -111,7 +112,7 @@ private struct SentimentView: View {
                         analyzeNext = true
                         request += 1
                     } label: {
-                        Label(model.ui(report == nil ? "Analizar sentimientos" : "Volver a analizar"), systemImage: "waveform.path")
+                        Label(model.ui(needsRefresh ? "Actualizar análisis" : report == nil ? "Analizar sentimientos" : "Volver a analizar"), systemImage: "waveform.path")
                     }
                     .disabled(paused)
                     .accessibilityIdentifier("analyzeSentiment")
@@ -127,7 +128,9 @@ private struct SentimentView: View {
                 if let report, !report.points.isEmpty {
                     reportContent(report)
                 } else if progress == nil {
-                    Text(model.ui(report == nil ? "Selecciona una sesión con transcripción para analizarla." : "Esta sesión no contiene texto para analizar."))
+                    Text(model.ui(needsRefresh ? "El análisis guardado usa un motor anterior o texto modificado. Actualízalo para ver la polaridad revisada; los datos anteriores siguen disponibles al exportar." :
+                        model.selectedSession == nil ? "Selecciona una sesión con transcripción para analizarla." :
+                        report == nil ? "Pulsa Analizar sentimientos para evaluar esta transcripción." : "Esta sesión no contiene texto para analizar."))
                         .font(.callout).foregroundStyle(.secondary)
                 }
             }
@@ -143,6 +146,7 @@ private struct SentimentView: View {
         analyzeNext = false
         progress = nil
         error = nil
+        needsRefresh = false
         focused = nil
         selectedEmotion = nil
         report = nil
@@ -160,9 +164,11 @@ private struct SentimentView: View {
                 report = result
             } else {
                 let cached = try await store.cachedSentiment(session: session.id)
+                let stale = cached == nil ? try await store.sentimentNeedsRefresh(session:session.id):false
                 try Task.checkCancellation()
                 guard job == currentJob else { return }
                 report = cached
+                needsRefresh = stale
             }
         } catch is CancellationError {
         } catch {
@@ -175,11 +181,11 @@ private struct SentimentView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Evolución de la polaridad").font(.headline)
             if report.points.contains(where: { $0.score != nil }) {
-                Text("Cada punto muestra cómo Apple clasificó el tono de un fragmento. −1 es el extremo negativo, 0 es neutro y +1 es el extremo positivo.")
+                Text("El índice local distingue valoraciones positivas y negativas del lenguaje informativo, que vale 0. La intensidad es orientativa, no una probabilidad. Los casos mixtos o sin conclusión no reciben un valor inventado.")
                     .font(.caption).foregroundStyle(.secondary)
                 if let boundary = report.boundaryConcentration {
                     let value = boundary.score < 0 ? "−1" : "+1"
-                    Label("\(boundary.count) de \(boundary.total) fragmentos puntuados quedaron en \(value). Apple devolvió el mismo extremo para la mayoría. Lee las citas para comprobar el tono en contexto.", systemImage: "info.circle")
+                    Label("\(boundary.count) de \(boundary.total) fragmentos puntuados quedaron en \(value). La clasificación local repitió el mismo extremo para la mayoría. Lee las citas para comprobar el tono en contexto.", systemImage: "info.circle")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 let selected = focused.flatMap { report.points.indices.contains($0) ? report.points[$0] : nil }
@@ -204,10 +210,13 @@ private struct SentimentView: View {
                 }
                 let unscored = report.points.filter { $0.score == nil }.count
                 if unscored > 0 {
-                    Text("\(unscored) fragmentos sin puntuación de Apple.").font(.caption).foregroundStyle(.secondary)
+                    Text("\(unscored) fragmentos sin puntuación local; no se convierten en 0.").font(.caption).foregroundStyle(.secondary)
                 }
+            } else if report.tagged > 0 {
+                Text("Las muestras evaluadas no tienen un balance numérico concluyente. Los datos mixtos o inciertos se conservan sin asignarles 0.")
+                    .font(.caption).foregroundStyle(.secondary)
             } else {
-                Text("NaturalLanguage no devolvió puntuaciones para esta transcripción.")
+                Text("No hay puntuaciones locales verificadas. Revisa la disponibilidad de Apple Intelligence y actualiza el análisis.")
                     .font(.caption).foregroundStyle(.secondary)
             }
             Divider()
@@ -215,13 +224,13 @@ private struct SentimentView: View {
             Text("Apple Intelligence asigna etiquetas al lenguaje de los fragmentos. Por ejemplo, «preocupación» señala una expresión de inquietud. El número indica en cuántos fragmentos apareció cada etiqueta.")
                 .font(.caption).foregroundStyle(.secondary)
             switch report.tagging {
-            case .unavailable: Text("La clasificación de emociones requiere Apple Intelligence disponible en este Mac.")
+            case .unavailable: Text("La polaridad revisada y las emociones requieren Apple Intelligence disponible en este Mac.")
             case .unsupported: Text("Apple Intelligence no admite el idioma de los fragmentos seleccionados.")
             case .partial: Text("Apple Intelligence devolvió un análisis parcial.")
             case .complete: EmptyView()
             }
             if report.tagged > 0 {
-                Text("Emociones analizadas en \(report.tagged) de \(report.points.count) fragmentos.")
+                Text("Polaridad y emociones evaluadas en \(report.tagged) de \(report.points.count) fragmentos; se seleccionan hasta 48 muestras distribuidas.")
                     .font(.caption).foregroundStyle(.secondary)
             }
             if report.emotionCounts.isEmpty, report.tagged > 0 {
@@ -301,6 +310,12 @@ private struct SentimentView: View {
                 if let speaker = point.speaker { Text(speaker) }
                 else if let number = point.speakerNumber { Text("Hablante \(number)") }
                 Spacer()
+                if let polarity = point.polarity { Text(model.ui(polarity.title)).fontWeight(.semibold) }
+                if let quote = point.polarityEvidence { Text("Expresión citada: «\(quote)»").font(.caption) }
+                if let raw = point.rawAppleScore {
+                    Text(model.ui("Valor original de NaturalLanguage") + ": " + raw.formatted(.number.precision(.fractionLength(2))))
+                        .font(.caption).foregroundStyle(.secondary)
+                }
                 if let score = point.score {
                     Text(score, format: .number.precision(.fractionLength(2))).monospacedDigit()
                 }

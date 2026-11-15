@@ -2,7 +2,7 @@
 set -euo pipefail
 MODE="${1:-run}"
 CONFIGURATION="Debug"
-if [[ "$MODE" == "--install" || "$MODE" == "--review" ]]; then CONFIGURATION="Release"; fi
+if [[ "$MODE" == "--install" || "$MODE" == "--review" || "$MODE" == "--release-build-only" ]]; then CONFIGURATION="Release"; fi
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_NAME="PAIMON"
 BUILD_OPTIONS=('ARCHS=arm64' 'ONLY_ACTIVE_ARCH=YES')
@@ -35,7 +35,7 @@ case "$MODE" in
     /usr/bin/open -n "$REVIEW_BUNDLE" --args --review-directory "$REVIEW_ROOT/Review-Data" --review-audio "$REVIEW_ROOT/spanish-synthetic.aiff"
     printf 'Instancia aislada: %s\n' "$REVIEW_BUNDLE"
     ;;
-  --build-only) printf '%s\n' "$APP_BUNDLE" ;;
+  --build-only|--release-build-only) printf '%s\n' "$APP_BUNDLE" ;;
   run) /usr/bin/open -n "$APP_BUNDLE" ;;
   --verify) /usr/bin/open -n "$APP_BUNDLE"; sleep 2; pgrep -x "$APP_NAME" >/dev/null ;;
   --install)
@@ -140,5 +140,5 @@ case "$MODE" in
   --debug) lldb -- "$APP_BUNDLE/Contents/MacOS/$APP_NAME" ;;
   --logs) /usr/bin/open -n "$APP_BUNDLE"; /usr/bin/log stream --info --style compact --predicate 'process == "PAIMON"' ;;
   --telemetry) /usr/bin/open -n "$APP_BUNDLE"; /usr/bin/log stream --info --style compact --predicate 'subsystem == "local.audio.intelligence"' ;;
-  *) printf 'usage: %s [run|--build-only|--review|--verify|--install|--debug|--logs|--telemetry]\n' "$0" >&2; exit 2 ;;
+  *) printf 'usage: %s [run|--build-only|--release-build-only|--review|--verify|--install|--debug|--logs|--telemetry]\n' "$0" >&2; exit 2 ;;
 esac

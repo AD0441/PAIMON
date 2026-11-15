@@ -6962,6 +6962,402 @@
           }
         }
       }
+    },
+    "Sentimientos y datos vocales": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentiment and vocal data"
+          }
+        }
+      }
+    },
+    "Asistente: consultas, respuestas y citas": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assistant: questions, answers and quotes"
+          }
+        }
+      }
+    },
+    "Análisis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysis"
+          }
+        }
+      }
+    },
+    "Solo se exportan resultados ya calculados. Exportar no ejecuta IA.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only existing results are exported. Exporting does not run AI."
+          }
+        }
+      }
+    },
+    "El índice local distingue valoraciones positivas y negativas del lenguaje informativo, que vale 0. La intensidad es orientativa, no una probabilidad. Los casos mixtos o sin conclusión no reciben un valor inventado.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The local index separates positive and negative evaluations from factual language, scored as 0. Intensity is indicative, not a probability. Mixed or uncertain cases receive no invented score."
+          }
+        }
+      }
+    },
+    "%lld de %lld fragmentos puntuados quedaron en %@. La clasificación local repitió el mismo extremo para la mayoría. Lee las citas para comprobar el tono en contexto.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld scored excerpts landed at %@. The local classification repeated the same extreme for most excerpts. Read the quotes to check their context."
+          }
+        }
+      }
+    },
+    "%lld fragmentos sin puntuación local; no se convierten en 0.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld excerpts without a local score; they are not converted to 0."
+          }
+        }
+      }
+    },
+    "No hay puntuaciones locales verificadas. Revisa la disponibilidad de Apple Intelligence y actualiza el análisis.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No verified local scores are available. Check Apple Intelligence availability and update the analysis."
+          }
+        }
+      }
+    },
+    "La polaridad revisada y las emociones requieren Apple Intelligence disponible en este Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reviewed polarity and emotion labels require Apple Intelligence on this Mac."
+          }
+        }
+      }
+    },
+    "Polaridad y emociones evaluadas en %lld de %lld fragmentos; se seleccionan hasta 48 muestras distribuidas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Polarity and emotions evaluated in %lld of %lld excerpts; up to 48 distributed samples are selected."
+          }
+        }
+      }
+    },
+    "Valoración detectada: «%@»": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detected evaluation: “%@”"
+          }
+        }
+      }
+    },
+    "Valor original de NaturalLanguage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original NaturalLanguage score"
+          }
+        }
+      }
+    },
+    "Reducir trabajo con temperatura elevada": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduce work at high temperatures"
+          }
+        }
+      }
+    },
+    "Presión informada por macOS": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pressure reported by macOS"
+          }
+        }
+      }
+    },
+    "Reanudar tras normalizarse la memoria": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume after memory returns to normal"
+          }
+        }
+      }
+    },
+    "5 segundos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 seconds"
+          }
+        }
+      }
+    },
+    "15 segundos · recomendado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15 seconds · recommended"
+          }
+        }
+      }
+    },
+    "30 segundos": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 seconds"
+          }
+        }
+      }
+    },
+    "El umbral lo fija macOS. PAIMON respeta los avisos y siempre protege ante presión crítica. Este ajuste cambia la espera de recuperación; avisos repetidos la amplían hasta dos minutos.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS sets the threshold. PAIMON respects warnings and always protects against critical pressure. This setting changes the recovery delay; repeated warnings extend it up to two minutes."
+          }
+        }
+      }
+    },
+    "Las consultas se guardan en esta sesión, en el Mac. Exportar incluye el historial completo; aquí se muestran las últimas 12.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questions are saved with this session on your Mac. Export includes the full history; the latest 12 are shown here."
+          }
+        }
+      }
+    },
+    "Respuesta anterior a una corrección del texto. Revisa sus citas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This response predates a text correction. Review its quotes."
+          }
+        }
+      }
+    },
+    "Advertencia": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warning"
+          }
+        }
+      }
+    },
+    "Crítica": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Critical"
+          }
+        }
+      }
+    },
+    "Neutro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutral"
+          }
+        }
+      }
+    },
+    "Positivo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Positive"
+          }
+        }
+      }
+    },
+    "Negativo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Negative"
+          }
+        }
+      }
+    },
+    "Sin conclusión": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uncertain"
+          }
+        }
+      }
+    },
+    "La transcripción cambió o la respuesta no tiene citas válidas.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The transcript changed or the response has no valid quotes."
+          }
+        }
+      }
+    },
+    "El análisis de sentimientos cambió durante la exportación. Reintenta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sentiment analysis changed during export. Try again."
+          }
+        }
+      }
+    },
+    "El historial del asistente cambió durante la exportación. Reintenta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The assistant history changed during export. Try again."
+          }
+        }
+      }
+    },
+    "El lote de sentimientos supera el contexto local.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sentiment batch exceeds the local context."
+          }
+        }
+      }
+    },
+    "Expresión citada: «%@»": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quoted expression: “%@”"
+          }
+        }
+      }
+    },
+    "Las muestras evaluadas no tienen un balance numérico concluyente. Los datos mixtos o inciertos se conservan sin asignarles 0.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The evaluated samples have no conclusive numeric balance. Mixed or uncertain data are preserved without assigning 0."
+          }
+        }
+      }
+    },
+    "Actualizar análisis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update analysis"
+          }
+        }
+      }
+    },
+    "El análisis guardado usa un motor anterior o texto modificado. Actualízalo para ver la polaridad revisada; los datos anteriores siguen disponibles al exportar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The saved analysis uses an earlier engine or changed text. Update it to see reviewed polarity; the previous data remain available for export."
+          }
+        }
+      }
+    },
+    "Pulsa Analizar sentimientos para evaluar esta transcripción.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click Analyze sentiment to evaluate this transcript."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

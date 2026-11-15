@@ -1,4 +1,4 @@
-# Limitaciones pendientes · PAIMON 0.14.0
+# Limitaciones pendientes · PAIMON 0.15.0
 
 - Se compila para macOS 26.0+, pero este equipo ejecuta macOS 27.3. Hace falta repetir las pruebas en macOS 26 y una sesión de varias horas antes de considerar una distribución estable.
 - El idioma de interfaz español/inglés no traduce transcripciones ni informes guardados. Mensajes de frameworks y cuadros de macOS pueden seguir el idioma del sistema.
@@ -36,3 +36,13 @@
 - Las emociones usan Core ML en CPU según la configuración medida previamente. No se afirma uso del ANE. El modelo se libera tras cada muestra; en Large el coste de carga puede ser relevante. Las etiquetas son experimentales y no miden estados psicológicos reales.
 - La compuerta ocupada omite esa inferencia vocal sin acumularla. Con Parakeet se conservan solo métricas de señal en vivo y se pospone Discurso hasta terminar. Bajo presión de memoria o calor se reduce trabajo opcional.
 - Al detener se descarta la ventana vocal aún incompleta o en proceso. La transcripción confirmada y los resultados derivados guardados permanecen. Falta un ensayo prolongado con ambas fuentes, modelos opcionales y macOS 26.
+
+## Polaridad revisada e historial · 0.15.0
+
+- El nuevo índice requiere Apple Intelligence disponible y una selección de hasta 48 muestras. No sustituye un estudio completo de todas las intervenciones ni una evaluación humana; mixto, incierto y no analizado quedan sin índice. Los valores ordinales no son probabilidades.
+- La muestra de validación es sintética y pequeña. Que diferencie hechos, elogios, críticas y negaciones en esos ejemplos no garantiza exactitud en conversaciones reales, ironía, citas extensas o español chileno.
+- Los valores originales NaturalLanguage se conservan como referencia, aunque pueden clasificar negativamente lenguaje factual. Los registros antiguos deben recalcularse para la gráfica nueva y se identifican al exportar.
+- El historial del Asistente solo se conserva desde esta versión. Los mensajes anteriores que no se guardaron en disco no pueden recuperarse tras cerrar la versión antigua. Las respuestas históricas pueden perder vigencia al editar el texto y se marcan como tales.
+- La exportación incluye resultados ya calculados, sin inferencia. No guarda ni exporta PCM por activar análisis; tampoco conserva vectores vocales completos. Para volver a calcular voz se necesita el audio original o archivado.
+- No se elevó el umbral de presión de memoria de macOS. Ajustar la espera de recuperación no demuestra que sea seguro mantener modelos bajo advertencia o presión crítica. Falta una prueba prolongada de memoria total, servicios Apple y otras apps en el M1 de 8 GB.
+- La revisión visual de los controles nuevos sigue pendiente en esta iteración; se han compilado y probado las rutas de datos. [Alcance](POLARITY-EXPORT.md).

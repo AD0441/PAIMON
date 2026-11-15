@@ -89,7 +89,7 @@ public struct VocalAudioTrack: Sendable, Identifiable {
     }
 }
 
-public struct VocalPoint: Identifiable, Sendable {
+public struct VocalPoint: Codable, Identifiable, Sendable {
     public let id: Int
     public let start: Double
     public let end: Double

@@ -1,4 +1,4 @@
-# Arquitectura y privacidad · PAIMON 0.14.0
+# Arquitectura y privacidad · PAIMON 0.15.0
 
 El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** y el lema **Transformando sonido en conocimiento.** El nombre visible, el ejecutable y el bundle `.app` usan PAIMON. Se conserva `local.audio.intelligence` como identidad de preferencias y permisos, así como la carpeta de datos anterior para evitar migraciones innecesarias. La marca vigente se conserva en `Resources/Brand` mediante fuentes SVG/PNG reproducibles; los iconos anteriores quedan en el historial de Git. El ICNS generado se carga mediante los mecanismos nativos de macOS. No intervienen modelos ni recursos remotos en la identidad visual.
 
@@ -90,3 +90,13 @@ SQLite conserva discourse_findings, discourse_state y una cola de trabajos final
 RecordingPipeline entrega PCM también a una cola opcional bufferingNewest(12), consumida por LiveVocalSession sin esperar la inferencia en el consumidor de transcripción. LiveVocalSampler mantiene hasta tres segundos a 16 kHz por fuente y detecta discontinuidades. La inferencia vocal usa performIfIdle: nunca añade una espera detrás de otra generación. Core ML CPU-only y SoundAnalysis se ejecutan sucesivamente; el modelo propio se libera antes del clasificador de sonidos. Cancelación, presión y pausa invalidan la ventana pendiente. Solo se retiene el último embedding por fuente para calcular una distancia.
 
 live_vocal almacena tiempos, métricas, etiquetas, identificador del modelo y distancia; no PCM ni embeddings. Todas las tablas nuevas dependen de la sesión con ON DELETE CASCADE y conservan el mecanismo existente de eliminación/compactación SQLite. Guardar audio sigue siendo una decisión independiente, apagada por defecto. La cola final de Discurso se recupera cuando terminan los resúmenes y hay recursos; una generación rechazada conserva el cursor para un reintento explícito.
+
+## Polaridad y exportación integral · 0.15.0
+
+El índice textual v2 usa SystemLanguageModel.default y un protocolo SentimentTagging inyectable. NativePolarityScorer conserva valores NaturalLanguage independientes, con un objeto por tarea y un ámbito que termina antes de inferir. La generación combina clasificación, intensidad ordinal, cita, etiquetas y contexto por lote; no usa las puntuaciones nativas como valores predeterminados ni convierte datos ausentes a neutralidad.
+
+assistant_turns guarda cada pregunta/respuesta con revisión y evidencia; vocal_analysis guarda el último conjunto derivado por fuente, sin PCM ni vectores de embedding. Ambas tablas dependen de sessions mediante ON DELETE CASCADE. Los snapshots vocales conservan modelo, mediciones, categorías, sonidos y distancias. Vincular un audio nuevo invalida el snapshot previo en la misma transacción.
+
+SessionExporter conserva flujos paginados para historial y muestras vocales. El JSON v2 incluye métodos, unidades, índices nulos explícitos y fechas ISO 8601. Se valida la existencia y revisión de la sesión y sellos de análisis/historial antes de publicar el archivo temporal. El historial previo a una edición se exporta como histórico; las respuestas nuevas con evidencia obsoleta se rechazan.
+
+MemoryPressureLevel distingue normal/warning/critical. La presión booleana se deriva de ese único estado. Normal inicia una espera configurable con backoff acotado; un aviso nuevo cancela la recuperación. El usuario no cambia los umbrales que fija macOS. [Detalles](POLARITY-EXPORT.md).

@@ -438,3 +438,37 @@ PAIMON_TEST_DISCOURSE=1 PAIMON_TEST_LIVE_VOCAL=1 ./script/test.sh
 ~~~
 
 El proyecto mantiene solo Versiones/PAIMON-actual.zip (0.14.0, 30) y Versiones/PAIMON-anterior.zip (0.13.0, 29), además del enlace a /Applications/PAIMON.app. Los archivos fuente, pruebas, documentación y registros de validación se conservan.
+
+## Polaridad, exportación integral y memoria · PAIMON 0.15.0 (31)
+
+**Resultado:** 157 métodos registrados; 145 ejecutados en la batería predeterminada y cinco integraciones nativas ejecutadas aparte: **150 métodos distintos sin fallos**. Siete integraciones opcionales no se ejecutaron. La prueba de polaridad contiene dos casos de idioma y 16 frases en total; no se cuenta cada frase como un método adicional.
+
+Comprobaciones del 15 de noviembre de 2026 en **Apple M1 con 8 GB, macOS 27.3 y Xcode 27.2**. Release arm64 compila con destino mínimo macOS 26. La revisión visual nueva no se realizó en esta iteración; el usuario no está frente al Mac. No se afirma una prueba actual de botones en pantalla, grabación real, carga prolongada ni macOS 26. [Registro por prueba](evidence/polarity-export-validation.json) · [Método y cambios](POLARITY-EXPORT.md).
+
+Se reprodujo el sesgo observado de NaturalLanguage con quince frases sintéticas. Los puntajes se conservaron sin transformarlos: las fechas y descripciones simples recibieron valores negativos. La nueva clasificación de Apple Foundation Models pasó **16 casos sintéticos, ocho en español y ocho en inglés**, con neutralidad para hechos/decisiones, signo positivo para satisfacción/elogios y negativo para críticas/negaciones explícitas. Las frases neutrales no recibieron etiquetas emocionales. Es una prueba de regresión acotada, no una estimación general de precisión.
+
+Las integraciones nativas se ejecutaron **por separado** para evitar competir por memoria: polaridad es/en, preocupación sin confundir desacuerdo con enojo, Asistente con respuesta y abstención, Discurso incremental y análisis vocal PCM mediante Sound Analysis y Core ML cuando el paquete Base está instalado. Los tiempos y resultados concretos están en el registro. No hubo descargas nuevas ni uso de grabaciones privadas.
+
+La batería predeterminada comprobó las rutas de datos con dobles controlados donde corresponde. Se exportaron **137 consultas guardadas** y sus respuestas, sentimientos y datos vocales en los cuatro formatos. Se comprobaron números, procedencia, referencias, persistencia al reabrir SQLite, ausencia de vectores completos de embeddings, abstenciones, compatibilidad de análisis antiguos, nulidad distinta de neutralidad, eliminación con la sesión e invalidación por correcciones o renombrado de voces. Las exportaciones puras de análisis no añaden avisos de resumen no seleccionado.
+
+En una transcripción sintética de 200 fragmentos cortos, el planificador seleccionó 48 muestras y emitió 16 solicitudes por lotes, sin generar una solicitud independiente por cada campo. Tras tres fallos consecutivos se detuvo el intento, conservando datos faltantes como tales. No se envió texto a modelos reales en esas dos pruebas del planificador.
+
+Se compararon 100 puntuaciones NaturalLanguage obtenidas con un objeto independiente por fragmento y con uno reutilizado por tarea: **los valores fueron idénticos**. El registro conserva los tiempos de una única pasada serial, con el método independiente primero. El orden y el calentamiento influyen; no demuestra por sí solo una mejora sostenida ni una reducción equivalente de memoria, energía o inferencia de Foundation Models.
+
+La prueba de memoria inyectó secuencias normal → advertencia → crítica y verificó escalada, cancelación de recuperación y espera antes de retomar. **No se provocó presión real en el Mac del usuario ni se elevó un umbral del sistema.** La espera configurable conserva 15 s por defecto, admite 5/30 s y limita el backoff a 120 s. La captura mantiene prioridad.
+
+Para repetir las pruebas nativas, con Apple Intelligence y recursos preparados:
+
+~~~bash
+./script/test.sh
+PAIMON_TEST_POLARITY=1 ./script/test.sh --filter nativeLocalPolaritySeparatesFactsFromExplicitEvaluations
+PAIMON_TEST_SENTIMENT_FOUNDATION=1 ./script/test.sh --filter nativeTaggingDistinguishesConcernAndDisagreement
+PAIMON_TEST_ASSISTANT_FOUNDATION=1 ./script/test.sh --filter assistantAnswersAndAbstainsWithTheLocalAppleModel
+PAIMON_TEST_DISCOURSE=1 ./script/test.sh --filter discourseNativeModelProcessesProposalsAndKeepsItsCheckpoint
+PAIMON_TEST_LIVE_VOCAL=1 ./script/test.sh --filter liveVocalNativeSoundStreamAndSelectedCoreMLModelProcessActualBuffers
+./script/build_and_run.sh --release-build-only
+~~~
+
+Las integraciones opcionales no activadas no cuentan como aprobadas. El esquema de tablas nuevo es aditivo. El historial del Asistente anterior a esta versión solo estaba en memoria y no se puede migrar automáticamente desde una app ya cerrada.
+
+Instalación completada: **/Applications/PAIMON.app, 0.15.0 (31)**, firma ad hoc verificada y proceso iniciado. Se mantienen únicamente `Versiones/PAIMON-actual.zip` (0.15.0, 31) y `Versiones/PAIMON-anterior.zip` (0.14.0, 30); `PAIMON.app` junto al proyecto es un enlace a Aplicaciones. El usuario autorizó reiniciar después del aviso sobre consultas antiguas del Asistente. No se inspeccionó la ventana con sus datos.

@@ -89,8 +89,8 @@ struct AppModelTests {
         let model=fixture.model(engine:engine)
         await model.select(session.id)
         model.state=busyState
-        model.memoryPressureChanged(true)
-        model.memoryPressureChanged(false)
+        model.memoryPressureChanged(.warning)
+        model.memoryPressureChanged(.normal)
         #expect(try await fixture.store.pendingFinalSession()?.id==session.id)
         #expect(model.summaryWorking==false)
 
@@ -110,17 +110,17 @@ struct AppModelTests {
         let model=fixture.model(engine:engine)
         await model.select(session.id)
 
-        model.memoryPressureChanged(true)
-        model.memoryPressureChanged(false)
+        model.memoryPressureChanged(.warning)
+        model.memoryPressureChanged(.normal)
         #expect(model.waitingForMemoryRecovery)
         #expect(model.canStartAudio)
-        model.memoryPressureChanged(true)
+        model.memoryPressureChanged(.warning)
         #expect(!model.waitingForMemoryRecovery)
         try await Task.sleep(for:.milliseconds(80))
         #expect(try await fixture.store.latestSummary(session:session.id)==nil)
         #expect(try await fixture.store.processingProgress(session:session.id).finalQueued)
 
-        model.memoryPressureChanged(false)
+        model.memoryPressureChanged(.normal)
         await model.waitForSummaryRecovery()
         #expect(try await fixture.store.latestSummary(session:session.id)?.isFinal==true)
         #expect(try await fixture.store.pendingFinalSession()==nil)
@@ -327,4 +327,21 @@ struct AppModelTests {
             #expect(placeholders(key)==placeholders(value),"Formato de \(key)")
         }
     }
+    @Test func memoryPressureEscalatesWithoutLosingCriticalStateAndRespectsRecovery() async throws {
+        let fixture=try ModelFixture()
+        defer { fixture.clean() }
+        let model=fixture.model()
+        model.memoryPressureChanged(.warning)
+        #expect(model.pressure && model.memoryPressureLevel == .warning)
+        model.memoryPressureChanged(.critical)
+        #expect(model.pressure && model.memoryPressureLevel == .critical)
+        model.memoryPressureChanged(.normal)
+        #expect(!model.pressure && model.waitingForMemoryRecovery)
+        model.memoryPressureChanged(.critical)
+        #expect(model.pressure && !model.waitingForMemoryRecovery)
+        model.memoryPressureChanged(.normal)
+        await model.waitForSummaryRecovery()
+        #expect(!model.pressure && !model.waitingForMemoryRecovery)
+    }
+
 }
