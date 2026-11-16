@@ -39,21 +39,45 @@ public struct DraftSummary: Codable, Sendable {
         return try GenerationSchema(root:.init(name:"Summary",properties:[.init(name:"findings",schema:.init(arrayOf:item,minimumElements:0,maximumElements:maximumFindings))]),dependencies:[])
     }
 }
+public enum SummaryRejectionReason: String, Sendable {
+    case overviewLength, unrelatedOverview, inventedApproval, unsupportedAgreement, missingPoints
+    var explanation: String {
+        switch self {
+        case .overviewLength: "La síntesis no cumple la extensión admitida."
+        case .unrelatedOverview: "La síntesis no tiene referencias suficientes al contenido original."
+        case .inventedApproval: "La síntesis añade una afirmación sobre aprobación que no consta en las fuentes."
+        case .unsupportedAgreement: "La síntesis presenta como acuerdo una acción sin respaldo explícito."
+        case .missingPoints: "El modelo no produjo puntos relevantes verificables."
+        }
+    }
+}
 public enum SummaryResponseError: LocalizedError, Sendable {
     case incomplete
     case ungrounded
     case insufficient
+    case rejected(SummaryRejectionReason,actualCharacters:Int?=nil)
     public var errorDescription:String? {
         switch self {
+        case .rejected(let reason,_): "\(reason.explanation) La transcripción está guardada; vuelve a actualizar el resumen."
         case .incomplete: "El modelo devolvió un resumen incompleto. La transcripción está guardada; pulsa Actualizar resumen para reintentarlo."
         case .insufficient: "El resultado no contiene una síntesis general suficiente. La transcripción está guardada; vuelve a actualizar el resumen."
         case .ungrounded: "El modelo no produjo hallazgos con citas verificables. La transcripción está guardada; pulsa Actualizar resumen para reintentarlo."
         }
     }
+    var recoveryInstructions:String {
+        switch self {
+        case .rejected(.overviewLength,_): "La respuesta anterior incumplió la extensión. Escribe overview en dos frases cortas, de 80 a 350 caracteres en total."
+        case .rejected(.inventedApproval,_): "La respuesta anterior añadió una valoración de aprobación inexistente. Omite esa valoración y describe solo los hechos y propuestas presentes."
+        case .rejected(.unsupportedAgreement,_): "La respuesta anterior atribuyó un acuerdo sin respaldo. Describe cada propuesta como propuesta y cada acuerdo explícito en una frase separada."
+        case .rejected(.unrelatedOverview,_), .ungrounded: "La respuesta anterior no quedó respaldada. Conserva los términos concretos de las fuentes y resume únicamente lo que dicen."
+        case .rejected(.missingPoints,_): "La respuesta anterior no aportó puntos verificables. Añade un punto concreto con su identificador de fuente, sin inventar tareas ni acuerdos."
+        case .insufficient, .incomplete: "La respuesta anterior quedó incompleta. Usa dos frases breves y una estructura más pequeña, con todos los campos obligatorios."
+        }
+    }
     static func isRetryable(_ error:any Error) -> Bool {
         if error is Self || error is DecodingError { return true }
         if #available(macOS 27.0, *),error is GeneratedContent.ParsingError { return true }
-        if #unavailable(macOS 27.0),let legacy=error as? LanguageModelSession.GenerationError,
+        if let legacy=error as? LanguageModelSession.GenerationError,
            case .decodingFailure = legacy { return true }
         return false
     }
@@ -177,16 +201,17 @@ public actor FoundationSummaryEngine: SummarizationEngine {
             }
             guard SummaryResponseError.isRetryable(error) else { throw error }
             // Keep the mandatory overview even when retrying a smaller response.
-            return try await generate(sources:sources,maximumPoints:min(2,maximumPoints),locale:locale)
+            return try await generate(sources:sources,maximumPoints:min(2,maximumPoints),locale:locale,repair:(error as? SummaryResponseError)?.recoveryInstructions ?? SummaryResponseError.incomplete.recoveryInstructions)
         }
     }
-    private static func contextExceeded(_ error:any Error) -> Bool {
+    static func contextExceeded(_ error:any Error) -> Bool {
         if error is SummaryContextError { return true }
         if #available(macOS 27.0,*),let error=error as? LanguageModelError,case .contextSizeExceeded = error { return true }
-        if #unavailable(macOS 27.0),let error=error as? LanguageModelSession.GenerationError,case .exceededContextWindowSize = error { return true }
+        // The dynamic-schema API can still return its legacy error on newer macOS.
+        if let error=error as? LanguageModelSession.GenerationError,case .exceededContextWindowSize = error { return true }
         return false
     }
-    private func generate(sources:[SummarySource],maximumPoints:Int,locale:String) async throws -> [Finding] {
+    private func generate(sources:[SummarySource],maximumPoints:Int,locale:String,repair:String?=nil) async throws -> [Finding] {
         try Task.checkCancellation()
         if let reason=availability(locale:locale) { throw LAIError.message(reason) }
         let model=SystemLanguageModel.default
@@ -195,9 +220,10 @@ public actor FoundationSummaryEngine: SummarizationEngine {
         let rows=sources.enumerated().map { ["S\($0.offset)",$0.element.text] }
         let source=String(decoding:try JSONSerialization.data(withJSONObject:rows,options:.withoutEscapingSlashes),as:UTF8.self)
         let prompt="""
-        Redacta title (tema breve) y overview (síntesis general de 2 a 4 frases, máximo 650 caracteres).
+        Redacta title (tema breve) y overview (síntesis general de 2 o 3 frases cortas, preferentemente de 80 a 450 caracteres; máximo 650).
         Cubre el contenido completo de estas fuentes, desde el principio hasta el final. Menciona propuestas y conceptos concretos; no te limites al último fragmento. Conserva solo las dudas expresadas en las fuentes. No añadas advertencias genéricas sobre ausencia de aprobación. Un acuerdo explícito debe conservarse como acuerdo. Escribe acuerdos y tareas asignadas en frases separadas. Por ejemplo: «Se acordó comprar micrófonos. Ana enviará la cotización». No repitas puntos.
         \(maximumPoints>0 ? "Añade hasta \(maximumPoints) puntos relevantes y sus identificadores S. owner y due vacíos salvo si aparecen literalmente en la fuente elegida.":"Integra los resúmenes y los hechos documentados en una síntesis coherente. Incluye las decisiones y los compromisos explícitos relevantes, aunque sean del inicio. No añadas información externa.")
+        \(repair ?? "")
         FUENTES (cada fila: identificador y texto):\n\(source)
         """
         if #available(macOS 26.4, *) {

@@ -899,7 +899,14 @@ final class AppModel {
             if final { try await store?.completeFinalSummary(session:session.id) }
             await refreshProcessingProgress()
         } catch is CancellationError { if selected==session.id { summaryStatus="Resumen en espera; la transcripción permanece guardada." } }
-        catch { if selected==session.id { summaryStatus="Resumen pendiente: \(error.localizedDescription)" } }
+        catch {
+            if selected==session.id {
+                // Earlier blocks may have committed before a later generation failed.
+                await loadFindings(page:reportLoading ? 0:findingPage)
+                await refreshProcessingProgress()
+                if selected==session.id { summaryStatus="Resumen pendiente: \(error.localizedDescription)" }
+            }
+        }
         await engine.unload()
     }
     func newSession() { guard !active else { return }; selectionRequest=UUID(); selected=nil; selectedRecord=nil; title="Nueva sesión"; segments=[]; findings=[]; findingPage=0; moreFindings=false; partials=[:]; bookmarks=[]; bookmarkPage=0; transcriptTarget=nil; moreBookmarks=false; showBookmarks=false; transcriptSearch=""; oldestRow=0; canLoadEarlier=false; sessionContext = .init(); processingProgress = .init(); termsTask?.cancel(); terms=[]; message=nil; googleRetryStatus=nil; summaryStatus="El resumen aparecerá cuando haya texto definitivo." }

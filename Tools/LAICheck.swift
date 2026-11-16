@@ -11,6 +11,8 @@ import Speech
                 try await benchmarkSessionTools(output:URL(fileURLWithPath:arguments[1]))
             } else if arguments.first=="--validate-summary",arguments.count>=2 {
                 try await validateSummaryQuality(output:URL(fileURLWithPath:arguments[1]))
+            } else if arguments.first=="--diagnose-summary-block",arguments.count>=3,let id=UUID(uuidString:arguments[1]) {
+                try await diagnoseSummaryBlock(id:id,output:URL(fileURLWithPath:arguments[2]))
             } else if arguments.first=="--repair-summary",arguments.count>=3,let id=UUID(uuidString:arguments[1]) {
                 try await repairSummary(id:id,output:URL(fileURLWithPath:arguments[2]))
             } else if arguments.first=="--transcribe",arguments.count>=2 {

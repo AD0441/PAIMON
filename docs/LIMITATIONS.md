@@ -1,4 +1,4 @@
-# Limitaciones pendientes · PAIMON 0.15.0
+# Limitaciones pendientes · PAIMON 0.15.1
 
 - Se compila para macOS 26.0+, pero este equipo ejecuta macOS 27.3. Hace falta repetir las pruebas en macOS 26 y una sesión de varias horas antes de considerar una distribución estable.
 - El idioma de interfaz español/inglés no traduce transcripciones ni informes guardados. Mensajes de frameworks y cuadros de macOS pueden seguir el idioma del sistema.
@@ -46,3 +46,7 @@
 - La exportación incluye resultados ya calculados, sin inferencia. No guarda ni exporta PCM por activar análisis; tampoco conserva vectores vocales completos. Para volver a calcular voz se necesita el audio original o archivado.
 - No se elevó el umbral de presión de memoria de macOS. Ajustar la espera de recuperación no demuestra que sea seguro mantener modelos bajo advertencia o presión crítica. Falta una prueba prolongada de memoria total, servicios Apple y otras apps en el M1 de 8 GB.
 - La revisión visual de los controles nuevos sigue pendiente en esta iteración; se han compilado y probado las rutas de datos. [Alcance](POLARITY-EXPORT.md).
+
+## Corrección de síntesis · 0.15.1
+
+La reducción del prompt y el reintento dirigido corrigen el rechazo de extensión reproducido. El modelo aún puede producir resultados insuficientes o interpretaciones incorrectas. Se mantienen la verificación de citas y la negativa a publicar una síntesis sin respaldo. Un bloque válido inicial no demuestra que una sesión privada completa esté finalizada. Las comprobaciones nuevas de interfaz son de estado y datos; no se realizó una revisión visual de los controles en esta iteración.

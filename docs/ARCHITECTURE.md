@@ -1,4 +1,4 @@
-# Arquitectura y privacidad · PAIMON 0.15.0
+# Arquitectura y privacidad · PAIMON 0.15.1
 
 El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** y el lema **Transformando sonido en conocimiento.** El nombre visible, el ejecutable y el bundle `.app` usan PAIMON. Se conserva `local.audio.intelligence` como identidad de preferencias y permisos, así como la carpeta de datos anterior para evitar migraciones innecesarias. La marca vigente se conserva en `Resources/Brand` mediante fuentes SVG/PNG reproducibles; los iconos anteriores quedan en el historial de Git. El ICNS generado se carga mediante los mecanismos nativos de macOS. No intervienen modelos ni recursos remotos en la identidad visual.
 
@@ -100,3 +100,11 @@ assistant_turns guarda cada pregunta/respuesta con revisión y evidencia; vocal_
 SessionExporter conserva flujos paginados para historial y muestras vocales. El JSON v2 incluye métodos, unidades, índices nulos explícitos y fechas ISO 8601. Se valida la existencia y revisión de la sesión y sellos de análisis/historial antes de publicar el archivo temporal. El historial previo a una edición se exporta como histórico; las respuestas nuevas con evidencia obsoleta se rechazan.
 
 MemoryPressureLevel distingue normal/warning/critical. La presión booleana se deriva de ese único estado. Normal inicia una espera configurable con backoff acotado; un aviso nuevo cancela la recuperación. El usuario no cambia los umbrales que fija macOS. [Detalles](POLARITY-EXPORT.md).
+
+## Recuperación del resumen · 0.15.1
+
+La generación mantiene la validación de 35–650 caracteres para la síntesis y la comprobación de evidencia. El objetivo del prompt se reduce a 80–450 caracteres para dejar margen. El rechazo distingue extensión, falta de respaldo, aprobación inventada, acuerdo sin evidencia y ausencia de puntos. Se permite un solo reintento de respuesta con una instrucción específica para el motivo, sin reenviar el resultado rechazado ni ampliar el contexto de la sesión. El modelo y las comprobaciones de citas siguen siendo locales.
+
+La API de esquema dinámico puede devolver `GenerationError` incluso en un sistema reciente. El reconocimiento de desbordamiento y de fallo de decodificación admite tanto esos errores como los tipos nuevos; la recuperación no depende solamente del número de versión del sistema. Si un bloque posterior falla, AppModel recarga el avance y los hallazgos ya confirmados antes de mostrar el error. No se avanza el cursor del bloque rechazado.
+
+`LAICheck --diagnose-summary-block UUID /ruta/diagnostico.json` es una herramienta explícita para diagnóstico local del primer lote de una sesión autorizada. Devuelve únicamente cantidades, tiempos y motivos de rechazo; no escribe audio, texto, nombres ni resúmenes. No es una operación automática de la app ni usa servicios externos.

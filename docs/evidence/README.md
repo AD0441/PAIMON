@@ -1,6 +1,6 @@
 # Procedencia de las evidencias
 
-Este directorio reúne evidencias históricas con alcances distintos, junto con validaciones más recientes de la compilación 31. Las capturas de `../images` son muestras sintéticas de versiones anteriores; no muestran transcripciones privadas. Los registros de muestras sintéticas y las comprobaciones sobre el equipo se identifican por separado; ninguno debe leerse como prueba de precisión general.
+Este directorio reúne evidencias históricas con alcances distintos, junto con validaciones más recientes de la compilación 32. Las capturas de `../images` son muestras sintéticas de versiones anteriores; no muestran transcripciones privadas. Los registros de muestras sintéticas y las comprobaciones sobre el equipo se identifican por separado; ninguno debe leerse como prueba de precisión general.
 
 | Archivo | Versión y alcance |
 | --- | --- |
@@ -11,6 +11,7 @@ Este directorio reúne evidencias históricas con alcances distintos, junto con 
 | `performance-summary-recovery.json` | Histórico 0.4.0: recuperación de síntesis pendiente |
 | `discourse-live-validation.json` | 0.14.0: evidencia de análisis de discurso incremental y voz durante la captura |
 | `polarity-export-validation.json` | 0.15.0: polaridad contextual, exportación y memoria; incluye casos de prueba sintéticos y resultados de validación identificados por alcance |
+| `summary-recovery-validation.json` | 0.15.1: recuperación de síntesis, motivos de rechazo, avance parcial y comprobaciones nativas; no contiene texto privado |
 
 Las pruebas con dobles de motor verifican contratos y errores; no certifican hardware o inferencia. Los ensayos nativos se identifican por separado. Los casos sintéticos de polaridad comprueban comportamientos seleccionados, no la precisión general. Las métricas del cliente excluyen servicios de modelos de Apple. No hay prueba real de varias horas ni ejecución en macOS 26. La traza de Instruments permanece en una ubicación temporal y no se publica.
 

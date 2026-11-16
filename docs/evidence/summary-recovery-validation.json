@@ -1,0 +1,687 @@
+{
+  "version": "0.15.1",
+  "build": 32,
+  "date": "2026-11-16",
+  "environment": {
+    "cpu": "Apple M1",
+    "memoryGB": 8,
+    "macOS": "27.3",
+    "xcode": "27.2",
+    "minimumTarget": "macOS 26"
+  },
+  "defaultTests": {
+    "registered": 162,
+    "executed": 149,
+    "skipped": 13,
+    "failed": 0,
+    "completed": [
+      {
+        "test": "validOverviewLengthBoundariesKeepOriginalEvidence(_:) with 2 test cases",
+        "seconds": 0.268
+      },
+      {
+        "test": "summarySchemaCanBeConstructed()",
+        "seconds": 0.294
+      },
+      {
+        "test": "overviewCannotInventAnApprovalDisclaimer()",
+        "seconds": 0.335
+      },
+      {
+        "test": "identicalTaskWordingDoesNotEraseDifferentExplicitOwnersOrDates()",
+        "seconds": 0.335
+      },
+      {
+        "test": "sessionContextIsBoundedStableAndBackwardsCompatible()",
+        "seconds": 0.345
+      },
+      {
+        "test": "schedulingDefersPressureAndSilenceButRespondsToVolume()",
+        "seconds": 0.383
+      },
+      {
+        "test": "longExcerptsRemainBoundedAndRetainTheirText()",
+        "seconds": 0.394
+      },
+      {
+        "test": "liveVocalSamplerKeepsSourcesSeparateAndDoesNotBridgeCaptureGaps()",
+        "seconds": 0.4
+      },
+      {
+        "test": "interruptedValidationRestoresTheOriginalSettingsOnNextLoad()",
+        "seconds": 0.4
+      },
+      {
+        "test": "markdownEscapesSourceMarkupAndUsesEvidenceLinks()",
+        "seconds": 0.427
+      },
+      {
+        "test": "reportStructureSeparatesTasksAndOmitsEmptySections()",
+        "seconds": 0.452
+      },
+      {
+        "test": "discourseDoesNotDisplayInternalReferencesAsTopicNames()",
+        "seconds": 0.458
+      },
+      {
+        "test": "frequentTermsIgnoreAccentsPartialsAndEchoes()",
+        "seconds": 0.458
+      },
+      {
+        "test": "googleOptInNeverChangesHistoricalSessionOrLegacyLocalBackend()",
+        "seconds": 0.458
+      },
+      {
+        "test": "discourseLinksExplicitEvolutionAndResponsesToExistingEvidence()",
+        "seconds": 0.459
+      },
+      {
+        "test": "bookmarksPersistEditPaginateAndDeleteWithSession()",
+        "seconds": 0.46
+      },
+      {
+        "test": "speakerAlignmentKeepsSourcesSeparateAndAvoidsAmbiguousLabels()",
+        "seconds": 0.46
+      },
+      {
+        "test": "pendingDecisionCannotBorrowAnAgreementFromAnotherSentence()",
+        "seconds": 0.46
+      },
+      {
+        "test": "timestampFormats()",
+        "seconds": 0.46
+      },
+      {
+        "test": "discourseCheckpointRejectsStaleEvidenceAndDeletesWithTheSession()",
+        "seconds": 0.466
+      },
+      {
+        "test": "partialPresentationIsBoundedAndNeverReintroducesFinalizedText()",
+        "seconds": 0.466
+      },
+      {
+        "test": "vocalEmotionUsesNativeClassOrderAndDeclinesAmbiguousOutput()",
+        "seconds": 0.466
+      },
+      {
+        "test": "unrelatedIntroCannotBackAClaim()",
+        "seconds": 0.466
+      },
+      {
+        "test": "liveVocalRepeatedAvailableResourceChecksDoNotDiscardAnIncompleteSample()",
+        "seconds": 0.466
+      },
+      {
+        "test": "discourseRejectsInventedSourcesAndDoesNotInferAbandonmentFromSilence()",
+        "seconds": 0.466
+      },
+      {
+        "test": "discourseExplicitQuoteDisambiguatesStateAndRejectsConflictingClauses()",
+        "seconds": 0.466
+      },
+      {
+        "test": "threeVocalModelsPreserveTheirClassOrdersAndOldPreferences()",
+        "seconds": 0.466
+      },
+      {
+        "test": "legacySummaryErrorsRemainRecoverableOnNewerSystems()",
+        "seconds": 0.466
+      },
+      {
+        "test": "historicalFactMigrationIsResumableAndDoesNotRestoreAnotherTemplate()",
+        "seconds": 0.466
+      },
+      {
+        "test": "vocalChangesDistinguishSpeakersAndDoNotBridgeSilentWindows()",
+        "seconds": 0.466
+      },
+      {
+        "test": "differentPointsCanShareASourceAndPunctuationDoesNotDuplicateThem()",
+        "seconds": 0.466
+      },
+      {
+        "test": "emptyTranscriptsHaveNoInventedScoresOrTags()",
+        "seconds": 0.466
+      },
+      {
+        "test": "liveVocalMeasurementsDescribeSignalAndDoNotInventEmotion()",
+        "seconds": 0.466
+      },
+      {
+        "test": "vocalAnalysisReadsAnOriginalFileAndMeasuresPitchAndSilence()",
+        "seconds": 0.466
+      },
+      {
+        "test": "vocalEvidenceSelectsOnlyOverlappingTranscriptFromTheSameSource()",
+        "seconds": 0.466
+      },
+      {
+        "test": "googleRejectsEndpointInjection()",
+        "seconds": 0.471
+      },
+      {
+        "test": "executiveViewSelectsExistingFindingsWithoutChangingEvidence()",
+        "seconds": 0.471
+      },
+      {
+        "test": "sentimentExportStampIsStableAndDetectsSpeakerCacheInvalidation()",
+        "seconds": 0.471
+      },
+      {
+        "test": "intelligentReviewRejectsInventedAmbiguousAndProtectedChanges()",
+        "seconds": 0.471
+      },
+      {
+        "test": "historyPagesStayBoundedAndSupportUnicodeSearch()",
+        "seconds": 0.471
+      },
+      {
+        "test": "applePolaritiesUseNativeScoresAndPreserveMissingValues()",
+        "seconds": 0.472
+      },
+      {
+        "test": "unsupportedEvidenceAndInventedFieldsAreDiscarded()",
+        "seconds": 0.472
+      },
+      {
+        "test": "assistantPersistenceRejectsStaleOrInventedEvidenceAndRetainsHistoricalRevision()",
+        "seconds": 0.472
+      },
+      {
+        "test": "intelligentReviewExportCanSelectOriginalWhileKeepingCurrentEdits()",
+        "seconds": 0.472
+      },
+      {
+        "test": "rawScoresRemainAuditableWhenLocalClassificationCannotRun(_:) with 2 test cases",
+        "seconds": 0.471
+      },
+      {
+        "test": "oldSettingsAndSessionsKeepTheirPreferences()",
+        "seconds": 0.472
+      },
+      {
+        "test": "groundedSchemaRequiresAnOverviewAndUsesKnownAliases()",
+        "seconds": 0.472
+      },
+      {
+        "test": "intelligentReviewDeclinesStaleEditsAndRetainsRejectedState()",
+        "seconds": 0.472
+      },
+      {
+        "test": "incompleteFindingDoesNotDiscardValidSiblings()",
+        "seconds": 0.472
+      },
+      {
+        "test": "deletionPurgesRelatedDataAndReclaimsSpaceWhenHistoryIsEmpty()",
+        "seconds": 0.472
+      },
+      {
+        "test": "vocalEmbeddingsAreVectorsRatherThanEmotionalProbabilities()",
+        "seconds": 0.475
+      },
+      {
+        "test": "duplicateEvidenceMergesRephrasedTasks()",
+        "seconds": 0.475
+      },
+      {
+        "test": "discourseParticipationMergesWindowsWithoutCountingOverlapsOrPausesAsSpeech()",
+        "seconds": 0.476
+      },
+      {
+        "test": "malformedSummaryExplainsRecoveryWithoutMissingDataMessage()",
+        "seconds": 0.475
+      },
+      {
+        "test": "legacyFindingsDecodeWithTheirPrimaryEvidence()",
+        "seconds": 0.475
+      },
+      {
+        "test": "pendingEnglishDecisionCannotBorrowAnAgreementFromAnotherSentence()",
+        "seconds": 0.475
+      },
+      {
+        "test": "copyableMeetingReportPreservesEvidenceFields()",
+        "seconds": 0.475
+      },
+      {
+        "test": "persistenceSurvivesReopenAndDeletesAll()",
+        "seconds": 0.476
+      },
+      {
+        "test": "cachePersistsAndInvalidatesWhenTranscriptChanges()",
+        "seconds": 0.475
+      },
+      {
+        "test": "intelligentReviewRequiresManualVerificationForNamesAndRejectsOverlap()",
+        "seconds": 0.482
+      },
+      {
+        "test": "assistantSearchIsBoundedAndScopedToTheSelectedSession()",
+        "seconds": 0.483
+      },
+      {
+        "test": "intelligentReviewDoesNotBulkAcceptAccentsOrChangedNumericFormats()",
+        "seconds": 0.482
+      },
+      {
+        "test": "overviewRejectionReportsItsLengthWithoutExposingSourceText(_:) with 4 test cases",
+        "seconds": 0.482
+      },
+      {
+        "test": "intelligentReviewAcceptsMultipleEditsWithoutLosingOriginalAndPurgesWithSession()",
+        "seconds": 0.481
+      },
+      {
+        "test": "legacyIndexBackfillResumesAndIndexesNewRowsImmediately()",
+        "seconds": 0.485
+      },
+      {
+        "test": "continuousConverterPreservesSamples()",
+        "seconds": 0.481
+      },
+      {
+        "test": "ringBoundedOverflowDownmixAndRecovery()",
+        "seconds": 0.481
+      },
+      {
+        "test": "ledgerRevisionsPreferNewerSnapshotsAndPreserveEarlierFacts()",
+        "seconds": 0.481
+      },
+      {
+        "test": "failedMLXRuntimePreparationDoesNotPublishModelWeights()",
+        "seconds": 0.481
+      },
+      {
+        "test": "finalJobsSurviveRelaunchAndCompleteWithTheSnapshotTransaction()",
+        "seconds": 0.481
+      },
+      {
+        "test": "optionalModelInstallationVerifiesFilesBeforeSelectingThem(_:_:) with 12 test cases",
+        "seconds": 0.481
+      },
+      {
+        "test": "liveVocalPersistsDerivedResultsWithoutSavingAudioAndDeletesThemWithSession()",
+        "seconds": 0.481
+      },
+      {
+        "test": "legacyPolarityExportKeepsOriginalValuesInsteadOfRewritingThemAsNeutral()",
+        "seconds": 0.483
+      },
+      {
+        "test": "assistantRequiresOriginalQuotesAndReturnsTheirSource()",
+        "seconds": 0.486
+      },
+      {
+        "test": "concentrationUsesExactAppleScoresAndExcludesMissingValues()",
+        "seconds": 0.49
+      },
+      {
+        "test": "structuredPolarityEncodesUnknownAsNullAndNeutralAsAnActualZero()",
+        "seconds": 0.49
+      },
+      {
+        "test": "repeatedModelFailuresStopWithoutInventingScoresOrRetryingEveryFragment()",
+        "seconds": 0.496
+      },
+      {
+        "test": "overviewCannotJoinAnAssignedTaskToAnAgreement()",
+        "seconds": 0.524
+      },
+      {
+        "test": "vadHysteresisAndPCMConversion()",
+        "seconds": 0.504
+      },
+      {
+        "test": "integratedOverviewDoesNotCiteUnrelatedGreetingsOrMicrophoneProblems()",
+        "seconds": 0.49
+      },
+      {
+        "test": "googleIsDisabledByDefaultAndMissingKeysNeverSendRequests()",
+        "seconds": 0.49
+      },
+      {
+        "test": "evidenceWindowFindsOldSegmentsWithoutLoadingWholeSession()",
+        "seconds": 0.548
+      },
+      {
+        "test": "neutralIsZeroButMissingAndMixedAreNotInventedNeutrality()",
+        "seconds": 0.515
+      },
+      {
+        "test": "parakeetSplitsLongSpeechAtTheWorkerLimitAndKeepsItsRemainder()",
+        "seconds": 0.513
+      },
+      {
+        "test": "momentsUseChangesWithoutBridgingAbsentScores()",
+        "seconds": 0.518
+      },
+      {
+        "test": "discourseIncrementalCheckpointPreservesEarlierResultsAndFinalizesOnlyCompletedSessions()",
+        "seconds": 0.519
+      },
+      {
+        "test": "fullTextSearchHandlesAccentsPrefixesUpdatesAndLiteralOperators()",
+        "seconds": 0.524
+      },
+      {
+        "test": "longTaskRowsContinueAcrossPDFPagesWithoutLosingText()",
+        "seconds": 0.547
+      },
+      {
+        "test": "richReportPreservesBoldAndRealTableThroughRTF()",
+        "seconds": 0.592
+      },
+      {
+        "test": "richAnalysisExportsAllStoredAssistantTurnsAndNumericDataWithoutRawVectors()",
+        "seconds": 0.595
+      },
+      {
+        "test": "explicitRebuildReplacesObsoleteFactsWithoutReimportingOldSnapshots()",
+        "seconds": 0.596
+      },
+      {
+        "test": "googleStructuredSummaryUsesOnlyTextAndOriginalEvidence()",
+        "seconds": 0.599
+      },
+      {
+        "test": "audioImportPersistsFinalsAndBoundsPCMBuffers()",
+        "seconds": 0.601
+      },
+      {
+        "test": "contextOverflowSplitsWithoutAdvancingPastFailedContent()",
+        "seconds": 0.601
+      },
+      {
+        "test": "googleConnectionProbeSendsNoTranscriptAndKeepsKeyOutOfURL()",
+        "seconds": 0.601
+      },
+      {
+        "test": "sentimentBatchesStayBoundedAndDoNotGenerateOncePerField()",
+        "seconds": 0.603
+      },
+      {
+        "test": "googleRetriesTemporaryServerFailuresWithBoundedBackoff()",
+        "seconds": 0.603
+      },
+      {
+        "test": "googleErrorsDoNotExposeServiceResponseAndDoNotRetry()",
+        "seconds": 0.603
+      },
+      {
+        "test": "titleOnlyDoesNotAdvanceSummaryCursor()",
+        "seconds": 0.608
+      },
+      {
+        "test": "interruptedImportPreservesAlreadyRecognizedText()",
+        "seconds": 0.609
+      },
+      {
+        "test": "googleRejectsTruncationBlockingAndOversizedReplies()",
+        "seconds": 0.606
+      },
+      {
+        "test": "failedRebuildKeepsThePreviousRegisterUntilAValidBatchCommits()",
+        "seconds": 0.573
+      },
+      {
+        "test": "soundEventsMapToTheirTrackWithoutCrossingAnArchivedPause()",
+        "seconds": 0.621
+      },
+      {
+        "test": "pdfKeepsBoldTableAndLinksToOptionalEvidenceAnnex()",
+        "seconds": 0.625
+      },
+      {
+        "test": "googleRetryLimitAndLongServerWaitPreserveSafeErrors()",
+        "seconds": 0.65
+      },
+      {
+        "test": "liveVocalOptionalInferenceDoesNotWaitBehindAnOccupiedGate()",
+        "seconds": 0.649
+      },
+      {
+        "test": "oldSummaryVersionRebuildsTheOriginalOnce()",
+        "seconds": 0.649
+      },
+      {
+        "test": "progressUsesPersistedCursorAndBackendChangeRebuilds()",
+        "seconds": 0.65
+      },
+      {
+        "test": "importClosesEventsWhenInitialSaveFails()",
+        "seconds": 0.648
+      },
+      {
+        "test": "bookmarkExportsPageThroughAllNotesAndRespectSelection()",
+        "seconds": 0.652
+      },
+      {
+        "test": "importLevelingBoostsQuietSignalAndLimitsPeaksOnlyWhenEnabled()",
+        "seconds": 0.649
+      },
+      {
+        "test": "correctedTranscriptRebuildsSummaryAndKeepsRecognizedText()",
+        "seconds": 0.627
+      },
+      {
+        "test": "finalWithoutOverviewStaysPartialAndEarlierPointsArePreserved()",
+        "seconds": 0.616
+      },
+      {
+        "test": "failedSummaryPreservesCheckpointAndCanBeRetried()",
+        "seconds": 0.664
+      },
+      {
+        "test": "hierarchicalSummaryAdvancesCursorAndFinalizes()",
+        "seconds": 0.663
+      },
+      {
+        "test": "changingTemplateReprocessesOriginalWithoutExtraNormalPasses()",
+        "seconds": 0.658
+      },
+      {
+        "test": "vocalArchiveKeepsIndependentSourcesAndRealPauseTimes()",
+        "seconds": 0.664
+      },
+      {
+        "test": "deletingKeyWhileItIsBeingReadPreventsTransmission()",
+        "seconds": 0.665
+      },
+      {
+        "test": "finalizedSpeechWaitsForPersistenceCapacityOrReportsFailure()",
+        "seconds": 0.665
+      },
+      {
+        "test": "disablingGoogleCancelsInFlightRequest()",
+        "seconds": 0.666
+      },
+      {
+        "test": "revokingGoogleDuringBackoffPreventsAnotherTransmission()",
+        "seconds": 0.666
+      },
+      {
+        "test": "googleClientErrorsNeverTriggerAutomaticRetries()",
+        "seconds": 0.668
+      },
+      {
+        "test": "queuedCancellationDoesNotWaitForActiveInference()",
+        "seconds": 0.666
+      },
+      {
+        "test": "coordinatorCancellationRetainsCheckpointAndAllowsRecovery()",
+        "seconds": 0.664
+      },
+      {
+        "test": "repeatedQueuedUpdatesCoalesceAndKeepTheFinalRequest()",
+        "seconds": 0.67
+      },
+      {
+        "test": "stopDuringManualSummaryProcessesTailAndFinalizesOnce()",
+        "seconds": 0.67
+      },
+      {
+        "test": "memoryPressureCancelsRunningAndQueuedRequestsWithoutDroppingFinalJobs()",
+        "seconds": 0.671
+      },
+      {
+        "test": "sourceQuotesAreResolvedLocallyAndAllOverviewReferencesSurviveExports()",
+        "seconds": 0.672
+      },
+      {
+        "test": "reusedNativeScorerPreservesScoresAcrossLanguagesWithoutSharedState()",
+        "seconds": 0.686
+      },
+      {
+        "test": "exportFormatsAndSelection()",
+        "seconds": 0.724
+      },
+      {
+        "test": "soundCatalogAndFilteringUseTheNativeModel()",
+        "seconds": 0.815
+      },
+      {
+        "test": "durableRegisterKeepsOldDecisionsBeyondWorkingMemoryAndAcrossExports()",
+        "seconds": 0.873
+      },
+      {
+        "test": "optionalDiarizationKeepsImportAndPersistsLabels(_:) with 2 test cases",
+        "seconds": 1.013
+      },
+      {
+        "test": "vocalTimelineKeepsABoundedNumberOfPointsForLongAudio()",
+        "seconds": 3.523
+      },
+      {
+        "test": "summaryCompletionDoesNotReplaceAnotherSessionsStatus(_:) with 3 test cases",
+        "seconds": 0.041
+      },
+      {
+        "test": "pendingSummaryResumesWhenPressureNormalizesBeforeIdle(_:) with 2 test cases",
+        "seconds": 0.114
+      },
+      {
+        "test": "newPressureWarningCancelsScheduledRecovery()",
+        "seconds": 0.147
+      },
+      {
+        "test": "manualFinalSummaryPersistsBeforeInferenceAndSurvivesFailure()",
+        "seconds": 0.025
+      },
+      {
+        "test": "laterSummaryFailureShowsAlreadyCommittedPartialWithoutAdvancingPastFailure()",
+        "seconds": 0.015
+      },
+      {
+        "test": "deletingCurrentSessionClearsSelectionAndSearchWithoutRemovingOtherSessions()",
+        "seconds": 0.645
+      },
+      {
+        "test": "followUpPaginatesTheFilteredRegisterAndRetainsEvidence()",
+        "seconds": 0.074
+      },
+      {
+        "test": "transcriptFinishesBeforeItsBackgroundSummary()",
+        "seconds": 0.012
+      },
+      {
+        "test": "checkingAvailabilityPreservesStoredSummaryStatus()",
+        "seconds": 0.089
+      },
+      {
+        "test": "searchKeepsSummaryBookmarksAndEvidenceNavigation()",
+        "seconds": 0.282
+      },
+      {
+        "test": "cancelledSearchDoesNotReplaceVisibleTranscript()",
+        "seconds": 0.022
+      },
+      {
+        "test": "palettePersistsWithoutChangingPrivateEnginePreferences(_:) with 4 test cases",
+        "seconds": 0.057
+      },
+      {
+        "test": "interfaceLanguageKeepsRecognitionAndSessionSettings(_:) with 2 test cases",
+        "seconds": 0.023
+      },
+      {
+        "test": "localizedCatalogPreservesFormatArguments()",
+        "seconds": 0.011
+      },
+      {
+        "test": "memoryPressureEscalatesWithoutLosingCriticalStateAndRespectsRecovery()",
+        "seconds": 0.051
+      }
+    ],
+    "skippedNames": [
+      "nativeTaggingDistinguishesConcernAndDisagreement()",
+      "nativeSummaryOfManySourcesProducesABoundedOverviewAndVerifiablePoints()",
+      "additionalVocalModelsRunThroughCoreMLWithRealEmbeddings()",
+      "nativeAudioImportProducesRealSpanishText(_:)",
+      "nativeLocalPolaritySeparatesFactsFromExplicitEvaluations(_:)",
+      "nativeParakeetImportProducesRealSpanishText()",
+      "liveVocalNativeSoundStreamAndSelectedCoreMLModelProcessActualBuffers()",
+      "intelligentReviewCallsTheNativeModelAndCheckpointsItsValidatedResults()",
+      "emotion2vecProcessesTheSpanishAudioFixtureThroughCoreML()",
+      "assistantAnswersAndAbstainsWithTheLocalAppleModel()",
+      "appleSoundAnalysisRecognizesLaughterAndApplauseAndSkipsSpeech()",
+      "managedVocalDownloadsVerifyAndInstallThePublishedPackages()",
+      "discourseNativeModelProcessesProposalsAndKeepsItsCheckpoint()"
+    ]
+  },
+  "nativeSummary": {
+    "executedMethods": 1,
+    "passed": true,
+    "source": "16 synthetic source segments",
+    "seconds": 13.361
+  },
+  "nativeHierarchy": {
+    "allThreeTopicsCovered": true,
+    "clientFootprintMB": 9.938117980957031,
+    "elapsedSeconds": 13.29144945833832,
+    "findings": 6,
+    "originalQuotesOnly": true,
+    "overviewPresent": true,
+    "passed": true,
+    "processingVersion": 4,
+    "segments": 12,
+    "synthetic": true
+  },
+  "localDiagnostic": {
+    "authorizedByUser": true,
+    "scope": "Only the first pending batch was tested locally; this does not validate completion of the full private session.",
+    "rejectionBefore": "overviewLength",
+    "after": "completed with validated overview",
+    "sourceTextPublished": false,
+    "audioPublished": false,
+    "sessionIdentifierPublished": false,
+    "summaryWrittenByDiagnostic": false
+  },
+  "limits": [
+    "No visual review in this iteration",
+    "No macOS 26 runtime verification",
+    "No long-duration capture, RAM pressure or energy profiling",
+    "Remaining optional integration tests were not enabled in this iteration",
+    "Synthetic client footprint excludes system model services"
+  ],
+  "installation": {
+    "version": "0.15.1",
+    "build": 32,
+    "path": "/Applications/PAIMON.app",
+    "signature": "Ad hoc, deep strict verification passed",
+    "launched": true,
+    "backups": [
+      {
+        "file": "Versiones/PAIMON-actual.zip",
+        "version": "0.15.1",
+        "build": "32",
+        "sha256": "b2f85a7afe8740b7c655050c532d76c1583bbe75c30349ca0ce19e1b71870e54"
+      },
+      {
+        "file": "Versiones/PAIMON-anterior.zip",
+        "version": "0.15.0",
+        "build": "31",
+        "sha256": "3e52d175dc767c49969037561e81d94185a9f0ed3e83c612606813fefb2c7e46"
+      }
+    ]
+  }
+}

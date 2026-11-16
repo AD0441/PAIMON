@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
 - **Versión del documento:** 1.4 · **Fecha:** 15 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.15.0 (31); los estados históricos de la matriz conservan su evidencia original.
+- **Base revisada:** PAIMON 0.15.1 (32); los estados históricos de la matriz conservan su evidencia original.
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -240,3 +240,13 @@ Detalles, controles y pruebas: [DISCOURSE-LIVE.md](DISCOURSE-LIVE.md).
 | MEM-05 | N | Ensayo prolongado de memoria total y política de carga con otras apps, servicios Apple y modelos opcionales en M1 de 8 GB. |
 
 [Resultados y límites](POLARITY-EXPORT.md).
+
+## 19. Recuperación del resumen · 0.15.1
+
+- Diferenciar el rechazo por extensión del rechazo por evidencia y de los errores del modelo.
+- Reducir la extensión objetivo y adaptar el único reintento al motivo del fallo.
+- Recuperar errores de contexto/decodificación del esquema dinámico también en macOS reciente.
+- Mostrar hallazgos parciales confirmados cuando un bloque posterior falla; conservar el cursor y el trabajo pendiente.
+- Diagnóstico local explícito sin contenido de transcripción, audio ni nombres en su salida.
+
+Validación y límites: [VALIDATION.md](VALIDATION.md#recuperación-del-resumen--paimon-0151-32).

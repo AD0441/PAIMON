@@ -34,7 +34,7 @@ struct GroundedSummary:Decodable,Sendable {
         let text=DynamicGenerationSchema(type:String.self)
         var properties:[DynamicGenerationSchema.Property]=[
             .init(name:"title",description:"Tema concreto en menos de 8 palabras",schema:text),
-            .init(name:"overview",description:"Resumen general obligatorio: 2 a 4 frases breves que cubran los temas del material; máximo 650 caracteres",schema:text)
+            .init(name:"overview",description:"Síntesis general en 2 o 3 frases cortas; intenta 80 a 450 caracteres, sin superar 650",schema:text)
         ]
         if maximumPoints>0 {
             let point=DynamicGenerationSchema(name:"SupportedPoint",properties:[
@@ -120,10 +120,11 @@ enum SummaryGrounding {
         let overviewText=draft.overview.folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)
         let quoted=sources.flatMap(\.evidence).map(\.quote).joined(separator:"\n").folding(options:[.caseInsensitive,.diacriticInsensitive],locale:nil)
         for phrase in ["no tienen aprobacion explicita","no cuentan con aprobacion explicita","sin aprobacion explicita","no explicit approval","not been explicitly approved"] {
-            if overviewText.contains(phrase),!quoted.contains(phrase) { throw SummaryResponseError.insufficient }
+            if overviewText.contains(phrase),!quoted.contains(phrase) { throw SummaryResponseError.rejected(.inventedApproval) }
         }
-        guard !hasUnsupportedCombinedAgreement(draft.overview,quotes:quoted) else { throw SummaryResponseError.insufficient }
-        guard (35...650).contains(draft.overview.count),let overview=finding(kind:.overview,text:draft.overview,sources:sources) else { throw SummaryResponseError.insufficient }
+        guard !hasUnsupportedCombinedAgreement(draft.overview,quotes:quoted) else { throw SummaryResponseError.rejected(.unsupportedAgreement) }
+        guard (35...650).contains(draft.overview.count) else { throw SummaryResponseError.rejected(.overviewLength,actualCharacters:draft.overview.count) }
+        guard let overview=finding(kind:.overview,text:draft.overview,sources:sources) else { throw SummaryResponseError.rejected(.unrelatedOverview) }
         var result:[Finding]=[]
         if let topic=finding(kind:.topic,text:draft.title,sources:sources) { result.append(topic) }
         result.append(overview)
@@ -135,7 +136,7 @@ enum SummaryGrounding {
             guard refs.count==point.sources.count,let kind=FindingKind(rawValue:point.kind),kind != .overview,kind != .topic else { continue }
             if let value=finding(kind:kind,text:point.text,sources:refs,owner:point.owner,due:point.due) { result.append(value) }
         }
-        if maximumPoints>0,sources.map(\.text).joined().count>500,!result.contains(where:{$0.kind != .topic && $0.kind != .overview}) { throw SummaryResponseError.insufficient }
+        if maximumPoints>0,sources.map(\.text).joined().count>500,!result.contains(where:{$0.kind != .topic && $0.kind != .overview}) { throw SummaryResponseError.rejected(.missingPoints) }
         return result
     }
 }

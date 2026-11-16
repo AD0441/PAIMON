@@ -472,3 +472,24 @@ PAIMON_TEST_LIVE_VOCAL=1 ./script/test.sh --filter liveVocalNativeSoundStreamAnd
 Las integraciones opcionales no activadas no cuentan como aprobadas. El esquema de tablas nuevo es aditivo. El historial del Asistente anterior a esta versión solo estaba en memoria y no se puede migrar automáticamente desde una app ya cerrada.
 
 Instalación completada: **/Applications/PAIMON.app, 0.15.0 (31)**, firma ad hoc verificada y proceso iniciado. Se mantienen únicamente `Versiones/PAIMON-actual.zip` (0.15.0, 31) y `Versiones/PAIMON-anterior.zip` (0.14.0, 30); `PAIMON.app` junto al proyecto es un enlace a Aplicaciones. El usuario autorizó reiniciar después del aviso sobre consultas antiguas del Asistente. No se inspeccionó la ventana con sus datos.
+
+## Recuperación del resumen · PAIMON 0.15.1 (32)
+
+Validación del 16 de noviembre de 2026, Apple M1 de 8 GB, macOS 27.3, Xcode 27.2. **162 métodos registrados; 149 ejecutados en la batería predeterminada y uno nativo activado aparte: 150 métodos distintos sin fallos.** Doce integraciones opcionales no se ejecutaron en esta ronda. [Registro](evidence/summary-recovery-validation.json).
+
+Se comprobó que los rechazos por extensión identifican el motivo y la cantidad de caracteres sin exponer el texto. La síntesis conserva los límites de 35–650 caracteres y sus evidencias originales. La prueba nativa con 16 fragmentos sintéticos pasó en 13,361 s, con síntesis y puntos verificables. La comprobación jerárquica con 12 párrafos y tres temas finalizó en 13,291 s y conservó citas originales. Estos tiempos describen casos concretos, no una mejora general de rendimiento.
+
+El fallo de un bloque posterior conserva el resumen parcial visible, el cursor confirmado, los fragmentos pendientes y la solicitud final duradera. Los errores de decodificación y contexto del esquema dinámico se reconocen también cuando el sistema reciente devuelve el tipo antiguo. Las comprobaciones de acuerdos y citas no se relajaron.
+
+Con autorización explícita se reprodujo el rechazo por extensión en el primer lote de una sesión local. El mismo lote produjo después una síntesis válida. La herramienta no escribió un resumen en esa sesión; el texto, el audio, los nombres y su identificador no se publican. Esta comprobación no implica que se haya validado la sesión privada completa.
+
+No se forzó presión de memoria ni se elevó un umbral del sistema. La huella medida por la herramienta de prueba excluye los servicios de modelos de Apple. La revisión visual, las pruebas de horas y macOS 26 siguen pendientes.
+
+~~~bash
+./script/test.sh
+PAIMON_TEST_SUMMARY=1 ./script/test.sh --filter nativeSummaryOfManySourcesProducesABoundedOverviewAndVerifiablePoints
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift run --disable-sandbox --scratch-path "${TMPDIR}/LocalAudioIntelligence-tests" -j 2 LAICheck --validate-summary /tmp/paimon-summary-validation.json
+./script/build_and_run.sh --release-build-only
+~~~
+
+Instalada y abierta en `/Applications/PAIMON.app`, versión **0.15.1 (32)**, con firma verificada. Se mantienen únicamente los ZIP actual **0.15.1 (32)** y anterior **0.15.0 (31)**. El enlace de la carpeta del proyecto apunta a Aplicaciones.

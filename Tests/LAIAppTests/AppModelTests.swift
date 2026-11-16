@@ -38,6 +38,18 @@ actor ControlledSummary:SummarizationEngine {
     func unload() { unloads += 1 }
 }
 
+private actor PartialFailureSummary:SummarizationEngine {
+    var calls=0
+    nonisolated func processingVersion() -> Int { 4 }
+    func availability(locale:String) -> String? { nil }
+    func summarize(segments:[TranscriptSegment],previous:[Finding],final:Bool,locale:String) throws -> [Finding] {
+        calls += 1
+        guard calls==1,let first=segments.first else { throw SummaryResponseError.rejected(.overviewLength,actualCharacters:700) }
+        return [Finding(kind:.overview,text:"Se revisó el presupuesto del laboratorio.",segmentID:first.id,quote:first.text,start:first.start,end:first.end)]
+    }
+    func unload() {}
+}
+
 @MainActor
 private struct ModelFixture {
     let directory=FileManager.default.temporaryDirectory.appendingPathComponent("PAIMON-AppTests-\(UUID())")
@@ -147,6 +159,27 @@ struct AppModelTests {
         await retry.updateSummary(final:true)
         #expect(try await fixture.store.latestSummary(session:session.id)?.isFinal==true)
         #expect(try await fixture.store.pendingFinalSession()==nil)
+    }
+
+    @Test func laterSummaryFailureShowsAlreadyCommittedPartialWithoutAdvancingPastFailure() async throws {
+        let fixture=try ModelFixture(); defer { fixture.clean() }
+        let session=try await fixture.session("Laboratorio")
+        for i in 0..<2 {
+            try await fixture.store.append(TranscriptSegment(sessionID:session.id,source:.file,start:Double(20+i*20),end:Double(30+i*20),text:String(repeating:"La biblioteca revisará el catálogo digital. ",count:40)))
+        }
+        let engine=PartialFailureSummary()
+        let model=AppModel(store:fixture.store,preferences:fixture.defaults,summaryEngine:{ _ in engine })
+        await model.select(session.id)
+        await model.updateSummary(final:true)
+        let partial=try #require(try await fixture.store.latestSummary(session:session.id))
+        #expect(partial.isFinal==false)
+        #expect(model.hasSummaryToCopy==true)
+        #expect(model.findings.contains{$0.kind == .overview})
+        #expect(model.summaryStatus.contains("extensión admitida"))
+        #expect(model.processingProgress.pendingSegments>0)
+        #expect(try await fixture.store.pendingFinalSession()?.id==session.id)
+        #expect(model.summaryWorking==false)
+        #expect(await engine.calls==2)
     }
 
     @Test func deletingCurrentSessionClearsSelectionAndSearchWithoutRemovingOtherSessions() async throws {
