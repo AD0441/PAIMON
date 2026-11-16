@@ -1,4 +1,4 @@
-# Arquitectura y privacidad · PAIMON 0.15.1
+# Arquitectura y privacidad · PAIMON 0.15.2
 
 El producto se llama **PAIMON**, con el descriptor **Local Audio Intelligence** y el lema **Transformando sonido en conocimiento.** El nombre visible, el ejecutable y el bundle `.app` usan PAIMON. Se conserva `local.audio.intelligence` como identidad de preferencias y permisos, así como la carpeta de datos anterior para evitar migraciones innecesarias. La marca vigente se conserva en `Resources/Brand` mediante fuentes SVG/PNG reproducibles; los iconos anteriores quedan en el historial de Git. El ICNS generado se carga mediante los mecanismos nativos de macOS. No intervienen modelos ni recursos remotos en la identidad visual.
 
@@ -108,3 +108,9 @@ La generación mantiene la validación de 35–650 caracteres para la síntesis 
 La API de esquema dinámico puede devolver `GenerationError` incluso en un sistema reciente. El reconocimiento de desbordamiento y de fallo de decodificación admite tanto esos errores como los tipos nuevos; la recuperación no depende solamente del número de versión del sistema. Si un bloque posterior falla, AppModel recarga el avance y los hallazgos ya confirmados antes de mostrar el error. No se avanza el cursor del bloque rechazado.
 
 `LAICheck --diagnose-summary-block UUID /ruta/diagnostico.json` es una herramienta explícita para diagnóstico local del primer lote de una sesión autorizada. Devuelve únicamente cantidades, tiempos y motivos de rechazo; no escribe audio, texto, nombres ni resúmenes. No es una operación automática de la app ni usa servicios externos.
+
+## Recuperación de Discurso · 0.15.2
+
+El generador está desacoplado mediante `DiscourseGenerating`: disponibilidad, ajuste al contexto y generación. La implementación Apple conserva una sola inferencia pesada en la compuerta compartida. Los lotes parten de cuatro unidades; una respuesta ilegible o sin citas válidas recibe un único reintento sobre un prefijo menor, con esquema de hasta dos elementos. El esquema normal admite cuatro. Ambos conservan el máximo de 900 tokens y las validaciones originales.
+
+El bucle consume únicamente las fuentes realmente procesadas, conserva las restantes y confirma el cursor después del último fragmento completo. Los avances válidos notifican a la vista, incluso antes de terminar toda la sesión. Los modelos de prueba reproducen el mismo `GeneratedContent` sin el campo obligatorio `target`, además de cancelación, presupuesto reducido y error permanente. Se conserva `apple-discourse-2` para aprovechar los checkpoints existentes.

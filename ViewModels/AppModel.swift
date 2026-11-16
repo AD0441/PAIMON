@@ -784,12 +784,17 @@ final class AppModel {
                     self.discourseStatus="El discurso se pospone con Parakeet para priorizar la transcripción."
                     return
                 }
-                try await DiscourseAnalyzer.analyze(session:session,store:store,final:finalize)
+                try await DiscourseAnalyzer.analyze(session:session,store:store,final:finalize,progress:{ [weak self] _ in
+                    await self?.discourseBatchCommitted(session:session.id)
+                })
                 if finalize { try await store.clearDiscourseJob(session:session.id) }
                 self.discourseStatus=finalize ? "Análisis de discurso finalizado.":"Análisis provisional actualizado."
             } catch is CancellationError { self.discourseStatus="Análisis de discurso pausado." }
             catch { self.discourseStatus=error.localizedDescription }
         }
+    }
+    private func discourseBatchCommitted(session:UUID) {
+        if selected==session { discourseRevision=UUID() }
     }
     func cancelDiscourse() {
         discourseTask?.cancel()
@@ -807,7 +812,9 @@ final class AppModel {
                     try Task.checkCancellation()
                     guard !self.active,!self.pressure,let session=try await store.session(id:id) else { break }
                     self.discourseStatus="Consolidando el discurso…"
-                    try await DiscourseAnalyzer.analyze(session:session,store:store,final:true)
+                    try await DiscourseAnalyzer.analyze(session:session,store:store,final:true,progress:{ [weak self] _ in
+                        await self?.discourseBatchCommitted(session:id)
+                    })
                     try await store.clearDiscourseJob(session:id)
                     self.discourseStatus="Análisis de discurso finalizado."
                     self.discourseRevision=UUID()

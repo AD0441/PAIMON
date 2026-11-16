@@ -1,4 +1,4 @@
-# Limitaciones pendientes · PAIMON 0.15.1
+# Limitaciones pendientes · PAIMON 0.15.2
 
 - Se compila para macOS 26.0+, pero este equipo ejecuta macOS 27.3. Hace falta repetir las pruebas en macOS 26 y una sesión de varias horas antes de considerar una distribución estable.
 - El idioma de interfaz español/inglés no traduce transcripciones ni informes guardados. Mensajes de frameworks y cuadros de macOS pueden seguir el idioma del sistema.
@@ -50,3 +50,7 @@
 ## Corrección de síntesis · 0.15.1
 
 La reducción del prompt y el reintento dirigido corrigen el rechazo de extensión reproducido. El modelo aún puede producir resultados insuficientes o interpretaciones incorrectas. Se mantienen la verificación de citas y la negativa a publicar una síntesis sin respaldo. Un bloque válido inicial no demuestra que una sesión privada completa esté finalizada. Las comprobaciones nuevas de interfaz son de estado y datos; no se realizó una revisión visual de los controles en esta iteración.
+
+## Discurso por lotes pequeños · 0.15.2
+
+Las pruebas nativas con un corpus sintético denso y evolución explícita pasaron; no se volvió a procesar la transcripción privada del usuario para esta corrección. Reducir lotes y recuperar una respuesta incompleta no garantiza interpretar correctamente cada argumento. El contexto sigue limitado a doce hallazgos seleccionados; relaciones distantes pueden quedar sin identificar. La compactación adicional del contexto mediante otro modelo no está implementada en esta versión. La revisión visual, las sesiones prolongadas y macOS 26 continúan pendientes.

@@ -1,7 +1,7 @@
 # PAIMON — Requisitos y estado del producto
 
-- **Versión del documento:** 1.4 · **Fecha:** 15 de noviembre de 2026.
-- **Base revisada:** PAIMON 0.15.1 (32); los estados históricos de la matriz conservan su evidencia original.
+- **Versión del documento:** 1.5 · **Fecha:** 16 de noviembre de 2026.
+- **Base revisada:** PAIMON 0.15.2 (33); los estados históricos de la matriz conservan su evidencia original.
 - **Producto:** PAIMON · Local Audio Intelligence · Transformando sonido en conocimiento.
 - **Autor:** Sebastián Pastén F.
 
@@ -250,3 +250,13 @@ Detalles, controles y pruebas: [DISCOURSE-LIVE.md](DISCOURSE-LIVE.md).
 - Diagnóstico local explícito sin contenido de transcripción, audio ni nombres en su salida.
 
 Validación y límites: [VALIDATION.md](VALIDATION.md#recuperación-del-resumen--paimon-0151-32).
+
+## 20. Recuperación de Discurso · 0.15.2
+
+- Lotes de hasta cuatro unidades; resultados confirmados incrementalmente en SQLite.
+- Un único reintento más pequeño para respuestas incompletas o sin evidencia; el resto de las fuentes no se consume ni se descarta.
+- Conservar cursor, hallazgos y citas tras fallo permanente o cancelación; marcar final solo tras confirmar todos los fragmentos.
+- Refrescar resultados parciales durante el trabajo y explicar la diferencia entre parcial, provisional y elementos omitidos por falta de citas.
+- Mantener una ventana de contexto acotada; evaluar la compactación adicional antes de agregar inferencias redundantes.
+
+[Verificación](VALIDATION.md#discurso-por-lotes-pequeños--paimon-0152-33).

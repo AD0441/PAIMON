@@ -6,9 +6,9 @@
   <p>
     <img alt="macOS 26 o posterior" src="https://img.shields.io/badge/macOS-26%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
-    <img alt="Versión 0.15.1" src="https://img.shields.io/badge/versión-0.15.1-58616B?style=flat-square">
+    <img alt="Versión 0.15.2" src="https://img.shields.io/badge/versión-0.15.2-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/PAIMON/releases/download/v0.15.1/PAIMON-0.15.1.zip"><strong>Descargar PAIMON 0.15.1</strong></a> · <a href="#descargar-instalar-y-ejecutar">Instalación</a> · <a href="#qué-nos-diferencia">Funciones</a> · <a href="#compilar-desde-el-código-fuente">Código fuente</a></p>
+  <p><a href="https://github.com/AD0441/PAIMON/releases/download/v0.15.2/PAIMON-0.15.2.zip"><strong>Descargar PAIMON 0.15.2</strong></a> · <a href="#descargar-instalar-y-ejecutar">Instalación</a> · <a href="#qué-nos-diferencia">Funciones</a> · <a href="#compilar-desde-el-código-fuente">Código fuente</a></p>
 </div>
 
 ## Qué nos diferencia
@@ -29,21 +29,21 @@ PAIMON captura lo que ya suena en el Mac o transcribe una grabación que ya tien
 
 ## Descargar, instalar y ejecutar
 
-1. Descarga el ZIP de **PAIMON 0.15.1** en un **Mac con Apple Silicon y macOS 26 o posterior**. [Descargar ZIP](https://github.com/AD0441/PAIMON/releases/download/v0.15.1/PAIMON-0.15.1.zip).
+1. Descarga el ZIP de **PAIMON 0.15.2** en un **Mac con Apple Silicon y macOS 26 o posterior**. [Descargar ZIP](https://github.com/AD0441/PAIMON/releases/download/v0.15.2/PAIMON-0.15.2.zip).
 2. Descomprime el archivo y arrastra **PAIMON.app** a **Aplicaciones**. Si ya tienes PAIMON, ciérralo antes de reemplazar la app. El historial se conserva en el almacenamiento local. Si actualizas desde 0.14 o anterior, copia antes las respuestas del Asistente que quieras conservar: esas versiones solo las mantenían en memoria.
 3. Abre PAIMON. En **Ajustes → Inteligencia**, elige español o inglés y pulsa **Comprobar disponibilidad**. Si faltan recursos de voz, ve a **Ajustes → Modelos** y pulsa **Autorizar descarga del idioma seleccionado**. Activa **Apple Intelligence** desde Ajustes del Sistema para usar el resumen de Apple, el Asistente, la nueva polaridad textual y las etiquetas de emoción.
 4. Pulsa **Importar audio** para empezar con una grabación, o selecciona **Todo el sistema** o una aplicación abierta y pulsa **Iniciar**. Para capturar, concede el permiso de audio del sistema en macOS. Si activas el micrófono, concede también su permiso.
 5. Pulsa **Detener** al terminar la captura y abre **Resumen**, **Sentimientos**, **Discurso** o **Asistente**. Para analizar el tono, pulsa **Analizar sentimientos**. Para consultar la sesión, escribe una pregunta y pulsa **Preguntar**.
 
-La descarga tiene firma ad hoc. La notarización y las pruebas de instalación en otros Mac siguen pendientes. La compilación 32 se compiló y comprobó en un M1 de 8 GB con macOS 27.3: 150 pruebas ejecutadas sin fallos. La revisión visual de los nuevos controles queda pendiente. [Historial de versiones](https://github.com/AD0441/PAIMON/releases) · [Alcance de las pruebas](docs/VALIDATION.md#recuperación-del-resumen--paimon-0151-32).
+La descarga tiene firma ad hoc. La notarización y las pruebas de instalación en otros Mac siguen pendientes. La compilación 33 se compiló y comprobó en un M1 de 8 GB con macOS 27.3: 156 pruebas ejecutadas sin fallos. La revisión visual de los nuevos controles queda pendiente. [Historial de versiones](https://github.com/AD0441/PAIMON/releases) · [Alcance de las pruebas](docs/VALIDATION.md#discurso-por-lotes-pequeños--paimon-0152-33).
 
 <details>
 <summary>Verificar la descarga con SHA-256</summary>
 
-Guarda el archivo de verificación en la misma carpeta que el ZIP y ejecuta el comando desde esa carpeta. [Descargar SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.15.1/PAIMON-0.15.1.zip.sha256).
+Guarda el archivo de verificación en la misma carpeta que el ZIP y ejecuta el comando desde esa carpeta. [Descargar SHA-256](https://github.com/AD0441/PAIMON/releases/download/v0.15.2/PAIMON-0.15.2.zip.sha256).
 
 ```bash
-shasum -a 256 -c PAIMON-0.15.1.zip.sha256
+shasum -a 256 -c PAIMON-0.15.2.zip.sha256
 ```
 
 </details>
@@ -56,7 +56,7 @@ Si ya tienes el audio, usa **Importar audio** o arrastra un archivo WAV, M4A, AI
 
 ## Resumen local
 
-La versión **0.15.1** corrige un bloqueo causado por respuestas que incumplían la extensión de la síntesis. La solicitud pide una respuesta más breve y el único reintento se adapta al motivo del rechazo. Si falla un bloque posterior, se muestran los resúmenes parciales ya guardados y se conserva el punto de avance para reintentar.
+La versión **0.15.1** corrigió un bloqueo causado por respuestas que incumplían la extensión de la síntesis. La solicitud pide una respuesta más breve y el único reintento se adapta al motivo del rechazo. Si falla un bloque posterior, se muestran los resúmenes parciales ya guardados y se conserva el punto de avance para reintentar.
 
 **Revisa qué se decidió y qué queda pendiente.** PAIMON reúne el tema, los puntos clave, los acuerdos, las tareas y las preguntas abiertas que encuentra en la transcripción. Cambia entre **Ejecutiva**, **Completa** y **Acuerdos y pendientes** para revisar la misma sesión con distintos niveles de detalle.
 
@@ -98,6 +98,8 @@ En **Mixto**, compara la polaridad de la transcripción con las etiquetas experi
 En **Ajustes → Modelos → Emociones de voz** puedes descargar, seleccionar o borrar **emotion2vec+ Base** (94 MB), **Large** (195 MB) y **Wav2Vec2 Base SUPERB ER** (122 MB). Solo se carga el elegido. Los embeddings opcionales de Large y SUPERB permiten comparar patrones vocales y explorar cambios entre intervalos; no son probabilidades de emoción. SUPERB se entrenó en inglés y su uso en español es experimental. [Modelos, embeddings y mediciones](docs/VOCAL-MODELS.md).
 
 ## Análisis de discurso
+
+Desde **0.15.2**, Discurso procesa lotes pequeños y guarda cada avance. Una respuesta incompleta recibe un único reintento con menos contenido y una salida más breve; al volver a pulsar **Analizar discurso**, continúa desde el último bloque confirmado. Los resultados parciales se conservan y aparecen mientras se procesa. El aviso de interpretaciones omitidas indica que faltaban citas verificables.
 
 **Sigue las ideas y vuelve a sus citas.** La pestaña **Discurso** organiza la conversación en seis vistas:
 
@@ -164,7 +166,7 @@ Abre `LocalAudioIntelligence.xcodeproj` y selecciona el esquema **LocalAudioInte
 ./script/test.sh                     # ejecutar las pruebas
 ```
 
-Las validaciones y sus límites se describen en el [registro de esta versión](docs/VALIDATION.md#recuperación-del-resumen--paimon-0151-32). La polaridad contextual se contrastó con casos de español e inglés; esto no garantiza precisión general. Las inferencias de Apple requieren sus funciones disponibles en el Mac.
+Las validaciones y sus límites se describen en el [registro de esta versión](docs/VALIDATION.md#discurso-por-lotes-pequeños--paimon-0152-33). La polaridad contextual se contrastó con casos de español e inglés; esto no garantiza precisión general. Las inferencias de Apple requieren sus funciones disponibles en el Mac.
 
 - [Requisitos y estado](docs/REQUIREMENTS.md) · [Limitaciones](docs/LIMITATIONS.md)
 - [Arquitectura y privacidad](docs/ARCHITECTURE.md) · [Mediciones en Apple Silicon](docs/PERFORMANCE.md)

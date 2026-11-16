@@ -7358,6 +7358,61 @@
           }
         }
       }
+    },
+    "Análisis parcial guardado": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved partial analysis"
+          }
+        }
+      }
+    },
+    "Se omitieron algunas interpretaciones sin citas verificables. Los resultados mostrados se conservan.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some interpretations without verifiable quotes were omitted. The displayed results are preserved."
+          }
+        }
+      }
+    },
+    "El modelo devolvió un bloque de discurso incompleto. El avance guardado se conserva. Pulsa Analizar discurso para continuar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The model returned an incomplete discourse block. Saved progress is preserved. Click Analyze discourse to continue."
+          }
+        }
+      }
+    },
+    "El bloque de discurso no contiene citas verificables. El avance guardado se conserva. Puedes reintentar el análisis.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The discourse block has no verifiable quotes. Saved progress is preserved. You can retry the analysis."
+          }
+        }
+      }
+    },
+    "El bloque supera el contexto del modelo local. El avance guardado se conserva. Puedes reintentar el análisis.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The block exceeds the local model context. Saved progress is preserved. You can retry the analysis."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

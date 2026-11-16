@@ -61,10 +61,10 @@ struct DiscourseView: View {
                 if let reason = DiscourseAnalyzer.unavailableReason { Text(model.ui(reason)).font(.caption).foregroundStyle(.secondary) }
                 if stale { Text("El texto o el contexto cambió. Actualiza el análisis antes de exportarlo.").font(.caption).foregroundStyle(.secondary) }
                 if let state {
-                    Text(model.ui(state.final ? "Análisis final del texto disponible" : "Análisis provisional") + " · " + state.updated.formatted(date: .omitted, time: .shortened))
+                    Text(model.ui(state.final ? "Análisis final del texto disponible" : model.active ? "Análisis provisional":"Análisis parcial guardado") + " · " + state.updated.formatted(date: .omitted, time: .shortened))
                         .font(.caption).foregroundStyle(.secondary)
                     if state.rejected > 0 {
-                        Text("Se omitieron interpretaciones sin respaldo suficiente.").font(.caption).foregroundStyle(.secondary)
+                        Text("Se omitieron algunas interpretaciones sin citas verificables. Los resultados mostrados se conservan.").font(.caption).foregroundStyle(.secondary)
                     }
                 }
                 if let error { Text(model.ui(error)).font(.caption).foregroundStyle(.secondary) }

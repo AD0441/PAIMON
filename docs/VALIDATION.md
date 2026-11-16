@@ -493,3 +493,22 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift run --disable-san
 ~~~
 
 Instalada y abierta en `/Applications/PAIMON.app`, versión **0.15.1 (32)**, con firma verificada. Se mantienen únicamente los ZIP actual **0.15.1 (32)** y anterior **0.15.0 (31)**. El enlace de la carpeta del proyecto apunta a Aplicaciones.
+
+## Discurso por lotes pequeños · PAIMON 0.15.2 (33)
+
+16 de noviembre de 2026, Apple M1 de 8 GB, macOS 27.3, Xcode 27.2. **168 métodos registrados; 154 ejecutados por defecto y dos integraciones nativas activadas aparte: 156 métodos distintos sin fallos.** Doce integraciones opcionales no se ejecutaron en esta ronda. [Registro](evidence/discourse-recovery-validation.json).
+
+El corpus sintético denso de ocho fragmentos reprodujo el fallo original en 29,534 s: el contenido generado no incluía la propiedad obligatoria `target`. Después de la corrección, el mismo caso completó el checkpoint con citas verificables en 26,645 s. La prueba nativa de propuesta, aceptación explícita y reanudación sin duplicados pasó en 10,829 s. Estos tiempos corresponden a casos concretos y no prueban una mejora general de CPU o memoria.
+
+Las pruebas controladas usan el error real de conversión de `GeneratedContent` con el campo ausente, verifican la reducción de cuatro fuentes a dos, la conservación de las restantes y el cursor que no avanza tras doble fallo. Se comprobó la reanudación, la ausencia de duplicados, el contexto acotado, los fragmentos largos divididos y que la cancelación/errores ajenos al formato no desencadenan reintentos de lectura.
+
+No se abrió ni procesó la transcripción privada para estas pruebas. No se ejecutó una revisión visual, captura prolongada, presión real de RAM ni macOS 26. La política de memoria y la compuerta de inferencia se conservan. La compactación adicional con otra generación no se incluye sin medir su utilidad.
+
+~~~bash
+./script/test.sh
+PAIMON_TEST_DISCOURSE=1 ./script/test.sh --filter discourseNativeDenseSourcesKeepGroundedResultsAndCompleteCheckpoint
+PAIMON_TEST_DISCOURSE=1 ./script/test.sh --filter discourseNativeModelProcessesProposalsAndKeepsItsCheckpoint
+./script/build_and_run.sh --release-build-only
+~~~
+
+Instalada y abierta en `/Applications/PAIMON.app`, **0.15.2 (33)**, firma verificada. Se conservan los ZIP actual **0.15.2 (33)** y anterior **0.15.1 (32)**; el acceso del proyecto apunta a Aplicaciones. El análisis privado conserva su checkpoint: la corrección se verificó con datos sintéticos y el usuario puede continuar con **Analizar discurso**.

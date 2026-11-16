@@ -1,8 +1,8 @@
-# Discurso y voz durante la captura · PAIMON 0.14.0
+# Discurso y voz durante la captura · PAIMON 0.15.2
 
 ## Uso
 
-Antes de Iniciar puedes activar **Guardar audio**, **Vocal en vivo** y **Discurso automático** por separado. En **Ajustes → Modelos → Análisis durante la captura** elige los intervalos. Ninguna de estas dos funciones nuevas se activa automáticamente en instalaciones existentes.
+Antes de Iniciar puedes activar **Guardar audio**, **Vocal en vivo** y **Discurso automático** por separado. En **Ajustes → Modelos → Análisis durante la captura** elige los intervalos. Ninguna de estas dos funciones se activa automáticamente en instalaciones existentes.
 
 **Discurso** usa solo la transcripción y Apple Foundation Models. En una sesión importada o terminada pulsa Analizar discurso; durante una captura, el modo automático procesa el texto nuevo cada cinco minutos por defecto. Las actualizaciones se marcan como provisionales. Tras detener se consolida el trabajo pendiente, después del resumen final y cuando hay recursos. La cola final queda en SQLite si la app se cierra antes de completarla. Un error conserva los resultados y el cursor; puedes volver a intentarlo con Analizar discurso.
 
@@ -37,7 +37,7 @@ Vocal en vivo toma ventanas de **3 segundos a 16 kHz por fuente**, cada 30 segun
 
 La cola vocal está acotada y es independiente de la transcripción. Si la compuerta de inferencia está ocupada se omite esa inferencia sin añadir trabajo atrasado. Con Parakeet activo se difieren los modelos vocales y Discurso para priorizar reconocimiento; se conservan métricas de señal si hay recursos. Con presión de memoria, pausa o calor se suspenden tareas opcionales. Al detener se descarta la ventana incompleta o aún en proceso.
 
-Discurso procesa lotes y recupera hasta doce hallazgos anteriores relevantes, con control de contextSize y conteo de tokens en macOS 26.4+. Guarda el avance transaccionalmente y no repite toda la transcripción. Corregir el texto o cambiar el contexto invalida los resultados anteriores; deben actualizarse antes de exportar.
+Discurso procesa hasta cuatro unidades de texto por lote y solicita hasta cuatro hallazgos breves. Si la respuesta queda incompleta, permite un solo reintento con la mitad de las fuentes y un máximo de dos hallazgos; el resto del texto sigue pendiente. Recupera hasta doce hallazgos anteriores relevantes, con control de contextSize y conteo de tokens en macOS 26.4+. Guarda el avance transaccionalmente y no repite toda la transcripción. Corregir el texto o cambiar el contexto invalida los resultados anteriores; deben actualizarse antes de exportar.
 
 Exportar → **Discurso y participación** añade sus resultados a TXT, Markdown, PDF o JSON. Las tablas derivadas se eliminan junto con la sesión mediante claves foráneas y el mecanismo de limpieza de SQLite existente. Los originales externos y exportaciones que tú guardaste se administran aparte.
 
@@ -52,3 +52,19 @@ PAIMON_TEST_LIVE_VOCAL=1 ./script/test.sh --filter liveVocalNativeSoundStreamAnd
 La prueba vocal usa Tests/Fixtures/spanish-synthetic.aiff y los recursos ya instalados. La prueba nativa de discurso necesita Apple Intelligence disponible. No descargan modelos ni utilizan conversaciones del usuario. Consulta los resultados ejecutados y las limitaciones en [VALIDATION.md](VALIDATION.md) y [LIMITATIONS.md](LIMITATIONS.md).
 
 Referencias oficiales: [Generación estructurada](https://developer.apple.com/documentation/foundationmodels/generating-swift-data-structures-with-guided-generation), [Sonidos desde PCM en flujo](https://developer.apple.com/documentation/soundanalysis/classifying-sounds-in-an-audio-stream).
+
+## Recuperación de respuestas incompletas · 0.15.2
+
+Cada lote válido se confirma en SQLite antes de continuar. La RAM conserva una ventana pequeña y el modelo recibe fuentes nuevas y contexto relevante, sin cargar siempre toda la transcripción. El límite de respuesta sigue siendo de 900 tokens; se redujeron la cantidad de elementos y la extensión solicitada para disminuir el riesgo de resultados incompletos. Se comprueba el presupuesto de contexto también en el reintento.
+
+Si ambos intentos fallan, aparece una explicación y el cursor permanece en el último bloque válido. Pulsa **Analizar discurso** para continuar. Los fragmentos divididos solo avanzan el cursor al confirmar su última parte. Los resultados de la misma versión se actualizan sin duplicar las citas.
+
+**Análisis parcial guardado** significa que existe avance confirmado en una sesión terminada, pero no un análisis completo. Durante una captura sigue apareciendo **Análisis provisional**. El aviso de interpretaciones omitidas describe elementos sin citas verificables, no una pérdida de toda la transcripción ni un fallo de memoria.
+
+La compactación adicional mediante otra llamada al modelo sigue siendo una opción por evaluar. Esta versión mantiene los hallazgos completos en SQLite y acota/selecciona el contexto; no sustituye los originales por una condensación que pueda perder vínculos o citas.
+
+~~~bash
+PAIMON_TEST_DISCOURSE=1 ./script/test.sh --filter discourseNativeDenseSourcesKeepGroundedResultsAndCompleteCheckpoint
+~~~
+
+[Opciones oficiales de generación y límites de respuesta](https://developer.apple.com/documentation/foundationmodels/generationoptions).
